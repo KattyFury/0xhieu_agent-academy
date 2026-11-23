@@ -55,9 +55,9 @@ export function SetupAccount({ total: _total }: { total: number }) {
             {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
             {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the app. Credits may cost real money.", "Trong app. Credit có thể tốn tiền thật."))}
           </div></li>
-        <li><p className="t-content">{t("Create an ", "Tạo ")}<strong>MPC Wallet</strong>{t(" in the Binance app first.", " trong app Binance trước.")}</p></li>
+        <li><p className="t-content">{t("Create an ", "Tạo ")}<strong>MPC Wallet</strong>{t(" (keyless Web3 wallet) in the Binance app.", " (ví Web3 keyless) trong app Binance.")}</p></li>
         {path === "own"
-          ? <li><p className="t-content">{t("Install the skill in your computer's terminal:", "Cài skill trong terminal trên máy tính:")}</p><Box text={INSTALL} /></li>
+          ? <li><p className="t-content">{t("Install the skill in your terminal:", "Cài skill trong terminal:")}</p><Box text={INSTALL} /></li>
           : <li><p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p></li>}
         <li><p className="t-content">{t("Tell your AI (only once):", "Nói với AI (chỉ một lần):")}</p><Box text="Create my Binance Agentic Wallet" /></li>
       </ol>
