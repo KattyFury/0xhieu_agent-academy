@@ -23,7 +23,7 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - Order: 1 What is an Agentic Wallet (quiz) · 2 From zero to signed in · 3 Gas and Developer Mode · 4 Addresses · 5 Balances · 6 Networks, history and gas · 7 Rules · 8 Approvals · 9 Pending and locked · 10 Quotes (risk note) · 11 DeFi preview (risk note) · 12 Agent ID · 13 Staying safe.
 - Files: `web/src/book001.ts` (EN, `day` = chapter number) + `book001.vi.ts`; chapters 2-3 (inputs) in `web/src/views/Onboard.tsx`. Chapters 1-3 are recorded together on pages 5-6 (mask bits 0-2), since recording needs Developer Mode. Practice pages show "Right result / If not".
 - Sources: Binance Agentic Wallet Introduction + Install pages, skill v1.15.0, real read-only `baw` runs. `approvals list --binanceChainId` is in the docs but rejected by `baw` 1.12.0. `wallet chains` on the owner's wallet = 7 networks.
-- Fit: every spread 0 overflow at 1440 (EN + VI); at 1366 a few long spreads scroll inside the page ("More below"); phones OK; ds-check 0 issues. Export for editing: `npx tsx web/scripts/export-book.ts <out.md>` (setup chapters 2-3 not included).
+- Fit (2026-11-23): a page never scrolls. `Page` in `Reader.tsx` steps `data-fit1..4` (spacing, then text down to 13px) until it fits; phones show one page = one screen. Measured 0 overflow at 1920/1536/1440/1366/1280 desktop and 412/393/375/360 phones, EN + VI; ds-check 0 issues. If new text overflows even at fit4, shorten the text. Export for editing: `npx tsx web/scripts/export-book.ts <out.md>` (setup chapters 2-3 not included).
 
 ## Next
 1. Owner: publish book 1 (`createBook(1, 13)`), then a second person with a real Agent ID runs the full flow (spec §9.7).

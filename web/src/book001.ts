@@ -23,13 +23,13 @@ export const book001: Book = {
     {
       day: 1,
       title: "What is Binance Agentic Wallet?",
-      goal: "Know what Binance Agentic Wallet does before you install it.",
+      goal: "Know what it does before you install it.",
       learn: {
         paragraphs: [
           "**Binance Agentic Wallet** is a wallet your AI helper can use for you. You ask in plain words, like “show my balance”, and the AI does it.",
-          "Think of a **spending card with a daily limit**. **You** set the limit in the Binance app. The **AI** only works inside it. The **system** blocks it, or asks you again, if the AI goes too far.",
+          "Think of a **spending card with a daily limit**. **You** set the limit in the Binance app. The **AI** only works inside it. The **system** blocks it, or asks you, if the AI goes too far.",
           "The AI **never holds the wallet's key**. The key is split up and kept safe (**MPC Keyless**). Sign out, and the AI loses access.",
-          "With **Secure Auto Sign** on, things inside your limits can run without asking you each time. That's why **your limits are your safety net**.",
+          "With **Secure Auto Sign** on, actions inside your limits run without asking you. So **your limits are your safety net**.",
         ],
         remember: ["You set the rules; the AI works inside them.", "The AI never holds your key.", "Your limits are your safety net."],
       },

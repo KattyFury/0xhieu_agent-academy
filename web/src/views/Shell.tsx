@@ -2,15 +2,20 @@ import { useState, type ReactNode } from "react";
 import type { Address } from "viem";
 import { isAddr } from "../chain";
 import { LangSwitch, useT } from "../i18n";
+import { Award, BookOpen, type LucideIcon } from "lucide-react";
 
-type Tab = "library" | "book" | "cert";
+type Tab = "library" | "cert";
 
 /** Web shell copied from 0xhieu.xyz: pill bar, cat icon, text tabs, active tab yellow with black text, VI/EN switch. No wallet in the bar. */
 export function Nav({ active, banner }: { active?: Tab; banner?: ReactNode }) {
   const t = useT();
-  const tab = (key: Tab, href: string, label: string) => key === active
-    ? <span className="bk-tab bk-tab-on t-button" aria-current="page">{label}</span>
-    : <a className="bk-tab t-button" href={href}>{label}</a>;
+  // Phones show the icon only; the label stays for screen readers.
+  const tab = (key: Tab, href: string, label: string, Icon: LucideIcon) => {
+    const inner = <><Icon size={20} aria-hidden /><span className="bk-tab-label">{label}</span></>;
+    return key === active
+      ? <span className="bk-tab bk-tab-on t-button" aria-current="page">{inner}</span>
+      : <a className="bk-tab t-button" href={href}>{inner}</a>;
+  };
   return (
     <header className="bk-top">
       <nav className="bk-nav" aria-label="Main">
@@ -18,9 +23,8 @@ export function Nav({ active, banner }: { active?: Tab; banner?: ReactNode }) {
         {banner}
         <div className="bk-nav-right">
           <div className="bk-tabs">
-            {tab("library", "/library", t("Library", "Thư viện"))}
-            {active === "book" && tab("book", "/book/1/0", "#1")}
-            {tab("cert", "/certificate", t("Certificate", "Chứng chỉ"))}
+            {tab("library", "/library", t("Library", "Thư viện"), BookOpen)}
+            {tab("cert", "/certificate", t("Certificate", "Chứng chỉ"), Award)}
           </div>
           <LangSwitch />
         </div>

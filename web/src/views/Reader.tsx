@@ -3,7 +3,7 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Check, Copy, List, Loader2, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleCheck, Copy, List, Loader2, X } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { usePageTitles } from "./Library";
@@ -46,7 +46,7 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span><span>{t(`Pages ${pagesOf(page)} of ${2 * P}`, `Trang ${pagesOf(page)}/${2 * P}`)}</span></p>
+      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span></p>
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
       <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
@@ -138,7 +138,7 @@ function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Practice", "Thực hành")}</span><span>{t(`About ${d.practice.minutes} minutes`, `Khoảng ${d.practice.minutes} phút`)}</span></p>
+      <p className="bk-meta t-label"><span className="bk-kicker">{t("Practice", "Thực hành")}</span></p>
       <h2 className="t-page">{d.practice.title ?? "Try it yourself"}</h2>
       {d.practice.riskText && <p className="bk-risk t-note" role="note"><strong>{t("Risk:", "Cảnh báo rủi ro:")}</strong> {d.practice.riskText}</p>}
       <ol className="bk-steps">
@@ -234,10 +234,8 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
       rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} />
   );
   // Chapters 1-2 can't be recorded before Developer Mode (chapter 3), so chapters 1-3 are recorded together on pages 5–6.
-  const deferred = (p: number) => isDone(p) ? record(p) : <>
-    <p className="t-content">{t("Recorded together with chapter 3, on pages 5–6.", "Ghi nhận cùng chương 3, ở trang 5–6.")}</p>
-    <div><button className="btn btn-primary t-button" onClick={() => nav(p + 1)}>{t("Next", "Tiếp")}</button></div>
-  </>;
+  const deferred = (p: number) => isDone(p) ? record(p) :
+    <p className="bk-status bk-recorded t-content"><CircleCheck size={18} aria-hidden /> {t("Recorded with chapter 3 (pages 5–6).", "Ghi nhận cùng chương 3 (trang 5–6).")}</p>;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
     if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
@@ -254,7 +252,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
       onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
       onTouchEnd={(e) => { const t = touch.current; touch.current = null; if (!t || spreadMode || getSelection()?.toString()) return;
         const dx = e.changedTouches[0].clientX - t.x, dy = e.changedTouches[0].clientY - t.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) stepPage(dx < 0 ? 1 : -1); }}>
-      <Nav active="book" banner={(chain.error || q === "error") && <p className="bk-banner t-label" role="status">{t("Can't reach the chain. Progress may be out of date.", "Không kết nối được chuỗi. Tiến độ có thể chưa mới.")}</p>} />
+      <Nav active="library" banner={(chain.error || q === "error") && <p className="bk-banner t-label" role="status">{t("Can't reach the chain. Progress may be out of date.", "Không kết nối được chuỗi. Tiến độ có thể chưa mới.")}</p>} />
 
       <main className="bk-stage">
         {spreadMode ? (
@@ -275,10 +273,14 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
                 <Page side="right" folio={2 * shown + 2}>{page(shown, "practice", true)}</Page>
               </>
             )}
+
+            <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>
           </article>
         ) : (
           <article key={`${target}-${side}`} className="bk-book bk-one turn" aria-label={t(`Page ${2 * target + (side === "learn" ? 1 : 2)}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}`)}>
             <Page side={side === "learn" ? "left" : "right"} folio={side === "learn" ? 2 * target + 1 : 2 * target + 2}>{page(target, side, true)}</Page>
+
+            <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>
           </article>
         )}
       </main>
@@ -325,7 +327,17 @@ function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"
   const body = useRef<HTMLDivElement>(null);
   const [more, setMore] = useState(false);
   const check = () => { const b = body.current; if (b) setMore(b.scrollHeight - b.clientHeight - b.scrollTop > 8); };
-  useLayoutEffect(check);
+  // No scrollbar: step down spacing, then text size (data-fit1..4 in styles.css) until the page fits.
+  const fit = () => {
+    const b = body.current, sec = b?.parentElement; if (!b || !sec) return;
+    for (let l = 0; l <= 4; l++) {
+      for (let i = 1; i <= 4; i++) sec.toggleAttribute(`data-fit${i}`, i <= l);
+      if (b.scrollHeight <= b.clientHeight) break;
+    }
+    check();
+  };
+  useLayoutEffect(fit);
+  useEffect(() => { addEventListener("resize", fit); return () => removeEventListener("resize", fit); });
   return (
     <section className={`bk-page bk-${s} ${extra}`}>
       <div className="bk-body" ref={body} onScroll={check}>{children}

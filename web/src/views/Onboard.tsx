@@ -21,7 +21,7 @@ export function CopyBtn({ text, label }: { text: string; label?: string }) {
   );
 }
 
-const Meta = ({ left, right }: { left: string; right: string }) => <p className="bk-meta t-label"><span className="bk-kicker">{left}</span><span>{right}</span></p>;
+const Meta = ({ left }: { left: string }) => <p className="bk-meta t-label"><span className="bk-kicker">{left}</span></p>;
 const Goal = ({ children }: { children: ReactNode }) => <p className="bk-goal t-content">{children}</p>;
 const Box = ({ text }: { text: string }) => <div className="bk-prompt bk-prompt-row"><p className="t-data">{text}</p><CopyBtn text={text} /></div>;
 /** "Right result" / "If not" lines under a practice. */
@@ -40,8 +40,8 @@ export function ResultLines({ check, ifNot }: { check?: string; ifNot?: string }
 export function SetupAccount({ total }: { total: number }) {
   const t = useT();
   const steps: ReactNode[] = [
-    <>{t("Open the Binance app and create an ", "Mở app Binance, tạo ")}<strong>MPC Wallet</strong>{t(" first. You need it before Binance Agentic Wallet.", " trước. Cần có ví này trước Binance Agentic Wallet.")}</>,
-    <>{t("Install the skill on your computer (the command is on the right).", "Cài skill trên máy tính (lệnh ở trang phải).")}</>,
+    <>{t("In the Binance app, create an ", "Trong app Binance, tạo ")}<strong>MPC Wallet</strong>{t(" first. You need it before Binance Agentic Wallet.", " trước. Cần có ví này trước Binance Agentic Wallet.")}</>,
+    <>{t("Install the skill on your computer.", "Cài skill trên máy tính.")}</>,
     <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Create my Binance Agentic Wallet”</strong>{t(". Only once.", ". Chỉ làm một lần.")}</>,
     <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Sign in to Binance Agentic Wallet”</strong>{t(". Open its link, or scan its QR with the app.", ". Mở link nó đưa, hoặc quét QR bằng app.")}</>,
     <>{t("In the app, check the ", "Trong app, xem ")}<strong>{t("6-character code", "mã 6 ký tự")}</strong>{t(" matches the AI's. A new-IP warning that isn't you? ", " giống mã của AI. Có cảnh báo IP mới mà không phải bạn? ")}<strong>{t("Don't confirm.", "Đừng xác nhận.")}</strong></>,
@@ -50,7 +50,7 @@ export function SetupAccount({ total }: { total: number }) {
   ];
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Pages 3–4 of ${2 * total}`, `Trang 3–4/${2 * total}`)} />
+      <Meta left={t("Get ready", "Chuẩn bị")} />
       <h1 className="t-page">{t("From zero to signed in", "Từ số 0 đến đăng nhập")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have an account, a Binance Agentic Wallet, an Agent ID, and your AI signed in.", "Có tài khoản, Binance Agentic Wallet, Agent ID và AI đã đăng nhập.")}</Goal>
       <ol className="bk-steps bk-steps-tight">{steps.map((s, i) => <li key={i}><p className="t-content">{s}</p></li>)}</ol>
@@ -71,7 +71,7 @@ export function SetupAgent({ record }: { record: ReactNode }) {
   );
   return (
     <>
-      <Meta left={t("Practice", "Thực hành")} right={t("About 10 minutes", "Khoảng 10 phút")} />
+      <Meta left={t("Practice", "Thực hành")} />
       <h2 className="t-page">{t("Install and sign in", "Cài và đăng nhập")}</h2>
       <div className="setup-cards">
         {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
@@ -80,9 +80,9 @@ export function SetupAgent({ record }: { record: ReactNode }) {
       {path === "own"
         ? <><p className="t-content">{t("Paste in your computer's terminal:", "Dán vào terminal trên máy tính:")}</p><Box text={INSTALL} /></>
         : <p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p>}
-      <p className="t-content">{t("Do steps 3–4 on the left, then ask:", "Làm bước 3–4 bên trái, rồi hỏi:")}</p>
+      <p className="t-content">{t("After steps 3–4, ask:", "Sau bước 3–4, hỏi:")}</p>
       <Box text={CONNECTED} />
-      <ResultLines check={t("Your AI says the wallet is connected.", "AI báo ví đã kết nối.")} ifNot={t("Ask it to sign in again. If it shows an error, read it word for word; don't guess.", "Nhờ AI đăng nhập lại. Nếu báo lỗi, đọc đúng lỗi, đừng đoán.")} />
+      <ResultLines check={t("Your AI says the wallet is connected.", "AI báo ví đã kết nối.")} ifNot={t("Ask it to sign in again. Read any error word for word.", "Nhờ AI đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} />
       <div className="bk-record-block">{record}</div>
     </>
   );
@@ -116,7 +116,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
   };
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Pages 5–6 of ${2 * total}`, `Trang 5–6/${2 * total}`)} />
+      <Meta left={t("Get ready", "Chuẩn bị")} />
       <h1 className="t-page">{t("Gas and Developer Mode", "Gas và Developer Mode")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a little BNB for fees, and turn on Developer Mode.", "Có một ít BNB trả phí, và bật Developer Mode.")}</Goal>
       <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee you pay the network each time something is saved on it, paid in ", " là phí nhỏ trả cho mạng mỗi lần lưu gì đó lên mạng, trả bằng ")}<strong>BNB</strong>{t(". Recording a chapter costs very little.", ". Ghi nhận một chương tốn rất ít.")}</p>
@@ -138,7 +138,7 @@ export function SetupDevMode({ record }: { record: ReactNode }) {
   const t = useT();
   return (
     <>
-      <Meta left={t("Practice", "Thực hành")} right={t("About 5 minutes", "Khoảng 5 phút")} />
+      <Meta left={t("Practice", "Thực hành")} />
       <h2 className="t-page">{t("Turn on Developer Mode", "Bật Developer Mode")}</h2>
       <p className="t-content">{t("Recording a chapter means your AI calls the Agent Academy contract. It may only do that when ", "Ghi nhận chương là AI gọi hợp đồng Agent Academy. AI chỉ được làm vậy khi ")}<strong>{t("Developer Mode is on", "Developer Mode đang bật")}</strong>.</p>
       <ol className="bk-steps bk-steps-tight">
