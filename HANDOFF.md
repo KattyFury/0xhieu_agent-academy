@@ -8,7 +8,7 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 ## Live
 - Contract **AgentAcademy `0x66Ae47EAE1aacFd70148808AE63a5B4A5e882753`** (BSC, verified). Owner 0xhieu.ai `0xe0a34AC1da06423e1e67345828bd629dFAbd4Ca2`; only power = `createBook`.
 - **Book 1 is published: 13 chapters, permanent.** Text and layout can change any time (website deploy only); the chapter count can never change. Test books 900 (1 ch) and 901 (13 ch) exist; ids >= 900 are hidden.
-- Site https://academy.0xhieu.xyz, Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` (wrangler is logged in on this PC; keys file has `CLOUDFLARE_API_2211`). Worker secrets RELAYER_KEY, TG_*; KV `GAS` (free-gas relayer `/api/claim`: 0.00025 BNB once per Agent ID, max 20/day; relayer `0x49CBB7477b163F4613f08995E1dE61a502b2A43c` held ~0.006 BNB = ~22 people on 2026-11-23; a $10 top-up from 0xhieu.ai is blocked until the owner adds the relayer to the Binance app address book).
+- Site https://academy.0xhieu.xyz, Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` (wrangler is logged in on this PC; keys file has `CLOUDFLARE_API_2211`). Worker secrets RELAYER_KEY, TG_*; KV `GAS` (free-gas relayer `/api/claim`: 0.00025 BNB once per Agent ID, max 20/day; relayer `0x49CBB7477b163F4613f08995E1dE61a502b2A43c` held ~0.006 BNB = ~22 people on 2026-11-23; top-ups are done by the owner. `baw wallet send` only sends to addresses in the Binance app address book (Binance safety rule for AI sends), so either the owner adds the relayer there once, or sends BNB from the app/exchange themselves).
 - Routes: `/`, `/library`, `/book/1/<spread 0-13>[/practice]` (13 = ending spread), `/certificate`, `/certificate/1/0x…`. `?qa=<state>` for screenshots (e.g. `nowallet`, `unpublished`).
 
 ## Book #1 (28 pages = 13 chapters + ending spread)
@@ -29,8 +29,9 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - X post drafted (main + reply, with #BinanceWalletHackathon #AgenticWallet).
 
 ## Next
-1. A second person with a real Agent ID runs the full flow on book 1 (spec §9.7).
-2. Get >= 30 Agent ID holders recording; submit.
+1. Top up the relayer (~$10 = ~0.0173 BNB at $579 → ~90 people); 30 learners need ~0.0075 BNB.
+2. A second person with a real Agent ID runs the full flow on book 1 (spec §9.7). Also test one save with the Vietnamese prompt (not yet run end to end).
+3. Get >= 30 Agent ID holders saving; submit.
 
 ## Gotchas
 - Another Claude session once edited this repo at the same time: commit files by name, check `git status` first.
