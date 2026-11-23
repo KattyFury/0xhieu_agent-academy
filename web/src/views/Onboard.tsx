@@ -27,7 +27,7 @@ export function SetupId({ total }: { total: number }) {
   const t = useT();
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Page 1 of ${total}`, `Trang 1/${total}`)} />
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Pages 1–2 of ${2 * total}`, `Trang 1–2/${2 * total}`)} />
       <h1 className="t-page">{t("Your Agent ID", "Agent ID của bạn")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a Binance account, an Agentic Wallet and your Agent ID.", "Có tài khoản Binance, Agentic Wallet và Agent ID.")}</Goal>
       <p className="t-lead">{t("This book runs on ", "Sách này học trên ")}<strong>Binance Agentic Wallet</strong>{t(": a wallet your AI agent can use, with rules you set in the Binance app.", ": một ví mà AI agent của bạn dùng được, với quy tắc do bạn đặt trong app Binance.")}</p>
@@ -102,7 +102,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
   };
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Page 2 of ${total}`, `Trang 2/${total}`)} />
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Pages 3–4 of ${2 * total}`, `Trang 3–4/${2 * total}`)} />
       <h1 className="t-page">{t("Gas", "Gas")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have a little BNB so your agent can record pages.", "Có một ít BNB để agent ghi nhận trang.")}</Goal>
       <p className="t-lead">{t("Each record is a small transaction on BNB Smart Chain, paid in BNB. On Nov 23 one record cost about ", "Mỗi lần ghi nhận là một giao dịch nhỏ trên BNB Smart Chain, trả bằng BNB. Ngày 23/11 một lần ghi tốn khoảng ")}<strong>0.000006 BNB</strong>.</p>

@@ -29,7 +29,7 @@ export default function Entrance(_: { wallet: Address | null }) {
               {t("Agent Academy is a library of short books about AI agents. Every piece of theory comes with a small hands-on practice.",
                 "Agent Academy là thư viện những cuốn sách ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
             <div className="actions">
-              <a className="btn btn-primary t-button" href="/book/1/0">{t("Start learning", "Bắt đầu học")}</a>
+              <a className="btn btn-primary t-button" href="/library">{t("Start learning", "Bắt đầu học")}</a>
               <a className="btn btn-ghost t-button" href="/library">{t("Browse the library", "Xem thư viện")}</a>
             </div>
           </div>

@@ -298,7 +298,7 @@ h1, h2, h3 { text-wrap: balance; }
 .contents li + li { border-top: 1px solid var(--ds-bento-hair); }
 .contents-row { display: flex; align-items: center; gap: var(--ds-space-12); min-height: 48px; padding: var(--ds-space-8) 0; color: var(--ds-color-ink); text-decoration: none; }
 .contents-row:hover .contents-title { font-weight: 600; }
-.contents-no { width: 24px; flex: none; color: var(--ds-color-muted); }
+.contents-no { width: 48px; flex: none; color: var(--ds-color-muted); }
 .contents-title { flex: 1; min-width: 0; }
 .chip-done { display: inline-flex; align-items: center; gap: var(--ds-space-4); background: var(--ds-color-ink); color: var(--ds-accent); }
 .contents-foot { display: flex; flex-direction: column; gap: var(--ds-space-8); padding-top: var(--ds-space-12); border-top: 1px solid var(--ds-bento-hair); }

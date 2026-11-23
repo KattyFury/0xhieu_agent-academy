@@ -9,7 +9,7 @@ import { Nav } from "./Shell";
 import { SetupAgent, SetupDevMode, SetupGas, SetupId } from "./Onboard";
 import { useLang, useT } from "../i18n";
 import { book001Vi, localDay } from "../book001.vi";
-import { SETUP_PAGES, book001, completionPrompt, pageCount, type Day } from "../book001";
+import { SETUP_PAGES, book001, completionPrompt, pageCount, pagesOf, type Day } from "../book001";
 import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDone, progressOf } from "../chain";
 
 const book = book001;
@@ -45,7 +45,7 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span><span>{t(`Page ${page + 1} of ${P}`, `Trang ${page + 1}/${P}`)}</span></p>
+      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span><span>{t(`Pages ${pagesOf(page)} of ${2 * P}`, `Trang ${pagesOf(page)}/${2 * P}`)}</span></p>
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
       <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
@@ -119,7 +119,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }) : "";
   return (
     <>
-      <h3 className="t-header">{t("Record this page", "Ghi nhận trang này")}</h3>
+      <h3 className="t-header">{t(`Record pages ${pagesOf(page)}`, `Ghi nhận trang ${pagesOf(page)}`)}</h3>
       {published === false ? <p className="t-content">{t("Recording opens when this book is published on-chain. You can read every page now.", "Việc ghi nhận mở khi sách được phát hành on-chain. Bạn đọc được mọi trang ngay bây giờ.")}</p> : <>
         <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the record prompt into your agent and type ", "Dán prompt ghi nhận vào agent và gõ ")}<b>confirm</b>{t(" when it shows the preview.", " khi agent hiện phần xem trước.")}</>}</p>
         <div className="bk-record">
@@ -231,7 +231,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   );
   // Page 1 can't be recorded before Developer Mode (page 2), so pages 1 and 2 are recorded together on page 2.
   const deferred = isDone(0) ? record(0) : <>
-    <p className="t-content">{t("You record this page on page 2, with Developer Mode.", "Bạn ghi nhận trang này ở trang 2, cùng Developer Mode.")}</p>
+    <p className="t-content">{t("Recorded with pages 3–4, after Developer Mode.", "Ghi nhận cùng trang 3–4, sau Developer Mode.")}</p>
     <div><button className="btn btn-primary t-button" onClick={() => nav(1)}>{t("Next: gas and Developer Mode", "Tiếp: gas và Developer Mode")}</button></div>
   </>;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
@@ -253,7 +253,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
 
       <main className="bk-stage">
         {spreadMode ? (
-          <article ref={bookRef} className="bk-book" aria-label={t(`Page ${shown + 1} of ${P}`, `Trang ${shown + 1}/${P}`)} inert={!!turning}>
+          <article ref={bookRef} className="bk-book" aria-label={t(`Pages ${pagesOf(shown)} of ${2 * P}`, `Trang ${pagesOf(shown)}/${2 * P}`)} inert={!!turning}>
             {turning ? (
               <>
                 <Page side="left" folio={2 * (turning.dir === "fwd" ? turning.from : turning.to) + 1}>{page(turning.dir === "fwd" ? turning.from : turning.to, "learn", false)}</Page>
@@ -272,7 +272,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
             )}
           </article>
         ) : (
-          <article key={`${target}-${side}`} className="bk-book bk-one turn" aria-label={t(`Page ${target + 1}, ${side}`, `Trang ${target + 1}`)}>
+          <article key={`${target}-${side}`} className="bk-book bk-one turn" aria-label={t(`Page ${2 * target + (side === "learn" ? 1 : 2)}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}`)}>
             <Page side={side === "learn" ? "left" : "right"} folio={side === "learn" ? 2 * target + 1 : 2 * target + 2}>{page(target, side, true)}</Page>
           </article>
         )}
@@ -286,11 +286,11 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           <a className="btn btn-ghost t-button bk-contents" href="/library" aria-label={t("Contents", "Mục lục")}><List size={16} /> <span className="bk-hide-sm">{t("Contents", "Mục lục")}</span></a>
           <ol aria-label={t(`${P} pages`, `${P} trang`)}>
             {[...Array(P)].map((_, p) => (
-              <li key={p}><button aria-label={`${t("Page", "Trang")} ${p + 1}${isDone(p) ? t(", recorded", ", đã ghi nhận") : ""}`} aria-current={p === target ? "step" : undefined}
+              <li key={p}><button aria-label={`${t("Pages", "Trang")} ${pagesOf(p)}${isDone(p) ? t(", recorded", ", đã ghi nhận") : ""}`} aria-current={p === target ? "step" : undefined}
                 className={`bk-dotbtn ${isDone(p) ? "done" : ""} ${p === target ? "on" : ""}`} onClick={() => nav(p)} /></li>
             ))}
           </ol>
-          <span className="t-label">{spreadMode ? t(`Page ${target + 1} of ${P}, ${count} recorded`, `Trang ${target + 1}/${P}, đã ghi ${count}`) : t(`Page ${target + 1}, ${side === "learn" ? "1/2" : "2/2"}`, `Trang ${target + 1}, ${side === "learn" ? "1/2" : "2/2"}`)}</span>
+          <span className="t-label">{spreadMode ? t(`Pages ${pagesOf(target)} of ${2 * P}`, `Trang ${pagesOf(target)}/${2 * P}`) : t(`Page ${2 * target + (side === "learn" ? 1 : 2)} of ${2 * P}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}/${2 * P}`)}</span>
         </div>
         <button className="btn btn-ghost t-button" onClick={() => stepPage(1)} disabled={target === LAST && (spreadMode || side === "practice")} aria-label={t("Next", "Tiếp")}>
           <span className={spreadMode ? "bk-hide-sm" : ""}>{t("Next", "Tiếp")}</span> <ArrowRight size={16} />
@@ -311,6 +311,7 @@ function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"
       <div className="bk-body" ref={body} onScroll={check}>{children}
         {more && <p className="bk-more t-label" aria-hidden>{t("More below", "Còn tiếp bên dưới")}</p>}
       </div>
+      <span className="bk-folio t-label">{folio}</span>
     </section>
   );
 }

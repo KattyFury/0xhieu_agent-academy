@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Address } from "viem";
 import { Check } from "lucide-react";
-import { book001, pageCount } from "../book001";
+import { book001, pageCount, pagesOf } from "../book001";
 import { book001Vi, localDay } from "../book001.vi";
 import { done, progressOf, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
@@ -52,7 +52,7 @@ export default function Library({ wallet, setWallet }: { wallet: Address | null;
               {titles.map((name, i) => (
                 <li key={i}>
                   <a className="contents-row" href={`/book/1/${i}`}>
-                    <span className="t-data contents-no">{i + 1}</span>
+                    <span className="t-data contents-no">{pagesOf(i)}</span>
                     <span className="t-content contents-title">{name}</span>
                     {p && (isDone(i)
                       ? <span className="chip chip-done t-label"><Check size={14} aria-hidden /> {t("Done", "Đã học")}</span>

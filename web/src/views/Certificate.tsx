@@ -3,7 +3,7 @@ import type { Address } from "viem";
 import { Award, Check, ShieldCheck } from "lucide-react";
 import { AddressForm, Nav } from "./Shell";
 import { usePageTitles } from "./Library";
-import { book001, pageCount } from "../book001";
+import { book001, pageCount, pagesOf } from "../book001";
 import { book001Vi } from "../book001.vi";
 import { ACADEMY, BSCSCAN, certificate, done, progressOf, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
@@ -57,7 +57,7 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
                 {c && (c.ok ? <>
                   <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
                   <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
-                </> : <p className="t-content cert-status">{t(`Not issued yet: ${p?.count ?? 0} of ${P} pages recorded.`, `Chưa cấp: đã ghi ${p?.count ?? 0}/${P} trang.`)}</p>)}
+                </> : <p className="t-content cert-status">{t(`Not issued yet: ${p?.count ?? 0} of ${P} parts recorded.`, `Chưa cấp: đã ghi nhận ${p?.count ?? 0}/${P} phần.`)}</p>)}
                 <p className="t-note cert-note">{t("Issued by the contract when every page is recorded from an Agent ID wallet. It does not certify professional skill. Not an NFT.",
                   "Hợp đồng cấp khi mọi trang được ghi nhận từ một ví Agent ID. Không xác nhận kỹ năng chuyên môn. Không phải NFT.")}</p>
                 <div className="cert-actions">
@@ -67,12 +67,12 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
               </div>
             </article>
             <div className="tile span-2 contents">
-              <h2 className="t-label contents-head">{t(`Pages done: ${doneList.length} of ${P}`, `Trang đã học: ${doneList.length}/${P}`)}</h2>
+              <h2 className="t-label contents-head">{t(`Done: ${doneList.length} of ${P}`, `Đã học: ${doneList.length}/${P}`)}</h2>
               {p && doneList.length === 0 && <p className="t-secondary">{t("No pages recorded yet.", "Chưa ghi nhận trang nào.")} <a className="link" href="/book/1/0">{t("Start learning", "Bắt đầu học")}</a></p>}
               <ol>
                 {doneList.map(({ name, i }) => (
                   <li key={i}><a className="contents-row" href={`/book/1/${i}`}>
-                    <span className="t-data contents-no">{i + 1}</span>
+                    <span className="t-data contents-no">{pagesOf(i)}</span>
                     <span className="t-content contents-title">{name}</span>
                     <span className="chip chip-done t-label"><Check size={14} aria-hidden /> {t("Done", "Đã học")}</span>
                   </a></li>

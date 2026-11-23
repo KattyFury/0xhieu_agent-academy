@@ -257,7 +257,9 @@ export const book001: Book = {
 
 /** Pages in the book: 2 Get ready pages + one per lesson. Each page is one chapter on-chain. */
 export const SETUP_PAGES = 2;
-export const pageCount = (b: Book) => b.days.length + SETUP_PAGES;
+export const pageCount = (b: Book) => b.days.length + SETUP_PAGES; // spreads = on-chain chapters
+/** Printed pages of spread p ("1–2", "3–4", …). */
+export const pagesOf = (p: number) => `${2 * p + 1}–${2 * p + 2}`;
 
 /** Record prompt (spec v1.2 §6). The site fills the values; the learner pastes it into their own agent. */
 export function completionPrompt(p: { wallet: string; academy: string; bookId: number; mask: bigint; calldata: string }) {
