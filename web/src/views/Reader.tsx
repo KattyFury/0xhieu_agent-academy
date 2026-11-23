@@ -3,7 +3,7 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Bot, Check, Copy, CreditCard, KeyRound, List, Loader2, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, Check, Copy, CreditCard, Flag, KeyRound, List, Loader2, Lock, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { usePageTitles } from "./Library";
@@ -116,6 +116,18 @@ function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash
 }
 
 /** "Record this page": the learner's own agent sends completeChapters(book, mask | this page). */
+/** End of a chapter, apart from the practice: mark it done on-chain. That is the proof you finished it; every chapter done = certificate. */
+function Finish({ children }: { children: ReactNode }) {
+  const t = useT();
+  return (
+    <section className="bk-finish">
+      <h3 className="t-header"><Flag size={18} aria-hidden /> {t("Mark this chapter done", "Đánh dấu xong chương")}</h3>
+      <p className="t-content">{t("Saves on-chain proof that you finished it. All chapters done = certificate.", "Lưu bằng chứng on-chain là bạn đã học xong. Xong mọi chương = có chứng chỉ.")}</p>
+      {children}
+    </section>
+  );
+}
+
 function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone, rec, onCopy, setHash }: {
   page: number; bits?: bigint; text?: string; wallet: Address | null; mask: bigint; done: boolean; published: boolean | null; allDone: boolean; rec: Rec; onCopy: () => void; setHash: (h: Hash) => void;
 }) {
@@ -124,8 +136,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }) : "";
   return (
     <>
-      <h3 className="t-header">{t(`Record pages ${pagesOf(page)}`, `Ghi nhận trang ${pagesOf(page)}`)}</h3>
-      {published === false ? <p className="t-content">{t("Recording opens when this book is published on-chain. You can read every page now.", "Việc ghi nhận mở khi sách được phát hành on-chain. Bạn đọc được mọi trang ngay bây giờ.")}</p> : <>
+      {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
         <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the record prompt into your agent and type ", "Dán prompt ghi nhận vào agent và gõ ")}<b>confirm</b>{t(" when it shows the preview.", " khi agent hiện phần xem trước.")}</>}</p>
         <div className="bk-record">
           {!wallet ? <a className="btn btn-primary t-button" href="/book/1/0">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
@@ -138,7 +149,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   );
 }
 
-function PracticePage({ d, record, note }: { d: Day; record?: ReactNode; note?: ReactNode }) {
+function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
   const t = useT();
   return (
     <>
@@ -155,9 +166,8 @@ function PracticePage({ d, record, note }: { d: Day; record?: ReactNode; note?: 
             {i === all.length - 1 && <ResultLines check={d.practice.check} ifNot={d.practice.ifNot} />}
           </li>
         ))}
-        {record && <li>{record}</li>}
       </ol>
-      {note}
+      {record}
     </>
   );
 }
@@ -235,18 +245,18 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const tocRef = useRef<HTMLDialogElement>(null);
   const titles = usePageTitles();
 
-  // Book not on-chain yet: no record step at all (no placeholder text).
-  const record = (p: number, text?: string, bits?: bigint) => published === false ? null : (
-    <RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
-      rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} />
+  const record = (p: number, text?: string, bits?: bigint) => (
+    <Finish><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
+      rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} /></Finish>
   );
   // Chapters 1-2 can't be recorded before Developer Mode (chapter 3), so chapters 1-3 are recorded together on pages 5–6.
+  // Chapters 1-2 come before the wallet and gas, so they say nothing about recording; chapter 3 records 1-3.
   const deferred = (p: number) => isDone(p) ? record(p) : null;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
     if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
     const dd = localDay(dayAt(book, p)!, lang);
-    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} note={deferred(0)} />;
+    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={deferred(0)} />;
     return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
   };
 
