@@ -40,11 +40,10 @@ export default function Library({ wallet, setWallet }: { wallet: Address | null;
             <Cover number={book001.number} title={title} />
             <span className="shelf-info">
               <span className="t-label kicker">{book001.number}</span>
-              <span className="t-header">{title}</span>
-              <span className="t-secondary">{t(`${P} pages. Each page: read, practice with your own agent, record it on-chain. Record every page to earn the certificate.`,
-                `${P} trang. Mỗi trang: đọc, thực hành với agent của bạn, ghi nhận on-chain. Ghi đủ mọi trang để nhận chứng chỉ.`)}</span>
-              <span className="t-label">{p ? t(`${p.count} of ${P} pages done`, `Đã học ${p.count}/${P} trang`) : t(`${P} pages`, `${P} trang`)}</span>
-              <span className="btn btn-primary t-button">{p?.count ? (p.certified ? t("Read again", "Đọc lại") : t(`Continue at page ${next + 1}`, `Tiếp trang ${next + 1}`)) : t("Open the book", "Mở sách")}</span>
+              <span className="t-header">Binance Agentic Wallet</span>
+              <span className="t-secondary">{t("A course to learn and practice using Binance Agentic Wallet.", "Khóa học cho bạn tìm hiểu và tập sử dụng Binance Agentic Wallet.")}</span>
+              <span className="t-secondary">{t("Finish the course to earn the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</span>
+              <span className="btn btn-primary t-button">{t("Open the book", "Mở sách")}</span>
             </span>
           </a>
           <div className="tile span-2 contents">
