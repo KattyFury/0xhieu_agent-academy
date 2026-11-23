@@ -7,3 +7,4 @@ Read `HANDOFF.md` first. Spec: `docs/spec-v1.2.md` (owner's, Vietnamese; §14 = 
 - The website never sends transactions or connects a wallet; it builds calldata with viem and shows a prompt for the learner's own agent.
 - Design: nguyen0xhieu design system, theme `0xhieu-xyz` (yellow + black, same look as 0xhieu.xyz). EN default, VI optional.
 - Contract is immutable: `createBook(1, chapterCount)` only after content is frozen and the owner says so. Any on-chain write needs the owner's explicit OK.
+- Core: Agent Academy = a library; each book = a course; each lesson = short theory + a small practice; complete the course = certificate. Site-wide copy (home, library, certificate, steps) must fit ANY course: no wallet/agent/chain words there, plain ELI12 (e.g. "Complete the course to get a certificate"). Book-specific words only inside that book.
