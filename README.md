@@ -27,7 +27,7 @@ The website never sends transactions and never connects to a wallet. It builds t
 
 ## Free gas (sponsored by Agent Academy)
 
-To record chapters, a learner's Agentic Wallet needs a little BNB for gas. The site offers a one-time top-up of **0.0005 BNB (about $0.25)** per wallet through `POST /api/claim` (`web/functions/api/claim.ts`):
+To record chapters, a learner's Agentic Wallet needs a little BNB for gas. The site offers a one-time top-up of **0.00025 BNB (about $0.15)** per wallet through `POST /api/claim` (`web/functions/api/claim.ts`):
 
 - Only Agent ID holders: the server checks `balanceOf(address) > 0` on the Agent ID contract before sending.
 - Once per address (stored in Cloudflare KV), and only if the wallet holds less than 0.0002 BNB.

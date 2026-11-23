@@ -10,7 +10,7 @@ interface Env { RELAYER_KEY: string; GAS: KVNamespace; TG_BOT_TOKEN?: string; TG
 
 const AGENT_ID = "0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F";
 const RPC = "https://bsc-dataseed.binance.org";
-const SEND_WEI = 500000000000000n; // 0.0005 BNB, enough for every lesson
+const SEND_WEI = 250000000000000n; // 0.00025 BNB, enough for every lesson
 const ENOUGH_WEI = 200000000000000n; // wallets with 0.0002 BNB or more don't need it
 const DAILY_CAP = 20;
 const nftAbi = parseAbi(["function balanceOf(address) view returns (uint256)"]);
