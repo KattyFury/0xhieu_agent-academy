@@ -8,7 +8,7 @@ import { Cover, Nav } from "./Shell";
 export function usePageTitles() {
   const t = useT();
   const { lang } = useLang();
-  const setup: Record<number, string> = { 1: t("From zero to signed in", "Từ số 0 đến đăng nhập"), 2: t("Gas and Developer Mode", "Gas và Developer Mode") };
+  const setup: Record<number, string> = { 1: t("From zero to signed in", "Từ số 0 đến đăng nhập"), 3: t("Gas and Developer Mode", "Gas và Developer Mode") };
   return [...Array(pageCount(book001)).keys()].map((p) => setup[p] ?? localDay(dayAt(book001, p)!, lang).title);
 }
 

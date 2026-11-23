@@ -85,7 +85,7 @@ export function SetupAgent({ record }: { record: ReactNode }) {
   );
 }
 
-/** Chapter 3, left: gas, plus the one-time free gas. */
+/** Chapter 4, left: gas, plus the one-time free gas. */
 export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null; setWallet: (a: Address | null) => void; total: number }) {
   const t = useT();
   const [v, setV] = useState(wallet ?? "");
@@ -115,7 +115,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
     <>
       <h1 className="t-page">{t("Gas and Developer Mode", "Gas và Developer Mode")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a little BNB for fees, and turn on Developer Mode.", "Có một ít BNB trả phí, và bật Developer Mode.")}</Goal>
-      <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee you pay the network each time something is saved on it, paid in ", " là phí nhỏ trả cho mạng mỗi lần lưu gì đó lên mạng, trả bằng ")}<strong>BNB</strong>{t(". Recording a chapter costs very little.", ". Ghi nhận một chương tốn rất ít.")}</p>
+      <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee, paid in ", " là phí rất nhỏ, trả bằng ")}<strong>BNB</strong>{t(", each time you save something on the network. Saving your progress costs very little.", ", mỗi lần bạn lưu gì đó lên mạng. Lưu tiến độ tốn rất ít.")}</p>
       <p className="t-lead">{t("Agent Academy gives ", "Agent Academy tặng ")}<strong>{t("free gas once", "gas miễn phí một lần")}</strong>{t(" (0.00025 BNB, about $0.15) to each Agent ID. Ask your AI for your wallet address and paste it below. It starts with 0x and is safe to share.", " (0,00025 BNB, khoảng 0,15 USD) cho mỗi Agent ID. Hỏi AI địa chỉ ví rồi dán vào ô bên dưới. Địa chỉ bắt đầu bằng 0x và chia sẻ được an toàn.")}</p>
       {res ? <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p> : <>
         <input className="input t-input" aria-label={t("Wallet address", "Địa chỉ ví")} value={v} onChange={(e) => { setV(e.target.value); setErr(""); }} onKeyDown={(e) => { if (e.key === "Enter") send(); }} placeholder="0x…" spellCheck={false} autoComplete="off" />
@@ -129,15 +129,15 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
   );
 }
 
-/** Chapter 3, right: Developer Mode, check it, then record chapters 1-3. */
+/** Chapter 4, right: Developer Mode, check it, then save chapters 1-4. */
 export function SetupDevMode({ record }: { record: ReactNode }) {
   const t = useT();
   return (
     <>
       <h2 className="t-page">{t("Turn on Developer Mode", "Bật Developer Mode")}</h2>
-      <p className="t-content">{t("To mark chapters done, your AI needs ", "Để đánh dấu xong chương, AI cần ")}<strong>{t("Developer Mode on", "bật Developer Mode")}</strong>.</p>
+      <p className="t-content">{t("To save your progress, your AI needs ", "Để lưu tiến độ, AI cần ")}<strong>{t("Developer Mode on", "bật Developer Mode")}</strong>.</p>
       <ol className="bk-steps bk-steps-tight">
-        <li><p className="t-content">{t("Binance app: Agentic Wallet, Settings (top right), ", "App Binance: Agentic Wallet, Cài đặt (góc trên phải), ")}<strong>Developer Mode</strong>.</p></li>
+        <li><p className="t-content">{t("In the Binance app: Agentic Wallet → Settings (top right) → ", "Trong app Binance: Agentic Wallet → Cài đặt (góc trên phải) → ")}<strong>Developer Mode</strong>.</p></li>
         <li><p className="t-content">{t("Read the warning, confirm, approve in the app. It lasts ", "Đọc cảnh báo, xác nhận, duyệt trong app. Có hiệu lực ")}<strong>{t("7 days", "7 ngày")}</strong>{t(" and renews each time you use it.", " và tự gia hạn mỗi lần dùng.")}</p></li>
         <li><p className="t-content">{t("Check it:", "Kiểm tra:")}</p><Box text={DEVMODE} /></li>
       </ol>

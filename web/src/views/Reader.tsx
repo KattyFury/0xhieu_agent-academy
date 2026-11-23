@@ -3,7 +3,7 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Award, Bot, Check, Copy, CreditCard, Flag, KeyRound, List, ListChecks, Loader2, Lock, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, AtSign, Award, Bot, Check, CircleHelp, Clock, Coins, Copy, CreditCard, Eye, EyeOff, FileCheck, Flag, Fuel, Gauge, Hand, History, Hourglass, Infinity, KeyRound, Landmark, Layers, Link, List, ListChecks, Loader2, Lock, LockOpen, LogOut, MessageSquareWarning, Network, Percent, PiggyBank, Receipt, Scale, Search, Share2, ShieldCheck, SlidersHorizontal, Smartphone, TriangleAlert, User, Wallet, X, Zap } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { usePageTitles } from "./Library";
@@ -15,6 +15,7 @@ import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDo
 
 const book = book001;
 const P = pageCount(book); // pages = chapters (2 Get ready pages + lessons)
+const SAVE_AT = [3, 6, 9, 12]; // spreads that end with "Save your progress": chapters 4 (needs Developer Mode, set up in chapter 4), 7, 10, 13
 const END = P; // ending spread after the last chapter: not a chapter, nothing is recorded
 const LAST = END;
 const PAGES = 2 * (P + 1);
@@ -44,7 +45,7 @@ function useChain(wallet: Address | null) {
 // ---------- page contents ----------
 /** Lesson copy marks key terms with **…**; they render ink 600 inside grey body text. */
 const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((t, i) => i % 2 ? <strong key={i}>{t}</strong> : t)}</>;
-const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut, flag: Flag, list: ListChecks, award: Award } as const;
+const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut, flag: Flag, list: ListChecks, award: Award, landmark: Landmark, share: Share2, network: Network, alert: TriangleAlert, coins: Coins, layers: Layers, eyeOff: EyeOff, wallet: Wallet, history: History, hourglass: Hourglass, fuel: Fuel, gauge: Gauge, scale: Scale, user: User, fileCheck: FileCheck, clock: Clock, infinity: Infinity, help: CircleHelp, lock: Lock, unlock: LockOpen, smartphone: Smartphone, receipt: Receipt, activity: Activity, search: Search, piggy: PiggyBank, percent: Percent, eye: Eye, atSign: AtSign, link: Link, hand: Hand, message: MessageSquareWarning } as const;
 const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span className="bk-icon" aria-hidden><C size={20} /></span>; };
 
 /** Ending spread, left: the book is over and how the certificate comes. */
@@ -147,12 +148,12 @@ function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash
 
 /** "Record this page": the learner's own agent sends completeChapters(book, mask | this page). */
 /** End of a chapter, apart from the practice: mark it done on-chain. That is the proof you finished it; every chapter done = certificate. */
-function Finish({ children }: { children: ReactNode }) {
+function Finish({ upTo, children }: { upTo: number; children: ReactNode }) {
   const t = useT();
   return (
     <><span className="bk-push" aria-hidden />
     <section className="bk-finish">
-      <h3 className="t-header"><Flag size={18} aria-hidden /> {t("Mark this chapter done", "Đánh dấu xong chương")}</h3>
+      <h3 className="t-header"><Flag size={18} aria-hidden /> {t(`Save your progress: chapters 1–${upTo}`, `Lưu tiến độ: chương 1–${upTo}`)}</h3>
       <p className="t-content">{t("Saves proof you finished. All done = certificate.", "Lưu bằng chứng bạn học xong. Xong hết = có chứng chỉ.")}</p>
       {children}
     </section></>
@@ -170,7 +171,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
       {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
         <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>confirm</b>.</>}</p>
         <div className="bk-record">
-          {!wallet ? <a className="btn btn-primary t-button" href="/book/1/0">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
+          {!wallet ? <a className="btn btn-primary t-button" href="/book/1/3">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
             : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}
           {wallet && <RecordStatus done={done} rec={rec} setHash={setHash} />}
         </div>
@@ -275,20 +276,20 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const tocRef = useRef<HTMLDialogElement>(null);
   const titles = usePageTitles();
 
-  const record = (p: number, text?: string, bits?: bigint) => (
-    <Finish><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
-      rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} /></Finish>
-  );
-  // Chapters 1-2 can't be recorded before Developer Mode (chapter 3), so chapters 1-3 are recorded together on pages 5–6.
-  // Chapters 1-2 come before the wallet and gas, so they say nothing about recording; chapter 3 records 1-3.
-  const deferred = (p: number) => isDone(p) ? record(p) : null;
+  // One sign per 3 chapters: progress is saved after chapters 3, 6, 9 and 13 (spread indexes below).
+  // Each save marks every chapter up to that point, so a missed save is caught by the next one.
+  const record = (p: number, text?: string) => {
+    const bits = (1n << BigInt(p + 1)) - 1n;
+    return <Finish upTo={p + 1}><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={(mask & bits) === bits} published={published} allDone={count === P}
+      rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} /></Finish>;
+  };
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
     if (p === END) return which === "learn" ? <EndPage /> : <EndCertificate done={count} />;
-    if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
-    if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
+    if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={null} />;
+    if (p === 3) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(3)} />;
     const dd = localDay(dayAt(book, p)!, lang);
-    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={deferred(0)} />;
-    return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
+    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={null} />;
+    return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={SAVE_AT.includes(p) ? record(p, dd.practice.recordText) : null} />;
   };
 
   const bookRef = useRef<HTMLElement>(null);

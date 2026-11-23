@@ -4,7 +4,7 @@
 // Chapters 2-3 (setup, with inputs) live in views/Onboard.tsx; every other chapter is a `Day` below (`day` = chapter number).
 
 /** Icon names for lesson points and steps; mapped to Lucide icons in Reader.tsx. */
-export type IconKey = "bot" | "card" | "shield" | "key" | "zap" | "sliders" | "logout" | "flag" | "list" | "award";
+export type IconKey = "bot" | "card" | "shield" | "key" | "zap" | "sliders" | "logout" | "flag" | "list" | "award" | "landmark" | "share" | "network" | "alert" | "coins" | "layers" | "eyeOff" | "wallet" | "history" | "hourglass" | "fuel" | "gauge" | "scale" | "user" | "fileCheck" | "clock" | "infinity" | "help" | "lock" | "unlock" | "smartphone" | "receipt" | "activity" | "search" | "piggy" | "percent" | "eye" | "atSign" | "link" | "hand" | "message";
 export type Point = { icon: IconKey; text: string };
 export type Step = { title: string; text: string; prompt?: string; icon?: IconKey };
 export type Day = {
@@ -30,11 +30,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "bot", text: "A wallet your **AI uses for you**. Ask in plain words, like “show my balance”." },
-          { icon: "card", text: "Like a **spending card with a daily limit**. **You** set it in the Binance app." },
-          { icon: "shield", text: "AI goes too far? The **system blocks it** or asks you." },
-          { icon: "key", text: "The AI **never holds the key** (**MPC Keyless**). Sign out, and it loses access." },
-          { icon: "zap", text: "**Secure Auto Sign**: actions inside your limits run without asking you." },
+          { icon: "bot", text: "Your **AI uses this wallet for you**. Just ask, like “show my balance”." },
+          { icon: "card", text: "It's like a **card with a daily limit**. **You** set the limit in the Binance app." },
+          { icon: "shield", text: "AI goes too far? The wallet **blocks it** or asks you." },
+          { icon: "key", text: "The AI **never holds the key**. It's split up and kept safe (**MPC Keyless**)." },
+          { icon: "zap", text: "With **Secure Auto Sign**, things inside your limits run without asking you." },
         ],
         remember: ["You set the rules.", "The AI never holds your key.", "Your limits are your safety net."],
       },
@@ -49,120 +49,128 @@ export const book001: Book = {
       },
     },
     {
-      day: 4,
+      day: 3,
       title: "Your wallet addresses",
-      goal: "Find your wallet addresses and see why sharing them is safe.",
+      goal: "Find your addresses. Learn why sharing them is safe.",
       learn: {
-        paragraphs: [
-          "A wallet address is like a **bank account number**. People who know it can send you money, but they **can't take** any. So **sharing your address is safe**.",
-          "One **EVM address** works on many networks, like BNB Smart Chain, Ethereum and Base. **Solana** has its own address.",
-          "Networks are like **different banks**. Sending on the wrong network can lose money, so always check the network next to the address.",
+        paragraphs: [],
+        points: [
+          { icon: "landmark", text: "An address is like a **bank account number**. People can send to it, but **can't take** from it." },
+          { icon: "share", text: "So it's **safe to share** your address." },
+          { icon: "network", text: "One **EVM address** works on BNB Smart Chain, Ethereum, Base and more. **Solana** has its own." },
+          { icon: "alert", text: "Networks are like **different banks**. Wrong network can lose money. **Always check it.**" },
         ],
         remember: ["Share your address, never your codes or recovery phrase.", "One EVM address for many networks, a separate one for Solana.", "Always check the network."],
       },
       practice: {
         minutes: 3,
         title: "Find your addresses",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: show my wallet address for every supported network, tell me which networks share the same address, and show them in a small table. ${RO}` }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: show my wallet address for every supported network, tell me which networks share the same address, and show them in a small table. ${RO}` }],
         check: "A table with one shared EVM address and one Solana address. Compare it with the Agentic Wallet screen in the Binance app.",
       },
     },
     {
       day: 5,
       title: "Your balances",
-      goal: "See what your wallet holds, network by network.",
+      goal: "See what your wallet holds on each network.",
       learn: {
-        paragraphs: [
-          "Your AI lists each token with its **network**, amount and **value in USD**.",
-          "Each network has **its own balance**, like two separate pockets. USDT on Base can't pay for anything on BNB Smart Chain.",
-          "Zero balances don't show. Tiny tokens (under **$0.01**) are hidden unless you ask to see them.",
-          "Your Binance Agentic Wallet is a **separate wallet**, so its balance can differ from your normal Binance wallet. That's normal.",
+        paragraphs: [],
+        points: [
+          { icon: "coins", text: "Your AI lists each token: its **network**, amount and **value in USD**." },
+          { icon: "layers", text: "Each network is **its own pocket**. USDT on Base can't pay on BNB Smart Chain." },
+          { icon: "eyeOff", text: "Zero balances don't show. **Tiny tokens (under $0.01) are hidden** unless you ask." },
+          { icon: "wallet", text: "This wallet is **separate** from your normal Binance wallet, so balances differ. That's normal." },
         ],
         remember: ["Balances are per network.", "Tiny tokens are hidden.", "Separate wallet, separate balance."],
       },
       practice: {
         minutes: 3,
         title: "Read your balances",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: show my token balances on BNB Smart Chain with amount and USD value. Then show them again including very small tokens, and tell me what changed. ${RO}` }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: show my token balances on BNB Smart Chain with amount and USD value. Then show them again including very small tokens, and tell me what changed. ${RO}` }],
         check: "The second list can be longer, because tiny tokens now show. An empty wallet shows nothing both times, and that's fine.",
       },
     },
     {
       day: 6,
       title: "Networks, history and gas",
-      goal: "See which networks you can use, what your wallet did, and what fees cost.",
+      goal: "See your networks, your history and today's fees.",
       learn: {
-        paragraphs: [
-          "Your wallet works on several networks, and the list grows over time. So **let your AI read the current list** instead of remembering it.",
-          "**History** is your wallet's diary: each transaction, when it happened, whether it finished, and the fee. It shows what your AI really did.",
-          "**Pending** means waiting. Only **confirmed** means done.",
-          "**Gas** price has three levels: low, medium and high. Higher is faster and costs more. It's only **today's price**; the real fee is set when the transaction finishes.",
+        paragraphs: [],
+        points: [
+          { icon: "network", text: "Your wallet works on **several networks**, and the list grows. Let your AI read the latest one." },
+          { icon: "history", text: "**History** is your wallet's diary: what happened, when, and the fee." },
+          { icon: "hourglass", text: "**Pending** = still waiting. Only **confirmed** = done." },
+          { icon: "fuel", text: "**Gas** has 3 levels: low, medium, high. Higher is faster but costs more. The final fee is set at the end." },
         ],
         remember: ["History shows what your AI did.", "Pending is not done yet.", "A gas price is not the final fee."],
       },
       practice: {
         minutes: 4,
         title: "Read history and gas",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: list the networks my wallet supports; show my 5 most recent confirmed transactions on BNB Smart Chain with time, type and network fee; then show the current gas price on BNB Smart Chain at low, medium and high, and explain why that is not the final fee. ${RO}` }],
-        check: "A list of networks, up to 5 transactions (fewer for a new wallet), and three gas levels. Extra: open one transaction on BscScan and compare the time and fee.",
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: list the networks my wallet supports; show my 5 most recent confirmed transactions on BNB Smart Chain with time, type and network fee; then show the current gas price on BNB Smart Chain at low, medium and high, and explain why that is not the final fee. ${RO}` }],
+        check: "Networks, up to 5 transactions, and 3 gas levels. Bonus: open one on BscScan and compare the fee.",
       },
     },
     {
       day: 7,
       title: "Your wallet's rules",
-      goal: "Read the limits your AI has to follow.",
+      goal: "Read the limits your AI must follow.",
       learn: {
-        paragraphs: [
-          "Your wallet has a **daily limit**. DeFi, prediction markets, x402 payments and Developer Mode each have **their own limit**.",
-          "**Limit left is not your balance.** If you hold $1,000 but only $60 of today's limit is left, the AI can use only $60.",
-          "Strange or high-risk transactions are **blocked**, or **sent to the app for you to check**. You choose which.",
-          "Sign-ins expire; then you sign in again. **Only you change the rules**, in the app. The AI can only read them.",
+        paragraphs: [],
+        points: [
+          { icon: "gauge", text: "Your wallet has a **daily limit**. Some actions, like DeFi or Developer Mode, have **their own**." },
+          { icon: "scale", text: "**Limit left isn't your balance.** Hold $1,000 with $60 left today? The AI can use only $60." },
+          { icon: "shield", text: "Strange or risky moves are **blocked** or **sent to the app** for you to check." },
+          { icon: "user", text: "**Only you change the rules**, in the app. The AI can only read them." },
         ],
         remember: ["Limit left is not your balance.", "Each kind of action has its own limit.", "Only you change the rules."],
       },
       practice: {
         minutes: 4,
         title: "Read your rules",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: read my wallet settings and show a table with each limit type, its daily limit, used today and left today. Then tell me how abnormal transactions are handled and when my session expires. ${RO}` }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: read my wallet settings and show a table with each limit type, its daily limit, used today and left today. Then tell me how abnormal transactions are handled and when my session expires. ${RO}` }],
         check: "A table of your limits. Open Settings in the Binance app and compare the numbers.",
       },
     },
     {
       day: 8,
       title: "Approvals",
-      goal: "Know which apps are allowed to spend your tokens.",
+      goal: "See which apps can spend your tokens.",
       learn: {
-        paragraphs: [
-          "An **approval** is a permission slip: it lets an app (the **spender**) take one of your tokens, up to an amount.",
-          "The slip **stays valid until you cancel it**, even if you stop using that app.",
-          "**Unlimited** means the app can take all of that token. Your AI shows a **risk level** for each slip.",
-          "Before you approve anything, ask: **who takes it**, and **how much at most**? This book only reads approvals; it never cancels them.",
+        paragraphs: [],
+        points: [
+          { icon: "fileCheck", text: "An **approval** is a permission slip. It lets an app take some of one token." },
+          { icon: "clock", text: "The slip **lasts until you cancel it**, even if you stop using the app." },
+          { icon: "infinity", text: "**Unlimited** = the app can take all of that token. Your AI shows a **risk level**." },
+          { icon: "help", text: "Before you approve, ask: **who takes it**, and **how much at most**?" },
         ],
         remember: ["Approvals last until cancelled.", "Unlimited is a huge permission.", "Unknown spender? Stop."],
       },
       practice: {
         minutes: 3,
         title: "List your approvals",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: list my token approvals with token, spender, amount and risk level. If any is unlimited or high-risk, explain what that permission allows. ${RO} Do not revoke anything.` }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: list my token approvals with token, spender, amount and risk level. If any is unlimited or high-risk, explain what that permission allows. ${RO} Do not revoke anything.` }],
         check: "A list of approvals, or a note that you have none (normal for a new wallet).",
       },
     },
     {
       day: 9,
       title: "Pending and locked",
-      goal: "Know why your wallet sometimes can't send.",
+      goal: "Learn why your wallet sometimes waits.",
       learn: {
-        paragraphs: [
-          "Your wallet is **locked** while an earlier transaction is still **pending**. Like a queue: the next person waits until the first is done.",
-          "It also waits when the app needs your **second OK**.",
-          "**Unlocked** means ready. A stuck transaction can be sped up or cancelled, but only with your OK. This book only reads.",
+        paragraphs: [],
+        points: [
+          { icon: "lock", text: "Your wallet is **locked** while an earlier transaction is still **pending**." },
+          { icon: "list", text: "Like a queue: the next one waits until the first is done." },
+          { icon: "smartphone", text: "It also waits when the app needs **your OK**." },
+          { icon: "unlock", text: "**Unlocked** = ready. A stuck one can be sped up or cancelled, only with your OK." },
         ],
         remember: ["Pending blocks the next one.", "Some steps need your OK in the app.", "Unlocked means ready."],
       },
       practice: {
         minutes: 3,
         title: "Check the lock",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: check whether my wallet is locked on BNB Smart Chain and list any pending transactions. If it is locked, explain why and what I should do. Read data only. Do NOT send, sign, confirm, speed up or cancel any transaction." }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: check whether my wallet is locked on BNB Smart Chain and list any pending transactions. If it is locked, explain why and what I should do. Read data only. Do NOT send, sign, confirm, speed up or cancel any transaction." }],
         check: "Unlocked, with no pending transactions.",
         ifNot: "If something is pending, wait for the network, then check again.",
       },
@@ -170,13 +178,15 @@ export const book001: Book = {
     {
       day: 10,
       title: "Quotes before trades",
-      goal: "Read a swap quote without trading.",
+      goal: "Read a swap price without trading.",
       learn: {
-        paragraphs: [
-          "A **quote** tells you what you put in and roughly what you get back. It's only an **estimate**, like a taxi fare guess.",
-          "**Slippage** is how far the price may move before the swap is cancelled. If you say nothing, it's **auto**.",
-          "A sent swap is **not done yet**; it can still fail. For an unknown token, check its **security audit** first.",
-          "The AI gives no investment advice. It shows the numbers; **you decide**.",
+        paragraphs: [],
+        points: [
+          { icon: "receipt", text: "A **quote** shows what you put in and **about** what you get back. Like a taxi fare guess." },
+          { icon: "activity", text: "**Slippage** = how much the price may move before the swap cancels. Say nothing = **auto**." },
+          { icon: "hourglass", text: "A sent swap **isn't done yet**. It can still fail." },
+          { icon: "search", text: "Unknown token? Check its **security audit** first." },
+          { icon: "user", text: "The AI gives **no advice**. It shows numbers; **you decide**." },
         ],
         remember: ["A quote is an estimate.", "Slippage is the move you accept.", "Sent is not done."],
       },
@@ -184,7 +194,7 @@ export const book001: Book = {
         minutes: 4,
         title: "Read a quote, don't trade",
         riskText: "Trading can lose money. Quote only, not advice.",
-        steps: [{ title: "Ask for a quote", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: get a quote to swap 0.001 BNB to USDT on BNB Smart Chain. Show the amount in, the estimated amount out and the slippage setting, and explain why the amount out is not guaranteed. Quote only. Do NOT swap, send, sign or confirm any transaction." }],
+        steps: [{ icon: "bot", title: "Ask for a quote", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: get a quote to swap 0.001 BNB to USDT on BNB Smart Chain. Show the amount in, the estimated amount out and the slippage setting, and explain why the amount out is not guaranteed. Quote only. Do NOT swap, send, sign or confirm any transaction." }],
         check: "BNB in, estimated USDT out, and slippage (auto). Nothing is sent.",
         ifNot: "If the AI tries to swap for real, tell it to stop.",
       },
@@ -192,12 +202,14 @@ export const book001: Book = {
     {
       day: 11,
       title: "DeFi, preview only",
-      goal: "Compare DeFi apps and preview a deposit without sending it.",
+      goal: "Compare DeFi apps and preview, without sending.",
       learn: {
-        paragraphs: [
-          "A DeFi app is a **smart contract**, like an automatic savings machine. **TVL** is the money inside. **APY** is the yearly interest shown, and it changes all the time.",
-          "A **preview** shows how your balance would change, the fee, and which contract you'd use. **Nothing is sent.**",
-          "**High APY is not free money**: contracts can break, exits can be hard, prices can fall. **Big TVL means big, not safe.**",
+        paragraphs: [],
+        points: [
+          { icon: "piggy", text: "A DeFi app is a **smart contract**, like an automatic savings box." },
+          { icon: "percent", text: "**TVL** = money inside. **APY** = yearly interest shown, and it changes all the time." },
+          { icon: "eye", text: "A **preview** shows the balance change, the fee and the contract. **Nothing is sent.**" },
+          { icon: "alert", text: "**High APY isn't free money.** Contracts can break, prices can fall. **Big TVL isn't safe.**" },
         ],
         remember: ["Big TVL is not the same as safe.", "A preview sends nothing.", "High APY is not free money."],
       },
@@ -205,7 +217,7 @@ export const book001: Book = {
         minutes: 5,
         title: "Compare and preview",
         riskText: "DeFi can lose your money. This is not investment advice.",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. If I hold USDT on BNB Smart Chain, preview (do not execute) a deposit of 1 USDT into one Earn product and show the balance changes, estimated network fee and the contract it would interact with. Do not tell me which is best. Preview only. Do NOT deposit, send, sign or confirm any transaction." }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. If I hold USDT on BNB Smart Chain, preview (do not execute) a deposit of 1 USDT into one Earn product and show the balance changes, estimated network fee and the contract it would interact with. Do not tell me which is best. Preview only. Do NOT deposit, send, sign or confirm any transaction." }],
         check: "Three apps with TVL and APY, plus one preview.",
         ifNot: "No USDT? The AI can't preview. That's fine.",
       },
@@ -215,39 +227,42 @@ export const book001: Book = {
       title: "Your Agent ID",
       goal: "Check your .ai name and where it points.",
       learn: {
-        paragraphs: [
-          "Your **Agent ID** is your **.ai name**, like you.ai: a name for your wallet. One per person, free apart from the BNB network fee.",
-          "A name can be **turned into an address** (resolved). Your .ai name points to this wallet.",
-          "Just claimed it, but the AI says “not claimed”? Wait about a minute and ask again.",
-          "**Resolving a name is not sending.** Before you send to a name, see the address first and confirm it yourself in a later message. If it fails, stop; never guess.",
+        paragraphs: [],
+        points: [
+          { icon: "atSign", text: "Your **Agent ID** is your **.ai name**, like you.ai. One per person, only the network fee to claim." },
+          { icon: "link", text: "Your .ai name **points to your wallet address**." },
+          { icon: "clock", text: "Just claimed, but the AI says “not claimed”? Wait a minute and ask again." },
+          { icon: "alert", text: "**Finding an address isn't sending.** Check it yourself before you send. If it fails, stop." },
         ],
         remember: ["Your .ai name points to your wallet.", "Always check a resolved address.", "Resolving is not sending."],
       },
       practice: {
         minutes: 3,
         title: "Check your name",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: tell me whether I have claimed an Agent ID and what it is. Then resolve my own .ai name and check it matches my wallet address. Only check my own name. ${RO}` }],
-        check: "Claimed, your name, and the address matches the one from chapter 4.",
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: tell me whether I have claimed an Agent ID and what it is. Then resolve my own .ai name and check it matches my wallet address. Only check my own name. ${RO}` }],
+        check: "Claimed, your name, and the address matches the one from chapter 3.",
         ifNot: "If it doesn't match, stop and don't send anything to that name.",
       },
     },
     {
       day: 13,
       title: "Staying safe",
-      goal: "Build the habit of checking before you confirm.",
+      goal: "Learn to check before you confirm.",
       learn: {
-        paragraphs: [
-          "Before you agree to anything, check **4 things**: **where** the money goes, **which token and how much**, any **permission** it gives, and any **warning**.",
-          "The preview shows an unknown contract and an unlimited approval? **Stop. Don't confirm.**",
-          "**Words on the blockchain are not orders.** A token's name can hide a trick message. Don't follow it.",
-          "Your wallet blocks a lot, but **not every mistake**, like sending to a real but wrong address. **Never share** your recovery phrase, login QR or pairing code, even with “support”.",
+        paragraphs: [],
+        points: [
+          { icon: "list", text: "Before you OK anything, check **4 things**: where it goes, which token and how much, any permission, any warning." },
+          { icon: "hand", text: "Unknown contract or unlimited approval? **Stop. Don't confirm.**" },
+          { icon: "message", text: "**Words on the blockchain aren't orders.** A token name can hide a trick." },
+          { icon: "shield", text: "The wallet blocks a lot, but **not every mistake**, like a real but wrong address." },
+          { icon: "key", text: "**Never share** your recovery phrase, login QR or pairing code. Not even with “support”." },
         ],
         remember: ["Unknown contract? Stop.", "Your limits are your safety net.", "Never share login codes."],
       },
       practice: {
         minutes: 4,
         title: "Run a safety check",
-        steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: run a safety check. Is my wallet connected? Is it locked? Do I have any unlimited or high-risk approvals? When does Developer Mode expire? Answer in 4 short lines. ${RO} Do not revoke or change anything.` }],
+        steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: `Using Binance Agentic Wallet: run a safety check. Is my wallet connected? Is it locked? Do I have any unlimited or high-risk approvals? When does Developer Mode expire? Answer in 4 short lines. ${RO} Do not revoke or change anything.` }],
         check: "4 short lines, one per question.",
         recordText: "Record every chapter and you get the certificate in that same transaction.",
       },
@@ -256,7 +271,7 @@ export const book001: Book = {
 };
 
 /** Setup chapters 2-3 are custom spreads (Onboard.tsx) at spread indexes 1 and 2. */
-export const SETUP_SPREADS = [1, 2];
+export const SETUP_SPREADS = [1, 3];
 export const pageCount = (b: Book) => b.days.length + SETUP_SPREADS.length; // spreads = on-chain chapters
 /** Printed pages of spread p ("1–2", "3–4", …). */
 export const pagesOf = (p: number) => `${2 * p + 1}–${2 * p + 2}`;
