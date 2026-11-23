@@ -278,7 +278,7 @@ h1, h2, h3 { text-wrap: balance; }
 .book-tile > .t-label { color: var(--ds-on-primary); }
 @media (max-width: 640px) { .setup-cards { grid-template-columns: 1fr; } }
 .bk-prompt-row { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--ds-space-12); }
-.bk-prompt-row p { flex: 1; min-width: 0; word-break: break-all; }
+.bk-prompt-row p { flex: 1; min-width: 0; overflow-wrap: anywhere; } /* wrap at spaces; long commands still break */
 .cover .cover-frame .t-label { color: inherit; }
 .cover-muted .cover-frame { justify-content: center; }
 
@@ -434,3 +434,4 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-finish { display: flex; flex-direction: column; gap: var(--ds-space-8); padding-top: var(--ds-space-16); border-top: 1px solid var(--ds-color-line); }
 .bk-finish > h3 { display: flex; align-items: center; gap: var(--ds-space-8); color: var(--ds-color-ink); }
 .bk-page[data-fit1] .bk-finish { padding-top: var(--ds-space-8); gap: var(--ds-space-4); }
+.bk-steps .setup-cards { grid-template-columns: 1fr; } /* chapter 2 step 1: stacked AI cards */

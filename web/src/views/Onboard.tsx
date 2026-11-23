@@ -35,30 +35,8 @@ export function ResultLines({ check, ifNot }: { check?: string; ifNot?: string }
   );
 }
 
-/** Chapter 2, left: from zero to signed in. */
-export function SetupAccount({ total }: { total: number }) {
-  const t = useT();
-  const steps: ReactNode[] = [
-    <>{t("In the Binance app, create an ", "Trong app Binance, tạo ")}<strong>MPC Wallet</strong>{t(" first. You need it before Binance Agentic Wallet.", " trước. Cần có ví này trước Binance Agentic Wallet.")}</>,
-    <>{t("Install the skill on your computer.", "Cài skill trên máy tính.")}</>,
-    <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Create my Binance Agentic Wallet”</strong>{t(". Only once.", ". Chỉ làm một lần.")}</>,
-    <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Sign in to Binance Agentic Wallet”</strong>{t(". Open its link, or scan its QR with the app.", ". Mở link nó đưa, hoặc quét QR bằng app.")}</>,
-    <>{t("In the app, check the ", "Trong app, xem ")}<strong>{t("6-character code", "mã 6 ký tự")}</strong>{t(" matches the AI's. A new-IP warning that isn't you? ", " giống mã của AI. Có cảnh báo IP mới mà không phải bạn? ")}<strong>{t("Don't confirm.", "Đừng xác nhận.")}</strong></>,
-    <>{t("Accept ", "Đồng ý ")}<strong>Secure Auto Sign</strong>{t(", tick the 3 safety boxes, tap Continue.", ", tick 3 ô an ninh, bấm Tiếp tục.")}</>,
-    <>{t("Claim your ", "Nhận ")}<strong>Agent ID</strong>{t(": app, Wallet, the Agent ID banner. One per person.", ": app, Ví, banner Agent ID. Mỗi người một tên.")}</>,
-  ];
-  return (
-    <>
-      <h1 className="t-page">{t("From zero to signed in", "Từ số 0 đến đăng nhập")}</h1>
-      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have an account, a Binance Agentic Wallet, an Agent ID, and your AI signed in.", "Có tài khoản, Binance Agentic Wallet, Agent ID và AI đã đăng nhập.")}</Goal>
-      <ol className="bk-steps bk-steps-tight">{steps.map((s, i) => <li key={i}><p className="t-content">{s}</p></li>)}</ol>
-      <p className="t-note">{t("Your recovery phrase and pairing code go only into the Binance app. Never here, never to anyone.", "Cụm từ khôi phục và mã ghép nối chỉ nhập trong app Binance. Không nhập ở đây, không gửi cho ai.")}</p>
-    </>
-  );
-}
-
-/** Chapter 2, right: pick an AI, install, test the connection. */
-export function SetupAgent({ record }: { record: ReactNode }) {
+/** Chapter 2, left: steps 1-4, each with its own command or prompt (one guide, top to bottom). */
+export function SetupAccount({ total: _total }: { total: number }) {
   const t = useT();
   const [path, setPath] = useState<Path>("own");
   const card = (p: Path, icon: ReactNode, title: string, tag: string | null, line: string) => (
@@ -69,17 +47,39 @@ export function SetupAgent({ record }: { record: ReactNode }) {
   );
   return (
     <>
-      <h2 className="t-page">{t("Install and sign in", "Cài và đăng nhập")}</h2>
-      <div className="setup-cards">
-        {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
-        {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the app. Uses credits, may cost real money.", "Trong app. Dùng credit, có thể tốn tiền thật."))}
-      </div>
-      {path === "own"
-        ? <><p className="t-content">{t("Paste in your computer's terminal:", "Dán vào terminal trên máy tính:")}</p><Box text={INSTALL} /></>
-        : <p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p>}
-      <p className="t-content">{t("After steps 3–4, ask:", "Sau bước 3–4, hỏi:")}</p>
-      <Box text={CONNECTED} />
-      <ResultLines check={t("Your AI says the wallet is connected.", "AI báo ví đã kết nối.")} ifNot={t("Ask it to sign in again. Read any error word for word.", "Nhờ AI đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} />
+      <h1 className="t-page">{t("From zero to signed in", "Từ số 0 đến đăng nhập")}</h1>
+      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Binance Agentic Wallet and Agent ID ready, your AI signed in.", "Có Binance Agentic Wallet, Agent ID, và AI đã đăng nhập.")}</Goal>
+      <ol className="bk-steps bk-steps-tight">
+        <li><p className="t-content">{t("Pick your AI.", "Chọn AI.")}</p>
+          <div className="setup-cards">
+            {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
+            {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the app. Credits may cost real money.", "Trong app. Credit có thể tốn tiền thật."))}
+          </div></li>
+        <li><p className="t-content">{t("Create an ", "Tạo ")}<strong>MPC Wallet</strong>{t(" in the Binance app first.", " trong app Binance trước.")}</p></li>
+        {path === "own"
+          ? <li><p className="t-content">{t("Install the skill in your computer's terminal:", "Cài skill trong terminal trên máy tính:")}</p><Box text={INSTALL} /></li>
+          : <li><p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p></li>}
+        <li><p className="t-content">{t("Tell your AI (only once):", "Nói với AI (chỉ một lần):")}</p><Box text="Create my Binance Agentic Wallet" /></li>
+      </ol>
+    </>
+  );
+}
+
+/** Chapter 2, right: steps 5-9, sign in, Agent ID, check. */
+export function SetupAgent({ record }: { record: ReactNode }) {
+  const t = useT();
+  return (
+    <>
+      <h2 className="t-page">{t("Sign in and claim your Agent ID", "Đăng nhập và nhận Agent ID")}</h2>
+      <ol className="bk-steps bk-steps-tight" style={{ counterReset: "s 4" }}>
+        <li><p className="t-content">{t("Tell your AI:", "Nói với AI:")}</p><Box text="Sign in to Binance Agentic Wallet" /><p className="t-content">{t("Open its link, or scan its QR with the app.", "Mở link nó đưa, hoặc quét QR bằng app.")}</p></li>
+        <li><p className="t-content">{t("Check the ", "Xem ")}<strong>{t("6-character code", "mã 6 ký tự")}</strong>{t(" matches the AI's. New-IP warning that isn't you? ", " giống mã của AI. Cảnh báo IP mới không phải bạn? ")}<strong>{t("Don't confirm.", "Đừng xác nhận.")}</strong></p></li>
+        <li><p className="t-content">{t("Accept ", "Đồng ý ")}<strong>Secure Auto Sign</strong>{t(", tick the 3 boxes, tap Continue.", ", tick 3 ô, bấm Tiếp tục.")}</p></li>
+        <li><p className="t-content">{t("Claim your ", "Nhận ")}<strong>Agent ID</strong>{t(": app, Wallet, the Agent ID banner. One per person.", ": app, Ví, banner Agent ID. Mỗi người một tên.")}</p></li>
+        <li><p className="t-content">{t("Check it. Ask your AI:", "Kiểm tra. Hỏi AI:")}</p><Box text={CONNECTED} />
+          <ResultLines check={t("The wallet is connected.", "Ví đã kết nối.")} ifNot={t("Sign in again. Read any error word for word.", "Đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} /></li>
+      </ol>
+      <p className="t-note">{t("Never share your recovery phrase or pairing code.", "Không bao giờ chia sẻ cụm từ khôi phục hay mã ghép nối.")}</p>
       {record}
     </>
   );
@@ -116,7 +116,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
       <h1 className="t-page">{t("Gas and Developer Mode", "Gas và Developer Mode")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a little BNB for fees, and turn on Developer Mode.", "Có một ít BNB trả phí, và bật Developer Mode.")}</Goal>
       <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee you pay the network each time something is saved on it, paid in ", " là phí nhỏ trả cho mạng mỗi lần lưu gì đó lên mạng, trả bằng ")}<strong>BNB</strong>{t(". Recording a chapter costs very little.", ". Ghi nhận một chương tốn rất ít.")}</p>
-      <p className="t-lead">{t("Agent Academy gives ", "Agent Academy tặng ")}<strong>{t("free gas once", "gas miễn phí một lần")}</strong>{t(" (about $0.25 of BNB) to each Agent ID. Ask your AI for your wallet address (starts with 0x, safe to share):", " (khoảng 0,25 USD BNB) cho mỗi Agent ID. Hỏi AI địa chỉ ví (bắt đầu bằng 0x, chia sẻ an toàn):")}</p>
+      <p className="t-lead">{t("Agent Academy gives ", "Agent Academy tặng ")}<strong>{t("free gas once", "gas miễn phí một lần")}</strong>{t(" (about $0.25 of BNB) to each Agent ID. Ask your AI for your wallet address and paste it below. It starts with 0x and is safe to share.", " (khoảng 0,25 USD BNB) cho mỗi Agent ID. Hỏi AI địa chỉ ví rồi dán vào ô bên dưới. Địa chỉ bắt đầu bằng 0x và chia sẻ được an toàn.")}</p>
       {res ? <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p> : <>
         <input className="input t-input" aria-label={t("Wallet address", "Địa chỉ ví")} value={v} onChange={(e) => { setV(e.target.value); setErr(""); }} onKeyDown={(e) => { if (e.key === "Enter") send(); }} placeholder="0x…" spellCheck={false} autoComplete="off" />
         {err && <p className="t-note" role="alert" style={{ color: "var(--ds-color-red-text)" }}>{err}</p>}

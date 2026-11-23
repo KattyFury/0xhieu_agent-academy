@@ -23,7 +23,6 @@ export default function Entrance(_: { wallet: Address | null }) {
       <main className="frame">
         <section className="bento">
           <div className="tile hero span-2">
-            <p className="t-label kicker">Agent Academy</p>
             <h1 className="t-hero">{t("Learn by doing.", "Học bằng cách làm.")}</h1>
             <p className="t-content measure">
               {t("Agent Academy is a library of short books about AI agents. Every piece of theory comes with a small hands-on practice.",
