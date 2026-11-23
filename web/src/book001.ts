@@ -183,10 +183,10 @@ export const book001: Book = {
       practice: {
         minutes: 4,
         title: "Read a quote, don't trade",
-        riskText: "Crypto trading can lose money. This is only a quote-reading exercise, not advice.",
+        riskText: "Trading can lose money. Quote only, not advice.",
         steps: [{ title: "Ask for a quote", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: get a quote to swap 0.001 BNB to USDT on BNB Smart Chain. Show the amount in, the estimated amount out and the slippage setting, and explain why the amount out is not guaranteed. Quote only. Do NOT swap, send, sign or confirm any transaction." }],
         check: "BNB in, estimated USDT out, and slippage (auto). Nothing is sent.",
-        ifNot: "If the AI tries to swap for real, tell it to stop. You only need the quote.",
+        ifNot: "If the AI tries to swap for real, tell it to stop.",
       },
     },
     {
@@ -207,7 +207,7 @@ export const book001: Book = {
         riskText: "DeFi can lose your money. This is not investment advice.",
         steps: [{ title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. If I hold USDT on BNB Smart Chain, preview (do not execute) a deposit of 1 USDT into one Earn product and show the balance changes, estimated network fee and the contract it would interact with. Do not tell me which is best. Preview only. Do NOT deposit, send, sign or confirm any transaction." }],
         check: "Three apps with TVL and APY, plus one preview.",
-        ifNot: "No USDT in the wallet? The AI says it can't preview. That's fine.",
+        ifNot: "No USDT? The AI can't preview. That's fine.",
       },
     },
     {

@@ -135,7 +135,7 @@ export function SetupDevMode({ record }: { record: ReactNode }) {
   return (
     <>
       <h2 className="t-page">{t("Turn on Developer Mode", "Bật Developer Mode")}</h2>
-      <p className="t-content">{t("Recording a chapter means your AI calls the Agent Academy contract. It may only do that when ", "Ghi nhận chương là AI gọi hợp đồng Agent Academy. AI chỉ được làm vậy khi ")}<strong>{t("Developer Mode is on", "Developer Mode đang bật")}</strong>.</p>
+      <p className="t-content">{t("To mark chapters done, your AI needs ", "Để đánh dấu xong chương, AI cần ")}<strong>{t("Developer Mode on", "bật Developer Mode")}</strong>.</p>
       <ol className="bk-steps bk-steps-tight">
         <li><p className="t-content">{t("Binance app: Agentic Wallet, Settings (top right), ", "App Binance: Agentic Wallet, Cài đặt (góc trên phải), ")}<strong>Developer Mode</strong>.</p></li>
         <li><p className="t-content">{t("Read the warning, confirm, approve in the app. It lasts ", "Đọc cảnh báo, xác nhận, duyệt trong app. Có hiệu lực ")}<strong>{t("7 days", "7 ngày")}</strong>{t(" and renews each time you use it.", " và tự gia hạn mỗi lần dùng.")}</p></li>

@@ -150,11 +150,12 @@ function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash
 function Finish({ children }: { children: ReactNode }) {
   const t = useT();
   return (
+    <><span className="bk-push" aria-hidden />
     <section className="bk-finish">
       <h3 className="t-header"><Flag size={18} aria-hidden /> {t("Mark this chapter done", "Đánh dấu xong chương")}</h3>
-      <p className="t-content">{t("Saves on-chain proof that you finished it. All chapters done = certificate.", "Lưu bằng chứng on-chain là bạn đã học xong. Xong mọi chương = có chứng chỉ.")}</p>
+      <p className="t-content">{t("Saves proof you finished. All done = certificate.", "Lưu bằng chứng bạn học xong. Xong hết = có chứng chỉ.")}</p>
       {children}
-    </section>
+    </section></>
   );
 }
 
@@ -167,7 +168,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   return (
     <>
       {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
-        <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the record prompt into your agent and type ", "Dán prompt ghi nhận vào agent và gõ ")}<b>confirm</b>{t(" when it shows the preview.", " khi agent hiện phần xem trước.")}</>}</p>
+        <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>confirm</b>.</>}</p>
         <div className="bk-record">
           {!wallet ? <a className="btn btn-primary t-button" href="/book/1/0">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
             : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}

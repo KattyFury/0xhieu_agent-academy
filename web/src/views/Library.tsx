@@ -17,7 +17,7 @@ export default function Library(_: { wallet: Address | null; setWallet: (a: Addr
   const t = useT();
   const { lang } = useLang();
   const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const r = e.currentTarget.querySelector(".cover")?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height })); };
-  const books = [{ id: 1, number: book001.number, cover: lang === "vi" ? book001Vi.title : book001.title, title: "Binance Agentic Wallet",
+  const books = [{ id: 1, number: book001.number, cover: lang === "vi" ? book001Vi.title : book001.title, title: "Learn Binance Agentic Wallet",
     text: t("A course to learn and practice using Binance Agentic Wallet.", "Khóa học cho bạn tìm hiểu và tập sử dụng Binance Agentic Wallet.") }];
 
   return (

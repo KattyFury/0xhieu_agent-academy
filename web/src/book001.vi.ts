@@ -119,10 +119,10 @@ export const book001Vi = {
       ],
       remember: ["Báo giá chỉ là ước tính.", "Slippage là mức lệch bạn chấp nhận.", "Đã gửi chưa phải đã xong."],
       practiceTitle: "Đọc báo giá, không giao dịch",
-      riskText: "Giao dịch crypto có thể mất tiền. Đây chỉ là bài tập đọc báo giá, không phải lời khuyên.",
+      riskText: "Giao dịch có thể mất tiền. Chỉ xem báo giá, không phải lời khuyên.",
       steps: [{ title: "Xin báo giá", text: "Dán câu này vào AI." }],
-      check: "Số BNB vào, số USDT ước tính ra, slippage (auto). Không có giao dịch nào được gửi.",
-      ifNot: "Nếu AI định swap thật: bảo nó dừng. Bài này chỉ cần báo giá.",
+      check: "BNB vào, USDT ước tính ra, slippage (auto). Không gửi gì.",
+      ifNot: "Nếu AI định swap thật: bảo nó dừng.",
     },
     {
       title: "DeFi, chỉ xem trước",
@@ -137,7 +137,7 @@ export const book001Vi = {
       riskText: "DeFi có thể làm bạn mất tiền. Đây không phải lời khuyên đầu tư.",
       steps: [{ title: "Hỏi AI", text: "Dán câu này vào AI." }],
       check: "Ba app kèm TVL, APY và một bản xem trước.",
-      ifNot: "Ví không có USDT thì AI báo không xem trước được. Không sao.",
+      ifNot: "Không có USDT? AI không xem trước được. Không sao.",
     },
     {
       title: "Agent ID của bạn",
