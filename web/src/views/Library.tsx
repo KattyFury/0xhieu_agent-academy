@@ -61,7 +61,7 @@ export default function Library({ wallet, setWallet }: { wallet: Address | null;
                 </li>
               ))}
             </ol>
-            {!wallet && <div className="contents-foot"><p className="t-secondary">{t("Paste your agent wallet address to see which pages you have done.", "Dán địa chỉ ví agent để xem bạn đã học trang nào.")}</p><AddressForm wallet={wallet} setWallet={setWallet} /></div>}
+            {!wallet && <div className="contents-foot"><p className="t-secondary">{t("Paste your wallet address to see which lessons you have done.", "Dán địa chỉ ví để xem bạn đã học bài nào.")}</p><AddressForm wallet={wallet} setWallet={setWallet} /></div>}
           </div>
         </section>
       </main>

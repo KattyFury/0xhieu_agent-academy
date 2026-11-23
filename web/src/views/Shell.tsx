@@ -51,8 +51,8 @@ export function AddressForm({ wallet, setWallet }: { wallet: Address | null; set
   const save = () => { if (isAddr(v.trim())) { setWallet(v.trim() as Address); setErr(false); } else setErr(true); };
   return (
     <form className="address-form" onSubmit={(e) => { e.preventDefault(); save(); }}>
-      <input className="input t-input" value={v} onChange={(e) => { setV(e.target.value); setErr(false); }} placeholder={t("Your agent wallet address (0x…)", "Địa chỉ ví agent của bạn (0x…)")}
-        aria-label={t("Agent wallet address", "Địa chỉ ví agent")} spellCheck={false} autoComplete="off" />
+      <input className="input t-input" value={v} onChange={(e) => { setV(e.target.value); setErr(false); }} placeholder={t("Your wallet address (0x…)", "Địa chỉ ví của bạn (0x…)")}
+        aria-label={t("Wallet address", "Địa chỉ ví")} spellCheck={false} autoComplete="off" />
       <button className="btn btn-primary t-button" type="submit">{t("Show progress", "Xem tiến độ")}</button>
       {err && <p className="t-note" role="alert" style={{ color: "var(--ds-color-red-text)" }}>{t("That doesn't look like a wallet address.", "Đây không giống địa chỉ ví.")}</p>}
     </form>

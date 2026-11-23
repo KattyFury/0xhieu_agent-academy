@@ -1,5 +1,5 @@
 import type { Address } from "viem";
-import { ArrowRight, Award, BookOpen, Link2, Terminal } from "lucide-react";
+import { ArrowRight, Award, BookOpen, ListChecks, PenLine } from "lucide-react";
 import { book001 } from "../book001";
 import { book001Vi } from "../book001.vi";
 import { useLang, useT } from "../i18n";
@@ -11,10 +11,10 @@ export default function Entrance(_: { wallet: Address | null }) {
   const { lang } = useLang();
   const title = lang === "vi" ? book001Vi.title : book001.title;
   const steps = [
-    { icon: <BookOpen size={20} />, title: t("Read", "Đọc"), text: t("Each page teaches one idea in plain words.", "Mỗi trang dạy một ý, lời đơn giản.") },
-    { icon: <Terminal size={20} />, title: t("Practice", "Thực hành"), text: t("Paste a read-only prompt into your own agent and see real wallet data.", "Dán prompt chỉ-đọc vào agent của bạn và xem dữ liệu ví thật.") },
-    { icon: <Link2 size={20} />, title: t("Record", "Ghi nhận"), text: t("Your agent records the page on-chain after you confirm. You only pay a tiny network fee.", "Agent ghi trang lên chuỗi sau khi bạn xác nhận. Bạn chỉ trả phí mạng rất nhỏ.") },
-    { icon: <Award size={20} />, title: t("Earn", "Nhận"), text: t("Record every page of a book and the contract issues your certificate.", "Ghi đủ mọi trang của sách, hợp đồng cấp chứng chỉ cho bạn.") },
+    { icon: <BookOpen size={20} />, title: t("Learn", "Học"), text: t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.") },
+    { icon: <PenLine size={20} />, title: t("Practice", "Thực hành"), text: t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.") },
+    { icon: <ListChecks size={20} />, title: t("Save progress", "Lưu tiến độ"), text: t("Mark each lesson done so you can see how far you are.", "Đánh dấu bài đã học để biết mình đi tới đâu.") },
+    { icon: <Award size={20} />, title: t("Get certificate", "Nhận chứng chỉ"), text: t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.") },
   ];
 
   return (

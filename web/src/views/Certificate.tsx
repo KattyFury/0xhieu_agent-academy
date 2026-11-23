@@ -38,8 +38,8 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
         {!wallet ? (
           <section className="bento">
             <div className="tile span-2 address-tile">
-              <h2 className="t-header">{t("Your progress lives on-chain", "Tiến độ của bạn nằm on-chain")}</h2>
-              <p className="t-secondary">{t("Paste the wallet address your agent records with. We only read public data; nothing is sent.", "Dán địa chỉ ví mà agent dùng để ghi nhận. Chúng tôi chỉ đọc dữ liệu công khai, không gửi gì cả.")}</p>
+              <h2 className="t-header">{t("See your progress", "Xem tiến độ của bạn")}</h2>
+              <p className="t-secondary">{t("Paste the wallet address you study with.", "Dán địa chỉ ví bạn dùng để học.")}</p>
               <AddressForm wallet={wallet} setWallet={setWallet} />
             </div>
           </section>
@@ -58,8 +58,7 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
                   <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
                   <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
                 </> : <p className="t-content cert-status">{t(`Not issued yet: ${p?.count ?? 0} of ${P} parts recorded.`, `Chưa cấp: đã ghi nhận ${p?.count ?? 0}/${P} phần.`)}</p>)}
-                <p className="t-note cert-note">{t("Issued by the contract when every page is recorded from an Agent ID wallet. It does not certify professional skill. Not an NFT.",
-                  "Hợp đồng cấp khi mọi trang được ghi nhận từ một ví Agent ID. Không xác nhận kỹ năng chuyên môn. Không phải NFT.")}</p>
+                <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>
                 <div className="cert-actions">
                   <CopyBtn text={shareUrl} label={t("Copy share link", "Chép link chia sẻ")} />
                   <a className="btn btn-ghost t-button" href={`${BSCSCAN}/address/${ACADEMY}#readContract`} target="_blank" rel="noreferrer">{t("Verify on BscScan", "Xác minh trên BscScan")}</a>
