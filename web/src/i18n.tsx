@@ -5,8 +5,9 @@ const KEY = "academy.lang";
 const Ctx = createContext<{ lang: Lang; setLang: (l: Lang) => void }>({ lang: "en", setLang: () => {} });
 
 export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>(() => { const u = new URLSearchParams(location.search).get("lang"); return (u ?? localStorage.getItem(KEY)) === "vi" ? "vi" : "en"; }); // ?lang=vi for shared links
-  useEffect(() => { localStorage.setItem(KEY, lang); document.documentElement.lang = lang; }, [lang]);
+  // English by default on every visit (owner). Vietnamese only via the switch or a ?lang=vi link; the choice is not remembered.
+  const [lang, setLang] = useState<Lang>(() => (new URLSearchParams(location.search).get("lang") === "vi" ? "vi" : "en"));
+  useEffect(() => { localStorage.removeItem(KEY); document.documentElement.lang = lang; }, [lang]);
   return <Ctx.Provider value={{ lang, setLang }}>{children}</Ctx.Provider>;
 }
 
