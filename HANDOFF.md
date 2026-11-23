@@ -21,12 +21,18 @@ Spec: `docs/spec-v1.2.md` (owner). Previous build (v1.1, 7-day course contract, 
 ## Site (live, deployed from this repo 2026-11-23)
 - https://academy.0xhieu.xyz — Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` with `CLOUDFLARE_API_TOKEN` from `~/.claude/secrets.env`. SPA fallback in `wrangler.toml`; Worker secrets (RELAYER_KEY, TG_*) and KV `GAS` already on the Worker.
 - Routes: `/` landing (yellow tile → Library, black tile → Certificate), `/library` (contents, New/Done per page from a pasted address), `/book/1/<page>` (page 0 = Get ready), `/certificate[/0x…]`. Old `#/…` links redirect. `?lang=vi`, `?qa=<state>` for screenshots.
-- Book 1 now = 8 pages (Get ready + 7 lessons) from v1.1 content; every page has a record button sending the cumulative mask. Book 1 is NOT created on-chain yet, so pages say "Recording opens when this book is published".
 - Owner said: no wallet address in the navbar.
 
+## Book 1 content (2026-11-23, spec §9.6 done, waiting owner review)
+- **13 pages = 13 chapters** (bits 0..12): pages 1-2 Get ready (`views/Onboard.tsx`: Agent ID + agent/sign-in; gas + Developer Mode), pages 3-13 = 11 lessons (`book001.ts` / `book001.vi.ts`): addresses, balances, networks+history, gas, rules (settings), approvals (no revoke), pending/locked, quotes (preview, risk note), DeFi (protocol-list + defi preview, risk note), Agent ID (agent-id + resolve own name), staying safe.
+- Written from the official skill docs v1.15.0 (`SKILL.md`, references) and checked with real read-only `baw` runs on 0xhieu.ai (status, address, balance, chains, tx-history, gas-price, settings, approvals list, tx-lock, agent-id, resolve-domain, market-order quote, defi protocol-list, defi preview DEPOSIT 1 USDT on Venus: fee ~0.0001 BNB, nothing broadcast).
+- Docs vs CLI: `approvals list --binanceChainId` is in the docs but rejected by `baw` 1.12.0; the lesson prompt doesn't use it.
+- Page 1 can't be recorded before Developer Mode (page 2), so page 2's prompt records bits 0+1 together.
+- Dropped from v1.1: leaderboard/market page (not in spec §2 command list).
+- Fit: all 13 spreads 0 overflow at 1440 and 1366, EN + VI; phones no sideways scroll; ds-check 0 issues.
+
 ## Next (spec §9)
-6. Write page 1 + following pages from the official skill docs (`SKILL.md` + `references/`), not from memory.
-7. A second person with a real Agent ID runs the full flow.
+7. Owner reads the 13 pages (EN + VI) and approves; then a second person with a real Agent ID runs the full flow.
 8. Freeze content → `createBook(1, chapterCount)`.
 9. README final + deploy.
 
