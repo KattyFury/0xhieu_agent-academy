@@ -15,7 +15,7 @@ const RO = "Read data only. Do NOT send, sign or confirm any transaction.";
 
 export const book001: Book = {
   id: 1, // on-chain bookId
-  number: "Book 001",
+  number: "#1",
   title: "Learn Binance Agentic Wallet",
   days: [
     {

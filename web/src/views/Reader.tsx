@@ -249,7 +249,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
       onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
       onTouchEnd={(e) => { const t = touch.current; touch.current = null; if (!t || spreadMode || getSelection()?.toString()) return;
         const dx = e.changedTouches[0].clientX - t.x, dy = e.changedTouches[0].clientY - t.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) stepPage(dx < 0 ? 1 : -1); }}>
-      <Nav active="book" banner={(chain.error || q === "error") && <p className="bk-banner t-label" role="status">{t("Can't reach BNB Chain. Progress may be out of date.", "Không kết nối được BNB Chain. Tiến độ có thể chưa mới.")}</p>} />
+      <Nav active="book" banner={(chain.error || q === "error") && <p className="bk-banner t-label" role="status">{t("Can't reach the chain. Progress may be out of date.", "Không kết nối được chuỗi. Tiến độ có thể chưa mới.")}</p>} />
 
       <main className="bk-stage">
         {spreadMode ? (

@@ -19,7 +19,7 @@ export function Nav({ active, banner }: { active?: Tab; banner?: ReactNode }) {
         <div className="bk-nav-right">
           <div className="bk-tabs">
             {tab("library", "/library", t("Library", "Thư viện"))}
-            {active === "book" && tab("book", "/book/1/0", "Book 001")}
+            {active === "book" && tab("book", "/book/1/0", "#1")}
             {tab("cert", "/certificate", t("Certificate", "Chứng chỉ"))}
           </div>
           <LangSwitch />

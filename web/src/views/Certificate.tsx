@@ -52,8 +52,8 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
                 <h2 className="t-page">{title}</h2>
                 <p className="t-secondary">Agent Academy, {book001.number}</p>
                 <p className="t-data cert-wallet" translate="no">{wallet}</p>
-                {err && <p className="t-secondary" role="status">{t("Can't reach BNB Chain right now. Try again in a minute.", "Chưa kết nối được BNB Chain. Thử lại sau một phút.")}</p>}
-                {!err && !c && <p className="t-secondary" role="status">{t("Checking BNB Chain…", "Đang kiểm tra BNB Chain…")}</p>}
+                {err && <p className="t-secondary" role="status">{t("Can't reach the chain right now. Try again in a minute.", "Chưa kết nối được chuỗi. Thử lại sau một phút.")}</p>}
+                {!err && !c && <p className="t-secondary" role="status">{t("Checking on-chain…", "Đang kiểm tra trên chuỗi…")}</p>}
                 {c && (c.ok ? <>
                   <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
                   <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
