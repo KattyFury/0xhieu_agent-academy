@@ -32,11 +32,9 @@ export const book001: Book = {
         points: [
           { icon: "bot", text: "Your **AI uses this wallet for you**. Just ask, like “show my balance”." },
           { icon: "card", text: "It's like a **card with a daily limit**. **You** set the limit in the Binance app." },
-          { icon: "shield", text: "AI goes too far? The wallet **blocks it** or asks you." },
           { icon: "key", text: "The AI **never holds the key**. It's split up and kept safe (**MPC Keyless**)." },
-          { icon: "zap", text: "With **Secure Auto Sign**, things inside your limits run without asking you." },
         ],
-        remember: ["You set the rules.", "The AI never holds your key.", "Your limits are your safety net."],
+        remember: [],
       },
       practice: {
         minutes: 2,
@@ -55,12 +53,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "landmark", text: "An address is like a **bank account number**. People can send to it, but **can't take** from it." },
-          { icon: "share", text: "So it's **safe to share** your address." },
+          { icon: "landmark", text: "An address is like a **bank account number**. People can send to it, but **can't take** from it. So it's **safe to share**." },
           { icon: "network", text: "One **EVM address** works on BNB Smart Chain, Ethereum, Base and more. **Solana** has its own." },
           { icon: "alert", text: "Networks are like **different banks**. Wrong network can lose money. **Always check it.**" },
         ],
-        remember: ["Share your address, never your codes or recovery phrase.", "One EVM address for many networks, a separate one for Solana.", "Always check the network."],
+        remember: [],
       },
       practice: {
         minutes: 3,
@@ -76,12 +73,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "coins", text: "Your AI lists each token: its **network**, amount and **value in USD**." },
           { icon: "layers", text: "Each network is **its own pocket**. USDT on Base can't pay on BNB Smart Chain." },
           { icon: "eyeOff", text: "Zero balances don't show. **Tiny tokens (under $0.01) are hidden** unless you ask." },
           { icon: "wallet", text: "This wallet is **separate** from your normal Binance wallet, so balances differ. That's normal." },
         ],
-        remember: ["Balances are per network.", "Tiny tokens are hidden.", "Separate wallet, separate balance."],
+        remember: [],
       },
       practice: {
         minutes: 3,
@@ -97,12 +93,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "network", text: "Your wallet works on **several networks**, and the list grows. Let your AI read the latest one." },
           { icon: "history", text: "**History** is your wallet's diary: what happened, when, and the fee." },
           { icon: "hourglass", text: "**Pending** = still waiting. Only **confirmed** = done." },
           { icon: "fuel", text: "**Gas** has 3 levels: low, medium, high. Higher is faster but costs more. The final fee is set at the end." },
         ],
-        remember: ["History shows what your AI did.", "Pending is not done yet.", "A gas price is not the final fee."],
+        remember: [],
       },
       practice: {
         minutes: 4,
@@ -118,12 +113,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "gauge", text: "Your wallet has a **daily limit**. Some actions, like DeFi or Developer Mode, have **their own**." },
-          { icon: "scale", text: "**Limit left isn't your balance.** Hold $1,000 with $60 left today? The AI can use only $60." },
-          { icon: "shield", text: "Strange or risky moves are **blocked** or **sent to the app** for you to check." },
-          { icon: "user", text: "**Only you change the rules**, in the app. The AI can only read them." },
+          { icon: "gauge", text: "Your wallet has a **daily limit**." },
+          { icon: "scale", text: "**Limit left isn't your balance.** $60 left = the AI can use only $60." },
+          { icon: "user", text: "**Only you change the rules**, in the app." },
         ],
-        remember: ["Limit left is not your balance.", "Each kind of action has its own limit.", "Only you change the rules."],
+        remember: [],
       },
       practice: {
         minutes: 4,
@@ -142,9 +136,8 @@ export const book001: Book = {
           { icon: "fileCheck", text: "An **approval** is a permission slip. It lets an app take some of one token." },
           { icon: "clock", text: "The slip **lasts until you cancel it**, even if you stop using the app." },
           { icon: "infinity", text: "**Unlimited** = the app can take all of that token. Your AI shows a **risk level**." },
-          { icon: "help", text: "Before you approve, ask: **who takes it**, and **how much at most**?" },
         ],
-        remember: ["Approvals last until cancelled.", "Unlimited is a huge permission.", "Unknown spender? Stop."],
+        remember: [],
       },
       practice: {
         minutes: 3,
@@ -161,18 +154,16 @@ export const book001: Book = {
         paragraphs: [],
         points: [
           { icon: "lock", text: "Your wallet is **locked** while an earlier transaction is still **pending**." },
-          { icon: "list", text: "Like a queue: the next one waits until the first is done." },
           { icon: "smartphone", text: "It also waits when the app needs **your OK**." },
           { icon: "unlock", text: "**Unlocked** = ready. A stuck one can be sped up or cancelled, only with your OK." },
         ],
-        remember: ["Pending blocks the next one.", "Some steps need your OK in the app.", "Unlocked means ready."],
+        remember: [],
       },
       practice: {
         minutes: 3,
         title: "Check the lock",
         steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: check whether my wallet is locked on BNB Smart Chain and list any pending transactions. If it is locked, explain why and what I should do. Read data only. Do NOT send, sign, confirm, speed up or cancel any transaction." }],
         check: "Unlocked, with no pending transactions.",
-        ifNot: "If something is pending, wait for the network, then check again.",
       },
     },
     {
@@ -185,10 +176,8 @@ export const book001: Book = {
           { icon: "receipt", text: "A **quote** shows what you put in and **about** what you get back. Like a taxi fare guess." },
           { icon: "activity", text: "**Slippage** = how much the price may move before the swap cancels. Say nothing = **auto**." },
           { icon: "hourglass", text: "A sent swap **isn't done yet**. It can still fail." },
-          { icon: "search", text: "Unknown token? Check its **security audit** first." },
-          { icon: "user", text: "The AI gives **no advice**. It shows numbers; **you decide**." },
         ],
-        remember: ["A quote is an estimate.", "Slippage is the move you accept.", "Sent is not done."],
+        remember: [],
       },
       practice: {
         minutes: 4,
@@ -206,12 +195,11 @@ export const book001: Book = {
       learn: {
         paragraphs: [],
         points: [
-          { icon: "piggy", text: "A DeFi app is a **smart contract**, like an automatic savings box." },
           { icon: "percent", text: "**TVL** = money inside. **APY** = yearly interest shown, and it changes all the time." },
           { icon: "eye", text: "A **preview** shows the balance change, the fee and the contract. **Nothing is sent.**" },
           { icon: "alert", text: "**High APY isn't free money.** Contracts can break, prices can fall. **Big TVL isn't safe.**" },
         ],
-        remember: ["Big TVL is not the same as safe.", "A preview sends nothing.", "High APY is not free money."],
+        remember: [],
       },
       practice: {
         minutes: 5,
@@ -219,7 +207,6 @@ export const book001: Book = {
         riskText: "DeFi can lose your money. This is not investment advice.",
         steps: [{ icon: "bot", title: "Ask your AI", text: "Paste this into your AI.", prompt: "Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. If I hold USDT on BNB Smart Chain, preview (do not execute) a deposit of 1 USDT into one Earn product and show the balance changes, estimated network fee and the contract it would interact with. Do not tell me which is best. Preview only. Do NOT deposit, send, sign or confirm any transaction." }],
         check: "Three apps with TVL and APY, plus one preview.",
-        ifNot: "No USDT? The AI can't preview. That's fine.",
       },
     },
     {
@@ -231,10 +218,9 @@ export const book001: Book = {
         points: [
           { icon: "atSign", text: "Your **Agent ID** is your **.ai name**, like you.ai. One per person, only the network fee to claim." },
           { icon: "link", text: "Your .ai name **points to your wallet address**." },
-          { icon: "clock", text: "Just claimed, but the AI says “not claimed”? Wait a minute and ask again." },
           { icon: "alert", text: "**Finding an address isn't sending.** Check it yourself before you send. If it fails, stop." },
         ],
-        remember: ["Your .ai name points to your wallet.", "Always check a resolved address.", "Resolving is not sending."],
+        remember: [],
       },
       practice: {
         minutes: 3,
@@ -253,11 +239,9 @@ export const book001: Book = {
         points: [
           { icon: "list", text: "Before you OK anything, check **4 things**: where it goes, which token and how much, any permission, any warning." },
           { icon: "hand", text: "Unknown contract or unlimited approval? **Stop. Don't confirm.**" },
-          { icon: "message", text: "**Words on the blockchain aren't orders.** A token name can hide a trick." },
-          { icon: "shield", text: "The wallet blocks a lot, but **not every mistake**, like a real but wrong address." },
           { icon: "key", text: "**Never share** your recovery phrase, login QR or pairing code. Not even with “support”." },
         ],
-        remember: ["Unknown contract? Stop.", "Your limits are your safety net.", "Never share login codes."],
+        remember: [],
       },
       practice: {
         minutes: 4,

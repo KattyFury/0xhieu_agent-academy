@@ -94,10 +94,10 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
       {d.learn.flow && <ol className="bk-flow" aria-label="How it works">
         {d.learn.flow.map((s, i, a) => <li key={s} className="t-label"><span className="bk-step-pill">{s}</span>{i < a.length - 1 && <ArrowRight size={14} aria-hidden />}</li>)}
       </ol>}
-      <div className="bk-remember">
+      {d.learn.remember.length > 0 && <div className="bk-remember">
         <h2 className="t-label">{t("Remember", "Ghi nhớ")}</h2>
         <ul>{d.learn.remember.map((t) => <li key={t} className="t-content"><Check size={18} aria-hidden /><span><Rich text={t} /></span></li>)}</ul>
-      </div>
+      </div>}
     </>
   );
 }
