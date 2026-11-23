@@ -160,7 +160,6 @@ function Finish({ upTo, children }: { upTo: number; children: ReactNode }) {
     <><span className="bk-push" aria-hidden />
     <section className="bk-finish">
       <h3 className="t-header"><Flag size={18} aria-hidden /> {t(`Save your progress: chapters 1–${upTo}`, `Lưu tiến độ: chương 1–${upTo}`)}</h3>
-      <p className="t-content">{t("Saves proof you finished. All done = certificate.", "Lưu bằng chứng bạn học xong. Xong hết = có chứng chỉ.")}</p>
       {children}
     </section></>
   );
@@ -180,9 +179,9 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
         <div className="bk-record">
           {!wallet ? <a className="btn btn-primary t-button" href="/book/1/3">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
             : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}
-          {wallet && <RecordStatus done={done} rec={rec} setHash={setHash} />}
+          {wallet && allDone && <a className="btn btn-primary t-button" href="/certificate">{t("View certificate", "Xem chứng chỉ")}</a>}
+          {wallet && <div className="bk-statusbox"><RecordStatus done={done} rec={rec} setHash={setHash} /></div>}
         </div>
-        {wallet && allDone && <div><a className="btn btn-primary t-button" href="/certificate">{t("View certificate", "Xem chứng chỉ")}</a></div>}
       </>}
     </>
   );

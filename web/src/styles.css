@@ -436,3 +436,9 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-page[data-fit1] .bk-finish { padding-top: var(--ds-space-8); gap: var(--ds-space-4); }
 .bk-steps .setup-cards { grid-template-columns: 1fr; } /* chapter 2 step 1: stacked AI cards */
 .bk-page[data-fit4] .setup-card { padding-top: var(--ds-space-8); padding-bottom: var(--ds-space-8); }
+/* Save block: fixed height, so nothing jumps when the status changes. Button row 48px + status box 3 lines. */
+.bk-finish { gap: var(--ds-space-8); padding-top: var(--ds-space-8); }
+.bk-finish .bk-record { flex-direction: column; align-items: flex-start; flex-wrap: nowrap; gap: var(--ds-space-8); min-height: 120px; }
+.bk-finish .bk-record > .btn { flex: none; }
+.bk-finish .bk-statusbox { width: 100%; min-height: 64px; }
+.bk-finish .bk-status { font-size: 13px; line-height: 20px; margin: 0; }
