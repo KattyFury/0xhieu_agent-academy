@@ -68,7 +68,7 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
             </article>
             <div className="tile span-2 contents">
               <h2 className="t-label contents-head">{t(`Pages done: ${doneList.length} of ${P}`, `Trang đã học: ${doneList.length}/${P}`)}</h2>
-              {p && doneList.length === 0 && <p className="t-secondary">{t("No pages recorded yet.", "Chưa ghi nhận trang nào.")} <a className="link" href="/book/1/0">{t("Start Book 001", "Bắt đầu Book 001")}</a></p>}
+              {p && doneList.length === 0 && <p className="t-secondary">{t("No pages recorded yet.", "Chưa ghi nhận trang nào.")} <a className="link" href="/book/1/0">{t("Start learning", "Bắt đầu học")}</a></p>}
               <ol>
                 {doneList.map(({ name, i }) => (
                   <li key={i}><a className="contents-row" href={`/book/1/${i}`}>

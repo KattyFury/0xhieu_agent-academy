@@ -313,3 +313,5 @@ h1, h2, h3 { text-wrap: balance; }
 .shelf-book { align-items: flex-start; }
 .bk-goal { padding: var(--ds-space-8) var(--ds-space-12); border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-tile); color: var(--ds-color-grey); }
 .bk-goal strong { color: var(--ds-color-ink); font-weight: 600; }
+.door-seal { flex: 1; display: grid; place-items: center; color: var(--ds-accent); }
+.door-seal svg { width: 96px; height: 96px; }
