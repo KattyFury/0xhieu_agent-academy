@@ -200,6 +200,7 @@ h1, h2, h3 { text-wrap: balance; }
 /* ===== Page shell: Bento v4 spacious (DS README "Layout", "Presentation pages") ===== */
 .page { min-height: 100dvh; display: flex; flex-direction: column; background: var(--ds-bento-canvas); }
 .page > .bk-top { position: sticky; top: 0; z-index: 10; height: 80px; }
+.page .bk-nav { width: min(100%, calc(1280px - 2 * var(--ds-space-24))); } /* same width as .frame content */
 .frame { width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 var(--ds-space-24) var(--ds-space-48); flex: 1 0 auto; }
 .bento { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ds-bento-tile-gap); }
 .span-2 { grid-column: span 2; }
