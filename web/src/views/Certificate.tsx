@@ -31,7 +31,7 @@ export function CertificateList({ wallet, setWallet }: { wallet: Address | null;
       <main className="frame">
         <div className="page-head"><h1 className="t-page">{t("Certificate", "Chứng chỉ")}</h1></div>
         <section className="bento">
-          <div className="tile cert-card">
+          <div className="tile cert-card span-2">
             <span className="cert-seal" aria-hidden><Award size={28} /></span>
             <span className="t-label kicker">{book001.number}</span>
             <span className="t-header">Binance Agentic Wallet</span>

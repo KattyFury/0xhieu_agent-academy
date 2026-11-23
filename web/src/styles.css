@@ -343,3 +343,17 @@ h1, h2, h3 { text-wrap: balance; }
 .toc .contents-row { width: 100%; text-align: left; }
 .toc .contents-row[aria-current="page"] .contents-title { font-weight: 600; }
 .book-card-cover .cover-frame > .t-label:last-child { display: none; }
+/* Book / certificate cards: half the page on desktop; art on the left, text on the right */
+.book-card, .cert-card { display: grid; grid-template-columns: 176px minmax(0, 1fr); column-gap: var(--ds-space-32); row-gap: var(--ds-space-8); align-content: start; align-items: start; }
+.book-card > *, .cert-card > * { grid-column: 2; justify-self: start; }
+.book-card > .book-card-cover { grid-column: 1; grid-row: 1 / span 6; width: 176px; margin: 0; align-self: start; }
+.cert-card > .cert-seal { grid-column: 1; grid-row: 1 / span 8; width: 176px; height: 176px; justify-self: center; }
+.cert-card > .cert-seal svg { width: 64px; height: 64px; }
+.book-card .btn, .cert-card .btn { margin-top: var(--ds-space-8); }
+.cert-card .address-form { width: 100%; justify-self: stretch; }
+@media (max-width: 640px) {
+  .book-card, .cert-card { grid-template-columns: 1fr; }
+  .book-card > *, .cert-card > * { grid-column: 1; }
+  .book-card > .book-card-cover, .cert-card > .cert-seal { grid-row: auto; width: 144px; height: auto; justify-self: center; }
+  .cert-card > .cert-seal { width: 96px; height: 96px; }
+}

@@ -27,7 +27,7 @@ export default function Library(_: { wallet: Address | null; setWallet: (a: Addr
         <div className="page-head"><h1 className="t-page">{t("Library", "Thư viện")}</h1></div>
         <section className="bento">
           {books.map((b) => (
-            <a key={b.id} className="tile book-card" href={`/book/${b.id}/0`} onClick={remember} aria-label={b.title}>
+            <a key={b.id} className="tile book-card span-2" href={`/book/${b.id}/0`} onClick={remember} aria-label={b.title}>
               <span className="book-card-cover"><Cover number={b.number} title={b.cover} /></span>
               <span className="t-label kicker">{b.number}</span>
               <span className="t-header">{b.title}</span>
