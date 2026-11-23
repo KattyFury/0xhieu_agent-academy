@@ -279,7 +279,19 @@ export const pagesOf = (p: number) => `${2 * p + 1}–${2 * p + 2}`;
 export const dayAt = (b: Book, p: number) => b.days.find((d) => d.day === p + 1) ?? null;
 
 /** Record prompt (spec v1.2 §6). The site fills the values; the learner pastes it into their own agent. */
-export function completionPrompt(p: { wallet: string; academy: string; bookId: number; mask: bigint; calldata: string }) {
+export function completionPrompt(p: { wallet: string; academy: string; bookId: number; mask: bigint; calldata: string }, lang: "en" | "vi" = "en") {
+  if (lang === "vi") return `Bạn đang có Binance Agentic Wallet skill (\`baw\`). Hãy ghi tiến độ học của tôi lên hợp đồng Agent Academy trên BNB Smart Chain. Làm đúng từng bước và KHÔNG thay đổi bất kỳ giá trị nào bên dưới:
+- binanceChainId: 56
+- from: ${p.wallet}
+- to: ${p.academy}
+- value: 0
+- inputData: ${p.calldata}
+- Giao dịch này gọi completeChapters(bookId=${p.bookId}, mask=${p.mask}). Nó không chuyển token và không xin approve.
+Bước 1: chạy \`baw wallet settings --json\`. Nếu devMode.enabled không phải true thì dừng lại và hướng dẫn tôi bật Developer Mode trong app Binance.
+Bước 2: chạy \`baw contract-call preview --binanceChainId 56 --from ${p.wallet} --to ${p.academy} --value 0 --inputData ${p.calldata} --json\`.
+Bước 3: cho tôi xem parsedTx, risks và authorityChanges. Nếu preview báo lỗi hoặc có rủi ro, dừng lại và báo nguyên văn lỗi.
+Bước 4: CHỈ khi tôi trả lời "xác nhận", chạy \`baw contract-call execute --requestId <requestId> --json\`. Nếu cần xác nhận trong app Binance, nhắc tôi.
+Bước 5: báo txHash cho tôi.`;
   return `You have the Binance Agentic Wallet skill (\`baw\`). Record my completed chapters on the Agent Academy contract on BNB Smart Chain. Follow each step exactly and do NOT change any value below:
 - binanceChainId: 56
 - from: ${p.wallet}

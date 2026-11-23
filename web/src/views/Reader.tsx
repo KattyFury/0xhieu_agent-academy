@@ -52,9 +52,9 @@ const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span class
 function EndPage() {
   const t = useT();
   const pts: [IconKey, string][] = [
-    ["flag", t("That was the **last chapter** of this book.", "Đó là **chương cuối** của cuốn sách.")],
-    ["list", t(`Mark **all ${P} chapters** done to finish the course.`, `Đánh dấu xong **đủ ${P} chương** để hoàn thành khoá học.`)],
-    ["award", t("Then your **certificate** is issued on-chain, by itself.", "Khi đó **chứng chỉ** tự được cấp on-chain.")],
+    ["flag", t("That was the **last chapter**. Well done!", "Đó là **chương cuối**. Bạn giỏi lắm!")],
+    ["list", t(`Your last save, at the end of chapter ${P}, covers **every chapter**.`, `Lần lưu cuối, ở cuối chương ${P}, lưu **mọi chương**.`)],
+    ["award", t(`All ${P} saved = your **certificate** is issued on-chain, by itself.`, `Lưu đủ ${P} chương = **chứng chỉ** tự được cấp on-chain.`)],
   ];
   return (
     <>
@@ -67,12 +67,18 @@ function EndPage() {
 /** Ending spread, right: progress toward the certificate. */
 function EndCertificate({ done }: { done: number }) {
   const t = useT();
+  const all = done === P;
   return (
     <>
       <h2 className="t-page">{t("Your certificate", "Chứng chỉ của bạn")}</h2>
-      <p className="t-lead">{t(`${done} of ${P} chapters marked done.`, `Đã đánh dấu xong ${done}/${P} chương.`)}</p>
-      <p className="t-lead">{t("Missed one? Go back and mark it done. Anyone can check your certificate with your wallet address.", "Còn sót chương? Quay lại đánh dấu xong. Ai cũng kiểm tra được chứng chỉ bằng địa chỉ ví của bạn.")}</p>
-      <div><a className="btn btn-primary t-button" href="/certificate">{t("See your certificate", "Xem chứng chỉ")}</a></div>
+      <p className="t-lead">{t(`${done} of ${P} chapters saved.`, `Đã lưu ${done}/${P} chương.`)}</p>
+      <p className="t-lead">{all
+        ? t("All done! Your certificate is ready. Anyone can check it with your wallet address.", "Xong hết! Chứng chỉ đã sẵn sàng. Ai cũng kiểm tra được bằng địa chỉ ví của bạn.")
+        : t(`Not ${P} yet? Go back to chapter ${P} and save your progress. It saves every chapter at once.`, `Chưa đủ ${P}? Quay lại chương ${P} và lưu tiến độ. Lần lưu đó lưu mọi chương cùng lúc.`)}</p>
+      <div className="actions">
+        {!all && <a className="btn btn-primary t-button" href={`/book/1/${P - 1}/practice`}>{t(`Go to chapter ${P}`, `Tới chương ${P}`)}</a>}
+        <a className={`btn ${all ? "btn-primary" : "btn-ghost"} t-button`} href="/certificate">{t("See your certificate", "Xem chứng chỉ")}</a>
+      </div>
     </>
   );
 }
@@ -164,12 +170,13 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   page: number; bits?: bigint; text?: string; wallet: Address | null; mask: bigint; done: boolean; published: boolean | null; allDone: boolean; rec: Rec; onCopy: () => void; setHash: (h: Hash) => void;
 }) {
   const t = useT();
+  const { lang } = useLang();
   const next = mask | (bits ?? 1n << BigInt(page));
-  const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }) : "";
+  const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }, lang) : "";
   return (
     <>
       {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
-        <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>confirm</b>.</>}</p>
+        <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>{t("confirm", "xác nhận")}</b>.</>}</p>
         <div className="bk-record">
           {!wallet ? <a className="btn btn-primary t-button" href="/book/1/3">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
             : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}

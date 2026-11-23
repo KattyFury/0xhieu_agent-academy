@@ -59,7 +59,7 @@ export function SetupAccount({ total: _total }: { total: number }) {
         {path === "own"
           ? <li><p className="t-content">{t("Install the skill in your terminal:", "Cài skill trong terminal:")}</p><Box text={INSTALL} /></li>
           : <li><p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p></li>}
-        <li><p className="t-content">{t("Tell your AI (only once):", "Nói với AI (chỉ một lần):")}</p><Box text="Create my Binance Agentic Wallet" /></li>
+        <li><p className="t-content">{t("Tell your AI (only once):", "Nói với AI (chỉ một lần):")}</p><Box text={t("Create my Binance Agentic Wallet", "Tạo Binance Agentic Wallet cho tôi")} /></li>
       </ol>
     </>
   );
@@ -72,11 +72,11 @@ export function SetupAgent({ record }: { record: ReactNode }) {
     <>
       <h2 className="t-page">{t("Sign in and claim your Agent ID", "Đăng nhập và nhận Agent ID")}</h2>
       <ol className="bk-steps bk-steps-tight" style={{ counterReset: "s 4" }}>
-        <li><p className="t-content">{t("Tell your AI:", "Nói với AI:")}</p><Box text="Sign in to Binance Agentic Wallet" /><p className="t-content">{t("Open its link, or scan its QR with the app.", "Mở link nó đưa, hoặc quét QR bằng app.")}</p></li>
+        <li><p className="t-content">{t("Tell your AI:", "Nói với AI:")}</p><Box text={t("Sign in to Binance Agentic Wallet", "Đăng nhập Binance Agentic Wallet")} /><p className="t-content">{t("Open its link, or scan its QR with the app.", "Mở link nó đưa, hoặc quét QR bằng app.")}</p></li>
         <li><p className="t-content">{t("Check the ", "Xem ")}<strong>{t("6-character code", "mã 6 ký tự")}</strong>{t(" matches the AI's. New-IP warning that isn't you? ", " giống mã của AI. Cảnh báo IP mới không phải bạn? ")}<strong>{t("Don't confirm.", "Đừng xác nhận.")}</strong></p></li>
         <li><p className="t-content">{t("Accept ", "Đồng ý ")}<strong>Secure Auto Sign</strong>{t(", tick the 3 boxes, tap Continue.", ", tick 3 ô, bấm Tiếp tục.")}</p></li>
         <li><p className="t-content">{t("Claim your ", "Nhận ")}<strong>Agent ID</strong>{t(": app, Wallet, the Agent ID banner. One per person.", ": app, Ví, banner Agent ID. Mỗi người một tên.")}</p></li>
-        <li><p className="t-content">{t("Check it. Ask your AI:", "Kiểm tra. Hỏi AI:")}</p><Box text={CONNECTED} />
+        <li><p className="t-content">{t("Check it. Ask your AI:", "Kiểm tra. Hỏi AI:")}</p><Box text={t(CONNECTED, "Dùng Binance Agentic Wallet: kiểm tra ví của tôi đã kết nối chưa và giải thích trong một câu điều đó nghĩa là gì. Chỉ đọc dữ liệu. KHÔNG gửi, ký hay xác nhận giao dịch nào.")} />
           <ResultLines check={t("The wallet is connected.", "Ví đã kết nối.")} ifNot={t("Sign in again. Read any error word for word.", "Đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} /></li>
       </ol>
       <p className="t-note">{t("Never share your recovery phrase or pairing code.", "Không bao giờ chia sẻ cụm từ khôi phục hay mã ghép nối.")}</p>
@@ -139,7 +139,7 @@ export function SetupDevMode({ record }: { record: ReactNode }) {
       <ol className="bk-steps bk-steps-tight">
         <li><p className="t-content">{t("In the Binance app: Agentic Wallet → Settings (top right) → ", "Trong app Binance: Agentic Wallet → Cài đặt (góc trên phải) → ")}<strong>Developer Mode</strong>.</p></li>
         <li><p className="t-content">{t("Read the warning, confirm, approve in the app. It lasts ", "Đọc cảnh báo, xác nhận, duyệt trong app. Có hiệu lực ")}<strong>{t("7 days", "7 ngày")}</strong>{t(" and renews each time you use it.", " và tự gia hạn mỗi lần dùng.")}</p></li>
-        <li><p className="t-content">{t("Check it:", "Kiểm tra:")}</p><Box text={DEVMODE} /></li>
+        <li><p className="t-content">{t("Check it:", "Kiểm tra:")}</p><Box text={t(DEVMODE, "Dùng Binance Agentic Wallet: đọc cài đặt ví của tôi và cho biết Developer Mode có đang bật không, khi nào hết hạn và hạn mức mỗi ngày là bao nhiêu. Chỉ đọc dữ liệu. KHÔNG gửi, ký hay xác nhận giao dịch nào.")} /></li>
       </ol>
       <ResultLines check={t("Developer Mode is on, with an end date.", "Developer Mode đang bật, có ngày hết hạn.")} />
       {record}

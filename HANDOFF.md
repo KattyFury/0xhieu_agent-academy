@@ -14,6 +14,7 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 ## Book #1 (28 pages = 13 chapters + ending spread)
 - Order: 1 What is Binance Agentic Wallet (quiz) · 2 From zero to signed in · 3 Addresses · 4 Gas and Developer Mode (asks for the address, so it comes after 3) · 5 Balances · 6 Networks, history and gas · 7 Rules · 8 Approvals · 9 Pending and locked · 10 Quotes (risk note) · 11 DeFi preview (risk note) · 12 Agent ID · 13 Staying safe · ending spread (book finished + certificate progress, not a chapter).
 - Files: `web/src/book001.ts` (EN) + `book001.vi.ts`; chapters 2-3 in `web/src/views/Onboard.tsx`; reader in `web/src/views/Reader.tsx`.
+- VI mode: every prompt is Vietnamese too (setup commands, practice prompts, and the save prompt, whose contract values are identical to EN; the learner types "xác nhận"). EN mode unchanged.
 - All chapters use the ELI12 look: icon points (`learn.points` + `IconKey`), short goals, practice steps with a bot icon. AI prompts unchanged.
 - Chapter 2 is one numbered guide (steps 1-4 left, 5-9 right), each step with its own prompt.
 - Recording: one sign per 3 chapters. "Save your progress: chapters 1–N" ends chapters 4, 7, 10, 13 (`SAVE_AT` in Reader.tsx); each save marks every chapter up to N, so a missed save is caught by the next. First save is chapter 4 because it needs Developer Mode. Other chapters show nothing about recording. Certificate is issued by the contract at 13/13.
