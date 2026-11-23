@@ -134,7 +134,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
   );
 }
 
-function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
+function PracticePage({ d, record, note }: { d: Day; record?: ReactNode; note?: ReactNode }) {
   const t = useT();
   return (
     <>
@@ -150,8 +150,9 @@ function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
             {i === all.length - 1 && <ResultLines check={d.practice.check} ifNot={d.practice.ifNot} />}
           </li>
         ))}
-        <li>{record}</li>
+        {record && <li>{record}</li>}
       </ol>
+      {note}
     </>
   );
 }
@@ -240,7 +241,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
     if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
     const dd = localDay(dayAt(book, p)!, lang);
-    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={deferred(0)} />;
+    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} note={deferred(0)} />;
     return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
   };
 
