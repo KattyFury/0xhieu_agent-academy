@@ -22,8 +22,8 @@ export const book001: Book = {
   days: [
     {
       day: 1,
-      title: "What is an Agentic Wallet?",
-      goal: "Understand what this wallet does before you install anything.",
+      title: "What is Binance Agentic Wallet?",
+      goal: "Know what Binance Agentic Wallet does before you install it.",
       learn: {
         paragraphs: [
           "**Binance Agentic Wallet** is a wallet your AI helper can use for you. You ask in plain words, like “show my balance”, and the AI does it.",
@@ -37,9 +37,9 @@ export const book001: Book = {
         minutes: 2,
         title: "Quick check",
         steps: [
-          { title: "Can the AI take the wallet's key out?", text: "No. The key can't be taken out." },
+          { title: "Can the AI take your Binance Agentic Wallet's key out?", text: "No. The key can't be taken out." },
           { title: "Who can change the daily limit?", text: "Only you, in the Binance app. The AI can only read it." },
-          { title: "What happens if you sign out?", text: "The AI loses access to the wallet." },
+          { title: "What happens if you sign out?", text: "The AI loses access to your Binance Agentic Wallet." },
         ],
       },
     },
@@ -71,7 +71,7 @@ export const book001: Book = {
           "Your AI lists each token with its **network**, amount and **value in USD**.",
           "Each network has **its own balance**, like two separate pockets. USDT on Base can't pay for anything on BNB Smart Chain.",
           "Zero balances don't show. Tiny tokens (under **$0.01**) are hidden unless you ask to see them.",
-          "Your Agentic Wallet is a **separate wallet**, so its balance can differ from your normal Binance wallet. That's normal.",
+          "Your Binance Agentic Wallet is a **separate wallet**, so its balance can differ from your normal Binance wallet. That's normal.",
         ],
         remember: ["Balances are per network.", "Tiny tokens are hidden.", "Separate wallet, separate balance."],
       },

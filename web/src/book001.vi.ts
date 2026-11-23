@@ -7,8 +7,8 @@ export const book001Vi = {
   title: "Học Binance Agentic Wallet",
   days: [
     {
-      title: "Agentic Wallet là gì?",
-      goal: "Hiểu ví này làm gì trước khi cài bất cứ thứ gì.",
+      title: "Binance Agentic Wallet là gì?",
+      goal: "Hiểu Binance Agentic Wallet làm gì trước khi cài.",
       paragraphs: [
         "**Binance Agentic Wallet** là ví để AI làm việc với tiền mã hoá giúp bạn. Bạn nhờ bằng lời thường, ví dụ “xem số dư”, AI sẽ làm.",
         "Giống **thẻ phụ có hạn mức mỗi ngày**. **Bạn** đặt hạn mức trong app Binance. **AI** chỉ làm trong hạn mức đó. **Hệ thống** chặn, hoặc hỏi lại bạn, nếu AI làm quá.",
@@ -18,9 +18,9 @@ export const book001Vi = {
       remember: ["Bạn đặt luật, AI làm trong luật.", "AI không bao giờ cầm chìa khoá.", "Hạn mức là lưới an toàn."],
       practiceTitle: "Tự kiểm tra",
       steps: [
-        { title: "AI có lấy chìa khoá ví ra được không?", text: "Không. Chìa khoá không lấy ra được." },
+        { title: "AI có lấy chìa khoá Binance Agentic Wallet của bạn ra được không?", text: "Không. Chìa khoá không lấy ra được." },
         { title: "Ai đổi được hạn mức mỗi ngày?", text: "Chỉ bạn, trong app Binance. AI chỉ đọc được." },
-        { title: "Đăng xuất thì sao?", text: "AI mất quyền dùng ví." },
+        { title: "Đăng xuất thì sao?", text: "AI mất quyền dùng Binance Agentic Wallet của bạn." },
       ],
     },
     {
@@ -43,7 +43,7 @@ export const book001Vi = {
         "AI liệt kê từng token kèm **mạng**, số lượng và **giá trị USD**.",
         "Mỗi mạng có **số dư riêng**, như hai túi khác nhau. USDT ở Base không trả được gì ở BNB Smart Chain.",
         "Token bằng 0 không hiện. Token rất nhỏ (dưới **$0.01**) bị ẩn, muốn xem thì nói với AI.",
-        "Agentic Wallet là **ví riêng**, nên số dư có thể khác ví Binance thường của bạn. Bình thường thôi.",
+        "Binance Agentic Wallet là **ví riêng**, nên số dư có thể khác ví Binance thường của bạn. Bình thường thôi.",
       ],
       remember: ["Số dư tách theo mạng.", "Token rất nhỏ bị ẩn.", "Ví riêng, số dư riêng."],
       practiceTitle: "Đọc số dư",

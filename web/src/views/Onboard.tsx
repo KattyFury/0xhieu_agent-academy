@@ -40,7 +40,7 @@ export function ResultLines({ check, ifNot }: { check?: string; ifNot?: string }
 export function SetupAccount({ total }: { total: number }) {
   const t = useT();
   const steps: ReactNode[] = [
-    <>{t("Open the Binance app and create an ", "Mở app Binance, tạo ")}<strong>MPC Wallet</strong>{t(" first. You need it before the Agentic Wallet.", " trước. Cần có ví này trước Agentic Wallet.")}</>,
+    <>{t("Open the Binance app and create an ", "Mở app Binance, tạo ")}<strong>MPC Wallet</strong>{t(" first. You need it before Binance Agentic Wallet.", " trước. Cần có ví này trước Binance Agentic Wallet.")}</>,
     <>{t("Install the skill on your computer (the command is on the right).", "Cài skill trên máy tính (lệnh ở trang phải).")}</>,
     <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Create my Binance Agentic Wallet”</strong>{t(". Only once.", ". Chỉ làm một lần.")}</>,
     <>{t("Tell your AI: ", "Nói với AI: ")}<strong>“Sign in to Binance Agentic Wallet”</strong>{t(". Open its link, or scan its QR with the app.", ". Mở link nó đưa, hoặc quét QR bằng app.")}</>,
@@ -52,7 +52,7 @@ export function SetupAccount({ total }: { total: number }) {
     <>
       <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Pages 3–4 of ${2 * total}`, `Trang 3–4/${2 * total}`)} />
       <h1 className="t-page">{t("From zero to signed in", "Từ số 0 đến đăng nhập")}</h1>
-      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have an account, a wallet, an Agent ID, and your AI signed in.", "Có tài khoản, ví, Agent ID và AI đã đăng nhập.")}</Goal>
+      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have an account, a Binance Agentic Wallet, an Agent ID, and your AI signed in.", "Có tài khoản, Binance Agentic Wallet, Agent ID và AI đã đăng nhập.")}</Goal>
       <ol className="bk-steps bk-steps-tight">{steps.map((s, i) => <li key={i}><p className="t-content">{s}</p></li>)}</ol>
       <p className="t-note">{t("Your recovery phrase and pairing code go only into the Binance app. Never here, never to anyone.", "Cụm từ khôi phục và mã ghép nối chỉ nhập trong app Binance. Không nhập ở đây, không gửi cho ai.")}</p>
     </>
