@@ -27,9 +27,10 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - X post drafted (main + reply, with #BinanceWalletHackathon #AgenticWallet).
 
 ## Next
-1. Top up the relayer (~$10 = ~0.0173 BNB at $579 → ~90 people); 30 learners need ~0.0075 BNB.
-2. A second person with a real Agent ID runs the full flow on book 1 (spec §9.7). Also test one save with the Vietnamese prompt (not yet run end to end).
-3. Get >= 30 Agent ID holders saving; submit.
+1. Top up the relayer: it held 0.0060 BNB on 2026-11-24 (~24 people). `baw wallet send` of 0.00891 BNB (~$5) failed twice with 351703 (recipient not in the Binance address book). The owner must add `0x49CB...2A43c` (BSC) in Binance App > Wallet > Settings > Address Book, then re-send (check the BNB price first; 30 learners need ~0.0075 BNB).
+2. Test one real save with the new masks (page 6 = 15, page 12 = 255, page 18 = 8191) from a wallet with no saves yet; also the Vietnamese save prompt. A second person with a real Agent ID should run the full flow (spec §9.7). The owner's wallet already has units 1-10 (shows as 12 pages).
+3. Get >= 30 Agent ID holders saving; submit by 2026-12-09 08:00 UTC.
+4. Open: reading the .ai name from an address has no on-chain path found; the certificate name box is typed by the learner, local only.
 
 ## Gotchas
 - Another Claude session once edited this repo at the same time: commit files by name, check `git status` first.
