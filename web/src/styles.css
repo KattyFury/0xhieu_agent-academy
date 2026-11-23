@@ -262,11 +262,11 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-tabs { background: transparent; padding: 0; gap: var(--ds-space-4); }
 /* VI/EN switch, copied from 0xhieu.xyz .language-switch */
 .language-switch { position: relative; isolation: isolate; flex-shrink: 0; width: 80px; height: 40px; padding: var(--ds-space-4); display: grid; grid-template-columns: 1fr 1fr; align-items: center;
-  border: none; border-radius: var(--ds-bento-radius-pill); background: var(--ds-bento-tile); box-shadow: var(--ds-shadow-elev-sm); color: var(--ds-color-grey); cursor: pointer; font-family: inherit;
+  border: none; border-radius: var(--ds-bento-radius-pill); background: var(--ds-bento-canvas); box-shadow: none; color: var(--ds-color-muted); cursor: pointer; font-family: inherit;
   font-size: var(--ds-type-label-size); line-height: var(--ds-type-label-line); font-weight: 600; }
 .language-switch::before { content: ""; position: absolute; z-index: -1; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 2); border-radius: var(--ds-bento-radius-pill); background: var(--ds-color-ink); transition: transform .18s ease; }
 .language-switch[aria-checked="true"]::before { transform: translateX(100%); }
-.language-switch[aria-checked="false"] .language-option--vi, .language-switch[aria-checked="true"] .language-option--en { color: var(--ds-bento-tile); }
+.language-switch[aria-checked="false"] .language-option--en, .language-switch[aria-checked="true"] .language-option--vi { color: var(--ds-bento-tile); }
 @media (prefers-reduced-motion: reduce) { .language-switch::before { transition: none; } }
 @media (max-width: 640px) { .language-switch { width: 64px; height: 32px; } }
 /* Get ready spread */
@@ -315,3 +315,31 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-goal strong { color: var(--ds-color-ink); font-weight: 600; }
 .door-seal { flex: 1; display: grid; place-items: center; color: var(--ds-accent); }
 .door-seal svg { width: 96px; height: 96px; }
+/* v2 book: result lines, risk note, compact step lists */
+.bk-check { display: flex; flex-direction: column; gap: var(--ds-space-4); }
+.bk-check strong { color: var(--ds-color-ink); font-weight: 600; }
+.bk-risk { padding: var(--ds-space-8) var(--ds-space-12); border-radius: var(--ds-bento-radius-inner); background: var(--ds-color-red-soft); color: var(--ds-color-red-text); }
+.bk-risk strong { font-weight: 600; }
+.bk-steps-tight { gap: var(--ds-space-8); }
+.bk-steps-tight > li::before { width: 24px; height: 24px; }
+.bk-steps-tight > li { padding-left: var(--ds-space-32); }
+/* Long prompts: 3 lines + "Show full prompt" at every size; Copy always copies the full text. */
+.bk-prompt:not(.full):not(.bk-prompt-row) p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.bk-prompt-toggle { display: inline; }
+.bk-prompt-row p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.bk-single .bk-prompt:not(.full):not(.bk-prompt-row) p, .bk-single .bk-prompt-row p { -webkit-line-clamp: unset; display: block; }
+/* Library / certificate cards: one grid cell each, room for many books */
+.book-card, .cert-card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ds-space-8); color: var(--ds-color-ink); text-decoration: none; }
+.book-card-cover { align-self: center; width: min(100%, 144px); margin-bottom: var(--ds-space-8); }
+.book-card .cover { transition: transform 200ms ease-out; }
+.book-card:hover .cover { transform: translateY(-4px); }
+.book-card .btn, .cert-card .btn { margin-top: auto; }
+.cert-card .address-form { flex-direction: column; align-items: stretch; width: 100%; }
+.cert-card .address-form .input { flex: none; }
+.cert-full { grid-column: 1 / -1; width: min(100%, 720px); justify-self: center; }
+/* In-book table of contents */
+.toc { max-width: min(560px, calc(100vw - var(--ds-space-32))); }
+.toc[open] { height: auto; max-height: calc(100dvh - var(--ds-space-32)); }
+.toc .contents-row { width: 100%; text-align: left; }
+.toc .contents-row[aria-current="page"] .contents-title { font-weight: 600; }
+.book-card-cover .cover-frame > .t-label:last-child { display: none; }

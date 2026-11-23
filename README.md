@@ -25,6 +25,15 @@ Book ids at or above 900 are test books and are hidden by the website.
 
 The website never sends transactions and never connects to a wallet. It builds the calldata with viem and shows a prompt; the learner pastes it into their own agent (Binance Agentic Wallet skill), which runs `baw contract-call preview`, shows the preview, and only executes after the learner confirms. The website reads progress publicly with `progressOf` from a pasted wallet address. No API key, seed phrase, chat history or agent access is ever requested.
 
+## Free gas (sponsored by Agent Academy)
+
+To record chapters, a learner's Agentic Wallet needs a little BNB for gas. The site offers a one-time top-up of **0.0005 BNB (about $0.25)** per wallet through `POST /api/claim` (`web/functions/api/claim.ts`):
+
+- Only Agent ID holders: the server checks `balanceOf(address) > 0` on the Agent ID contract before sending.
+- Once per address (stored in Cloudflare KV), and only if the wallet holds less than 0.0002 BNB.
+- At most 20 top-ups per UTC day.
+- Sent from a dedicated relayer wallet `0x49CBB7477b163F4613f08995E1dE61a502b2A43c` that only holds the BNB for this; its key is a Worker secret, never in this repo.
+
 ## Develop
 
 ```bash

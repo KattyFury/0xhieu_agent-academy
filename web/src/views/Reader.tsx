@@ -3,13 +3,14 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Check, Copy, List, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Copy, List, Loader2, X } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
-import { SetupAgent, SetupDevMode, SetupGas, SetupId } from "./Onboard";
+import { usePageTitles } from "./Library";
+import { ResultLines, SetupAccount, SetupAgent, SetupDevMode, SetupGas } from "./Onboard";
 import { useLang, useT } from "../i18n";
 import { book001Vi, localDay } from "../book001.vi";
-import { SETUP_PAGES, book001, completionPrompt, pageCount, pagesOf, type Day } from "../book001";
+import { book001, completionPrompt, dayAt, pageCount, pagesOf, type Day } from "../book001";
 import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDone, progressOf } from "../chain";
 
 const book = book001;
@@ -49,9 +50,9 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
       <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
-      <ol className="bk-flow" aria-label="How it works">
+      {d.learn.flow && <ol className="bk-flow" aria-label="How it works">
         {d.learn.flow.map((s, i, a) => <li key={s} className="t-label"><span className="bk-step-pill">{s}</span>{i < a.length - 1 && <ArrowRight size={14} aria-hidden />}</li>)}
-      </ol>
+      </ol>}
       <div className="bk-remember">
         <h2 className="t-label">{t("Remember", "Ghi nhớ")}</h2>
         <ul>{d.learn.remember.map((t) => <li key={t} className="t-content"><Check size={18} aria-hidden /><span><Rich text={t} /></span></li>)}</ul>
@@ -139,13 +140,14 @@ function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
     <>
       <p className="bk-meta t-label"><span className="bk-kicker">{t("Practice", "Thực hành")}</span><span>{t(`About ${d.practice.minutes} minutes`, `Khoảng ${d.practice.minutes} phút`)}</span></p>
       <h2 className="t-page">{d.practice.title ?? "Try it yourself"}</h2>
-      {d.practice.risk && <p className="t-note">{t("Read-only. Crypto is risky and this is not investment advice.", "Chỉ đọc dữ liệu. Crypto có rủi ro và đây không phải lời khuyên đầu tư.")}</p>}
+      {d.practice.riskText && <p className="bk-risk t-note" role="note"><strong>{t("Risk:", "Cảnh báo rủi ro:")}</strong> {d.practice.riskText}</p>}
       <ol className="bk-steps">
-        {d.practice.steps.map((s) => (
+        {d.practice.steps.map((s, i, all) => (
           <li key={s.title}>
             <h3 className="t-header">{s.title}</h3>
             <p className="t-content"><Rich text={s.text} /></p>
             {s.prompt && <PromptBox text={s.prompt} />}
+            {i === all.length - 1 && <ResultLines check={d.practice.check} ifNot={d.practice.ifNot} />}
           </li>
         ))}
         <li>{record}</li>
@@ -224,20 +226,23 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
     addEventListener("keydown", on); return () => removeEventListener("keydown", on);
   });
   const touch = useRef<{ x: number; y: number } | null>(null);
+  const tocRef = useRef<HTMLDialogElement>(null);
+  const titles = usePageTitles();
 
   const record = (p: number, text?: string, bits?: bigint) => (
     <RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
       rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} />
   );
-  // Page 1 can't be recorded before Developer Mode (page 2), so pages 1 and 2 are recorded together on page 2.
-  const deferred = isDone(0) ? record(0) : <>
-    <p className="t-content">{t("Recorded with pages 3–4, after Developer Mode.", "Ghi nhận cùng trang 3–4, sau Developer Mode.")}</p>
-    <div><button className="btn btn-primary t-button" onClick={() => nav(1)}>{t("Next: gas and Developer Mode", "Tiếp: gas và Developer Mode")}</button></div>
+  // Chapters 1-2 can't be recorded before Developer Mode (chapter 3), so chapters 1-3 are recorded together on pages 5–6.
+  const deferred = (p: number) => isDone(p) ? record(p) : <>
+    <p className="t-content">{t("Recorded together with chapter 3, on pages 5–6.", "Ghi nhận cùng chương 3, ở trang 5–6.")}</p>
+    <div><button className="btn btn-primary t-button" onClick={() => nav(p + 1)}>{t("Next", "Tiếp")}</button></div>
   </>;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
-    if (p === 0) return which === "learn" ? <SetupId total={P} /> : <SetupAgent record={deferred} />;
-    if (p === 1) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(1, undefined, 0b11n)} />;
-    const dd = localDay(book.days[p - SETUP_PAGES], lang);
+    if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
+    if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
+    const dd = localDay(dayAt(book, p)!, lang);
+    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={deferred(0)} />;
     return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
   };
 
@@ -283,7 +288,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           <ArrowLeft size={16} /> <span className="bk-hide-sm">{t("Previous", "Trước")}</span>
         </button>
         <div className="bk-days">
-          <a className="btn btn-ghost t-button bk-contents" href="/library" aria-label={t("Contents", "Mục lục")}><List size={16} /> <span className="bk-hide-sm">{t("Contents", "Mục lục")}</span></a>
+          <button className="btn btn-ghost t-button bk-contents" onClick={() => tocRef.current?.showModal()} aria-label={t("Contents", "Mục lục")}><List size={16} /> <span className="bk-hide-sm">{t("Contents", "Mục lục")}</span></button>
           <ol aria-label={t(`${P} pages`, `${P} trang`)}>
             {[...Array(P)].map((_, p) => (
               <li key={p}><button aria-label={`${t("Pages", "Trang")} ${pagesOf(p)}${isDone(p) ? t(", recorded", ", đã ghi nhận") : ""}`} aria-current={p === target ? "step" : undefined}
@@ -296,6 +301,21 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           <span className={spreadMode ? "bk-hide-sm" : ""}>{t("Next", "Tiếp")}</span> <ArrowRight size={16} />
         </button>
       </footer>
+      <dialog ref={tocRef} className="dialog toc" onClick={(e) => { if (e.target === e.currentTarget) e.currentTarget.close(); }}>
+        <div className="dialog-head flex items-center justify-between gap-4">
+          <h2 className="t-header">{t("Contents", "Mục lục")}</h2>
+          <button className="btn btn-ghost" aria-label={t("Close", "Đóng")} onClick={() => tocRef.current?.close()} style={{ padding: 0, width: "var(--ds-control-height)" }}><X size={20} /></button>
+        </div>
+        <ol className="dialog-body contents">
+          {titles.map((name, i) => (
+            <li key={i}><button className="contents-row link-btn" onClick={() => { tocRef.current?.close(); nav(i); }} aria-current={i === target ? "page" : undefined}>
+              <span className="t-data contents-no">{pagesOf(i)}</span>
+              <span className="t-content contents-title">{name}</span>
+              {isDone(i) && <span className="chip chip-done t-label"><Check size={14} aria-hidden /> {t("Done", "Đã học")}</span>}
+            </button></li>
+          ))}
+        </ol>
+      </dialog>
     </div>
   );
 }

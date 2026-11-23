@@ -15,13 +15,13 @@ export const useLang = () => useContext(Ctx);
 /** t("English", "Tiếng Việt") */
 export const useT = () => { const { lang } = useLang(); return (en: string, vi: string) => (lang === "vi" ? vi : en); };
 
-/** VI/EN switch copied from 0xhieu.xyz (.language-switch): white pill, black sliding knob. */
+/** EN/VI switch: page-colored pill, EN left, VI right; chosen = black with white text, other = muted. */
 export function LangSwitch() {
   const { lang, setLang } = useLang();
   return (
-    <button className="language-switch" type="button" role="switch" aria-checked={lang === "en"} aria-label="English"
+    <button className="language-switch" type="button" role="switch" aria-checked={lang === "vi"} aria-label="Tiếng Việt"
       onClick={() => setLang(lang === "en" ? "vi" : "en")}>
-      <span className="language-option--vi" aria-hidden>VI</span><span className="language-option--en" aria-hidden>EN</span>
+      <span className="language-option--en" aria-hidden>EN</span><span className="language-option--vi" aria-hidden>VI</span>
     </button>
   );
 }

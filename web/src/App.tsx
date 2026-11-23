@@ -3,7 +3,7 @@ import type { Address } from "viem";
 import Entrance from "./views/Entrance";
 import Library from "./views/Library";
 import Reader from "./views/Reader";
-import Certificate from "./views/Certificate";
+import Certificate, { CertificateList } from "./views/Certificate";
 import { isAddr } from "./chain";
 
 const KEY = "academy.wallet";
@@ -54,6 +54,9 @@ export default function App() {
   const [page, a, b, c] = route;
   if (page === "library") return <Library wallet={wallet} setWallet={setWallet} />;
   if (page === "book") return <Reader day={Number(b ?? 0)} side={c === "practice" ? "practice" : "learn"} wallet={wallet} setWallet={setWallet} />;
-  if (page === "certificate") return <Certificate wallet={a && isAddr(a) ? (a as Address) : wallet} setWallet={setWallet} shared={!!a} />;
+  if (page === "certificate") {
+    const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/1/0x… (or old /certificate/0x…)
+    return addr ? <Certificate wallet={addr as Address} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
+  }
   return <Entrance wallet={wallet} />;
 }
