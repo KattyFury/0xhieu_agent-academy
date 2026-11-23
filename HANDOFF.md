@@ -18,8 +18,13 @@ Spec: `docs/spec-v1.2.md` (owner). Previous build (v1.1, 7-day course contract, 
 - `completeChapters(900, 1)` tx `0xb7b97532946a1ef87e6cfa8db5c713bb2f096d6c817ac71f6a8c45aa0ae8a3cb`: status 1, 78,149 gas, fee 0.0000057 BNB. `progressOf` = (1, 1, true).
 - §12 answers: risk engine does not block a new contract; Agent ID holder = Agentic Wallet address; the wallet needs BNB for gas (~0.000006 BNB per record at 0.05 gwei).
 
+## Site (live, deployed from this repo 2026-11-23)
+- https://academy.0xhieu.xyz — Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` with `CLOUDFLARE_API_TOKEN` from `~/.claude/secrets.env`. SPA fallback in `wrangler.toml`; Worker secrets (RELAYER_KEY, TG_*) and KV `GAS` already on the Worker.
+- Routes: `/` landing (yellow tile → Library, black tile → Certificate), `/library` (contents, New/Done per page from a pasted address), `/book/1/<page>` (page 0 = Get ready), `/certificate[/0x…]`. Old `#/…` links redirect. `?lang=vi`, `?qa=<state>` for screenshots.
+- Book 1 now = 8 pages (Get ready + 7 lessons) from v1.1 content; every page has a record button sending the cumulative mask. Book 1 is NOT created on-chain yet, so pages say "Recording opens when this book is published".
+- Owner said: no wallet address in the navbar.
+
 ## Next (spec §9)
-5. Web: port the v1.1 React site into `web/` (Library home + book reader with TOC), new contract + `completeChapters` calldata, EN/VI.
 6. Write page 1 + following pages from the official skill docs (`SKILL.md` + `references/`), not from memory.
 7. A second person with a real Agent ID runs the full flow.
 8. Freeze content → `createBook(1, chapterCount)`.
