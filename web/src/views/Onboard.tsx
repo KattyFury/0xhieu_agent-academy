@@ -1,4 +1,4 @@
-// Book #1 chapters 2-3 (setup spreads with inputs). Owner's v2, ELI12. Sources: Binance Agentic Wallet Install page,
+// Book #1 setup pages (sign-in, gas + Developer Mode; spreads with inputs). Owner's v2, ELI12. Sources: Binance Agentic Wallet Install page,
 // skill docs (authentication.md, preflight.md, external-sign.md, agent-id-claim-status.md).
 import { useState, type ReactNode } from "react";
 import type { Address } from "viem";
@@ -35,7 +35,7 @@ export function ResultLines({ check, ifNot }: { check?: string; ifNot?: string }
   );
 }
 
-/** Chapter 2, left: steps 1-4, each with its own command or prompt (one guide, top to bottom). */
+/** Pages 3-4, left: steps 1-4, each with its own command or prompt (one guide, top to bottom). */
 export function SetupAccount({ total: _total }: { total: number }) {
   const t = useT();
   const [path, setPath] = useState<Path>("own");
@@ -53,7 +53,7 @@ export function SetupAccount({ total: _total }: { total: number }) {
         <li><p className="t-content">{t("Pick your AI.", "Chọn AI.")}</p>
           <div className="setup-cards">
             {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
-            {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the app. Credits may cost real money.", "Trong app. Credit có thể tốn tiền thật."))}
+            {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the app. 250K tokens a week by default.", "Trong app. Mặc định 250K token mỗi tuần."))}
           </div></li>
         <li><p className="t-content">{t("Create an ", "Tạo ")}<strong>MPC Wallet</strong>{t(" (keyless Web3 wallet) in the Binance app.", " (ví Web3 keyless) trong app Binance.")}</p></li>
         {path === "own"
@@ -65,7 +65,7 @@ export function SetupAccount({ total: _total }: { total: number }) {
   );
 }
 
-/** Chapter 2, right: steps 5-9, sign in, Agent ID, check. */
+/** Pages 3-4, right: steps 5-9, sign in, Agent ID, check. */
 export function SetupAgent({ record }: { record: ReactNode }) {
   const t = useT();
   return (
@@ -75,7 +75,8 @@ export function SetupAgent({ record }: { record: ReactNode }) {
         <li><p className="t-content">{t("Tell your AI:", "Nói với AI:")}</p><Box text={t("Sign in to Binance Agentic Wallet", "Đăng nhập Binance Agentic Wallet")} /><p className="t-content">{t("Open its link, or scan its QR with the app.", "Mở link nó đưa, hoặc quét QR bằng app.")}</p></li>
         <li><p className="t-content">{t("Check the ", "Xem ")}<strong>{t("6-character code", "mã 6 ký tự")}</strong>{t(" matches the AI's. New-IP warning that isn't you? ", " giống mã của AI. Cảnh báo IP mới không phải bạn? ")}<strong>{t("Don't confirm.", "Đừng xác nhận.")}</strong></p></li>
         <li><p className="t-content">{t("Accept ", "Đồng ý ")}<strong>Secure Auto Sign</strong>{t(", tick the 3 boxes, tap Continue.", ", tick 3 ô, bấm Tiếp tục.")}</p></li>
-        <li><p className="t-content">{t("Claim your ", "Nhận ")}<strong>Agent ID</strong>{t(": app, Wallet, the Agent ID banner. One per person.", ": app, Ví, banner Agent ID. Mỗi người một tên.")}</p></li>
+        <li><p className="t-content">{t("Claim your ", "Nhận ")}<strong>Agent ID</strong>{t(": app, Wallet, the Agent ID banner. One per person.", ": app, Ví, banner Agent ID. Mỗi người một tên.")}</p>
+          <p className="bk-goal t-content"><strong>{t("Do it now: first come, first served.", "Làm ngay: ai đến trước được trước.")}</strong> {t("Claim your Agent ID and get ", "Nhận Agent ID để có ")}<strong>{t("2.5M free tokens", "2.5M token miễn phí")}</strong>{t(" for Binance AI Pro. The default is only 250K a week. We don't know when this ends.", " dùng Binance AI Pro. Mặc định chỉ 250K mỗi tuần. Chưa biết khi nào kết thúc.")}</p></li>
         <li><p className="t-content">{t("Check it. Ask your AI:", "Kiểm tra. Hỏi AI:")}</p><Box text={t(CONNECTED, "Dùng Binance Agentic Wallet: kiểm tra ví của tôi đã kết nối chưa và giải thích trong một câu điều đó nghĩa là gì. Chỉ đọc dữ liệu. KHÔNG gửi, ký hay xác nhận giao dịch nào.")} />
           <ResultLines check={t("The wallet is connected.", "Ví đã kết nối.")} ifNot={t("Sign in again. Read any error word for word.", "Đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} /></li>
       </ol>
@@ -85,7 +86,7 @@ export function SetupAgent({ record }: { record: ReactNode }) {
   );
 }
 
-/** Chapter 4, left: gas, plus the one-time free gas. */
+/** Pages 5-6, left: gas, plus the one-time free gas. */
 export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null; setWallet: (a: Address | null) => void; total: number }) {
   const t = useT();
   const [v, setV] = useState(wallet ?? "");
@@ -129,7 +130,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
   );
 }
 
-/** Chapter 4, right: Developer Mode, check it, then save chapters 1-4. */
+/** Pages 5-6, right: Developer Mode, check it, then save pages 1-6. */
 export function SetupDevMode({ record }: { record: ReactNode }) {
   const t = useT();
   return (

@@ -1,6 +1,6 @@
-// Book reader (spec v1.2): page 0 = Get ready, page n = lesson n; one open-book spread per page, page turns.
-// Every page is one on-chain chapter (bit = page index); its record button sends the cumulative mask.
-// QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
+// Book reader: one open-book spread = 2 pages (theory left, practice right). 9 lessons + an ending = 20 pages.
+// Saves at pages 6, 12 and 18 send a cumulative mask (SAVE_STEPS in chain.ts); the last one issues the certificate.
+// QA: every state has a URL, e.g. /book/1/2?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
 import { Activity, ArrowLeft, ArrowRight, AtSign, Award, Bot, Check, CircleHelp, Clock, Coins, Copy, CreditCard, Eye, EyeOff, FileCheck, Flag, Fuel, Gauge, Hand, History, Hourglass, Infinity, KeyRound, Landmark, Layers, Link, List, ListChecks, Loader2, Lock, LockOpen, LogOut, MessageSquareWarning, Network, Percent, PiggyBank, Receipt, Scale, Search, Share2, ShieldCheck, SlidersHorizontal, Smartphone, TriangleAlert, User, Wallet, X, Zap } from "lucide-react";
@@ -11,12 +11,13 @@ import { ResultLines, SetupAccount, SetupAgent, SetupDevMode, SetupGas } from ".
 import { useLang, useT } from "../i18n";
 import { book001Vi, localDay } from "../book001.vi";
 import { book001, completionPrompt, dayAt, pageCount, pagesOf, type Day, type IconKey } from "../book001";
-import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDone, progressOf } from "../chain";
+import { ACADEMY, BSCSCAN, SAVE_STEPS, chapterCount, client, completeCalldata, progressOf, savedPages } from "../chain";
 
 const book = book001;
-const P = pageCount(book); // pages = chapters (2 Get ready pages + lessons)
-const SAVE_AT = [3, 6, 9, 12]; // spreads that end with "Save your progress": chapters 4 (needs Developer Mode, set up in chapter 4), 7, 10, 13
-const END = P; // ending spread after the last chapter: not a chapter, nothing is recorded
+const P = pageCount(book); // lesson spreads (2 pages each); the ending is one more
+const SAVES: Record<number, (typeof SAVE_STEPS)[number]> = Object.fromEntries(SAVE_STEPS.map((s) => [s.pages / 2 - 1, s])); // spread index -> save (pages 6, 12, 18)
+const SAVE_AT = Object.keys(SAVES).map(Number);
+const END = P; // ending spread: nothing is recorded
 const LAST = END;
 const PAGES = 2 * (P + 1);
 const WATCH_MS = 10 * 60 * 1000;
@@ -52,9 +53,9 @@ const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span class
 function EndPage() {
   const t = useT();
   const pts: [IconKey, string][] = [
-    ["flag", t("That was the **last chapter**. Well done!", "Đó là **chương cuối**. Bạn giỏi lắm!")],
-    ["list", t(`Your last save, at the end of chapter ${P}, covers **every chapter**.`, `Lần lưu cuối, ở cuối chương ${P}, lưu **mọi chương**.`)],
-    ["award", t(`All ${P} saved = your **certificate** is issued on-chain, by itself.`, `Lưu đủ ${P} chương = **chứng chỉ** tự được cấp on-chain.`)],
+    ["flag", t("That was the **last page**. Well done!", "Đó là **trang cuối**. Bạn giỏi lắm!")],
+    ["list", t(`Your last save, at page ${2 * P}, covers **every page**.`, `Lần lưu cuối, ở trang ${2 * P}, lưu **mọi trang**.`)],
+    ["award", t(`All ${SAVE_STEPS.length} saves done = your **certificate** is issued on-chain, by itself.`, `Lưu đủ ${SAVE_STEPS.length} lần = **chứng chỉ** tự được cấp on-chain.`)],
   ];
   return (
     <>
@@ -67,16 +68,16 @@ function EndPage() {
 /** Ending spread, right: progress toward the certificate. */
 function EndCertificate({ done }: { done: number }) {
   const t = useT();
-  const all = done === P;
+  const all = done === 2 * P;
   return (
     <>
       <h2 className="t-page">{t("Your certificate", "Chứng chỉ của bạn")}</h2>
-      <p className="t-lead">{t(`${done} of ${P} chapters saved.`, `Đã lưu ${done}/${P} chương.`)}</p>
+      <p className="t-lead">{t(`${done} of ${2 * P} pages saved.`, `Đã lưu ${done}/${2 * P} trang.`)}</p>
       <p className="t-lead">{all
         ? t("All done! Your certificate is ready. Anyone can check it with your wallet address.", "Xong hết! Chứng chỉ đã sẵn sàng. Ai cũng kiểm tra được bằng địa chỉ ví của bạn.")
-        : t(`Not ${P} yet? Go back to chapter ${P} and save your progress. It saves every chapter at once.`, `Chưa đủ ${P}? Quay lại chương ${P} và lưu tiến độ. Lần lưu đó lưu mọi chương cùng lúc.`)}</p>
+        : t(`Not ${2 * P} yet? Go back to page ${2 * P} and save your progress. It saves every page at once.`, `Chưa đủ ${2 * P}? Quay lại trang ${2 * P} và lưu tiến độ. Lần lưu đó lưu mọi trang cùng lúc.`)}</p>
       <div className="actions">
-        {!all && <a className="btn btn-primary t-button" href={`/book/1/${P - 1}/practice`}>{t(`Go to chapter ${P}`, `Tới chương ${P}`)}</a>}
+        {!all && <a className="btn btn-primary t-button" href={`/book/1/${P - 1}/practice`}>{t(`Go to page ${2 * P}`, `Tới trang ${2 * P}`)}</a>}
         <a className={`btn ${all ? "btn-primary" : "btn-ghost"} t-button`} href="/certificate">{t("See your certificate", "Xem chứng chỉ")}</a>
       </div>
     </>
@@ -153,13 +154,13 @@ function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash
 }
 
 /** "Record this page": the learner's own agent sends completeChapters(book, mask | this page). */
-/** End of a chapter, apart from the practice: mark it done on-chain. That is the proof you finished it; every chapter done = certificate. */
+/** Save point: records your progress on-chain. All saves done = certificate. */
 function Finish({ upTo, children }: { upTo: number; children: ReactNode }) {
   const t = useT();
   return (
     <><span className="bk-push" aria-hidden />
     <section className="bk-finish">
-      <h3 className="t-header"><Flag size={18} aria-hidden /> {t(`Save your progress: chapters 1–${upTo}`, `Lưu tiến độ: chương 1–${upTo}`)}</h3>
+      <h3 className="t-header"><Flag size={18} aria-hidden /> {t(`Save your progress: pages 1–${upTo}`, `Lưu tiến độ: trang 1–${upTo}`)}</h3>
       {children}
     </section></>
   );
@@ -177,7 +178,7 @@ function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone,
       {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
         <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>{t("confirm", "xác nhận")}</b>.</>}</p>
         <div className="bk-record">
-          {!wallet ? <a className="btn btn-primary t-button" href="/book/1/3">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
+          {!wallet ? <a className="btn btn-primary t-button" href="/book/1/2">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
             : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}
           {wallet && allDone && <a className="btn btn-primary t-button" href="/certificate">{t("View certificate", "Xem chứng chỉ")}</a>}
           {wallet && <div className="bk-statusbox"><RecordStatus done={done} rec={rec} setHash={setHash} /></div>}
@@ -227,8 +228,9 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const rec: Rec = (q === "copied" && { phase: "copied", since: Date.now() }) || (q === "submitted" && { phase: "submitted", hash: ("0x" + "a".repeat(64)) as Hash, since: Date.now() })
     || (q === "failed" && { phase: "failed", hash: ("0x" + "b".repeat(64)) as Hash }) || (q === "timeout" && { phase: "timeout" }) || recs[target] || { phase: "idle" };
   const setRec = (p: number, r: Rec) => setRecs((m) => ({ ...m, [p]: r }));
-  const isDone = (p: number) => q === "confirmed" || bitDone(mask, p);
-  const count = [...Array(P)].filter((_, i) => isDone(i)).length;
+  const saved = q === "confirmed" ? 2 * P : savedPages(mask);
+  const isDone = (p: number) => saved >= Math.min(2 * (p + 1), 2 * P);
+  const count = saved;
   const watching = !q && (rec.phase === "copied" || rec.phase === "submitted");
   const { loadMask } = chain;
   useEffect(() => {
@@ -282,17 +284,16 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const tocRef = useRef<HTMLDialogElement>(null);
   const titles = usePageTitles();
 
-  // One sign per 3 chapters: progress is saved after chapters 3, 6, 9 and 13 (spread indexes below).
-  // Each save marks every chapter up to that point, so a missed save is caught by the next one.
+  // Saves at pages 6, 12 and 18. Each marks every page up to that point, so a missed save is caught by the next one.
   const record = (p: number, text?: string) => {
-    const bits = (1n << BigInt(p + 1)) - 1n;
-    return <Finish upTo={p + 1}><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={(mask & bits) === bits} published={published} allDone={count === P}
+    const bits = SAVES[p].bits;
+    return <Finish upTo={SAVES[p].pages}><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={(mask & bits) === bits} published={published} allDone={count === 2 * P}
       rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} /></Finish>;
   };
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
     if (p === END) return which === "learn" ? <EndPage /> : <EndCertificate done={count} />;
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={null} />;
-    if (p === 3) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(3)} />;
+    if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2)} />;
     const dd = localDay(dayAt(book, p)!, lang);
     if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={null} />;
     return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={SAVE_AT.includes(p) ? record(p, dd.practice.recordText) : null} />;

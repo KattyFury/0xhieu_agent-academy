@@ -4,11 +4,11 @@ import { book001Vi, localDay } from "../book001.vi";
 import { useLang, useT } from "../i18n";
 import { Cover, Nav } from "./Shell";
 
-/** Chapter titles of book #1 in reading order (chapters 2-3 are the setup spreads). */
+/** Page titles of book #1 in reading order (spreads 1-2 are the setup pages). */
 export function usePageTitles() {
   const t = useT();
   const { lang } = useLang();
-  const setup: Record<number, string> = { 1: t("From zero to signed in", "Từ số 0 đến đăng nhập"), 3: t("Gas and Developer Mode", "Gas và Developer Mode") };
+  const setup: Record<number, string> = { 1: t("From zero to signed in", "Từ số 0 đến đăng nhập"), 2: t("Gas and Developer Mode", "Gas và Developer Mode") };
   return [...Array(pageCount(book001)).keys()].map((p) => setup[p] ?? localDay(dayAt(book001, p)!, lang).title);
 }
 

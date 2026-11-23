@@ -40,9 +40,12 @@ export async function certificate(addr: Address, bookId: number): Promise<{ ok: 
   return { ok, issuedAt: Number(issuedAt) };
 }
 
-export const done = (mask: bigint, chapter: number) => (mask >> BigInt(chapter)) & 1n ? true : false;
+/** The contract counts 13 units; learners only see pages. A save at page N sets the units below, so the last save (page 18) sets all 13 and issues the certificate. */
+export const SAVE_STEPS = [{ pages: 6, bits: 15n }, { pages: 12, bits: 255n }, { pages: 18, bits: 8191n }] as const;
+/** Pages saved so far (0, 6, 12 or 18), from the on-chain mask. */
+export const savedPages = (mask: bigint) => SAVE_STEPS.reduce((n, s) => ((mask & s.bits) === s.bits ? s.pages : n), 0);
 
-/** Cumulative mask: everything already recorded plus this chapter. */
+/** Cumulative mask: everything already recorded plus this save. */
 export const completeCalldata = (bookId: number, mask: bigint) =>
   encodeFunctionData({ abi: academyAbi, functionName: "completeChapters", args: [BigInt(bookId), mask] });
 
