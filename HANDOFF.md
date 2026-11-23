@@ -14,19 +14,21 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 
 ## Live
 - **AgentAcademy `0x66Ae47EAE1aacFd70148808AE63a5B4A5e882753`** (BSC, verified). Owner 0xhieu.ai `0xe0a34AC1da06423e1e67345828bd629dFAbd4Ca2`. Test book 900 (1 chapter) exists.
-- **Book 1 is NOT created on-chain yet.** Record buttons say "Recording opens when this book is published". `createBook(1, 13)` was blocked by the Claude Code permission classifier on 2026-11-23; owner must say "publish book 1 with 13 chapters" and approve the prompt. Irreversible: chapter count can never change.
+- **Book 1 published 2026-11-23:** `createBook(1, 13)` tx `0xa2972462c4b82bf08349d5f8074bd1554081bf43bda523f320eeb00c1dc03251` (block 135278421). 13 chapters, permanent. Text can change; chapter count cannot.
+- Rehearsal first: test book 901 (13 chapters, hidden) tx `0xffb9a6a7…183d`; the site's own record prompt run as written by 0xhieu.ai recorded chapters 1-3 (`completeChapters(901, 7)` tx `0xeff075a6…1514`, 54,767 gas); `progressOf` = mask 7, count 3, not certified.
 - Day-0 test passed (spec §9.4): `completeChapters(900, 1)` tx `0xb7b97532946a1ef87e6cfa8db5c713bb2f096d6c817ac71f6a8c45aa0ae8a3cb`, 78,149 gas, 0.0000057 BNB. Risk engine doesn't block the new contract; Agent ID holder = Agentic Wallet address.
 - Site https://academy.0xhieu.xyz — Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` with `CLOUDFLARE_API_TOKEN` from `~/.claude/secrets.env`. Worker secrets (RELAYER_KEY, TG_*) and KV `GAS` are on the Worker.
 - Routes: `/` landing (yellow tile → Library, black → Certificate), `/library`, `/book/1/<spread 0-12>[/practice]`, `/certificate` (cards), `/certificate/1/0x…` (full certificate, share link). Old `#/…` links redirect. `?qa=<state>` for screenshots.
 
 ## Book #1 content (owner v2, ELI12, live)
+- After chapter 13: an ending spread (pages 27-28, not a chapter): book finished + certificate progress. Chapters 1-2 show nothing about recording; from chapter 3 each chapter ends with "Mark this chapter done".
 - Order: 1 What is an Agentic Wallet (quiz) · 2 From zero to signed in · 3 Gas and Developer Mode · 4 Addresses · 5 Balances · 6 Networks, history and gas · 7 Rules · 8 Approvals · 9 Pending and locked · 10 Quotes (risk note) · 11 DeFi preview (risk note) · 12 Agent ID · 13 Staying safe.
 - Files: `web/src/book001.ts` (EN, `day` = chapter number) + `book001.vi.ts`; chapters 2-3 (inputs) in `web/src/views/Onboard.tsx`. Chapters 1-3 are recorded together on pages 5-6 (mask bits 0-2), since recording needs Developer Mode. Practice pages show "Right result / If not".
 - Sources: Binance Agentic Wallet Introduction + Install pages, skill v1.15.0, real read-only `baw` runs. `approvals list --binanceChainId` is in the docs but rejected by `baw` 1.12.0. `wallet chains` on the owner's wallet = 7 networks.
 - Fit (2026-11-23): a page never scrolls. `Page` in `Reader.tsx` steps `data-fit1..4` (spacing, then text down to 13px) until it fits; phones show one page = one screen. Measured 0 overflow at 1920/1536/1440/1366/1280 desktop and 412/393/375/360 phones, EN + VI; ds-check 0 issues. If new text overflows even at fit4, shorten the text. Export for editing: `npx tsx web/scripts/export-book.ts <out.md>` (setup chapters 2-3 not included).
 
 ## Next
-1. Owner: publish book 1 (`createBook(1, 13)`), then a second person with a real Agent ID runs the full flow (spec §9.7).
+1. A second person with a real Agent ID runs the full flow on book 1 (spec §9.7).
 2. Optional: make 1366 fit with 0 overflow (trim chapters 1, 2, 7, 13 text or prompts).
 3. Submission (deadline 2026-12-09 08:00 UTC): ≥30 Agent ID holders recording; README already lists owner powers and the free-gas rules.
 
