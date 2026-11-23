@@ -3,7 +3,7 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Bot, Check, Copy, CreditCard, Flag, KeyRound, List, Loader2, Lock, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Award, Bot, Check, Copy, CreditCard, Flag, KeyRound, List, ListChecks, Loader2, Lock, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { usePageTitles } from "./Library";
@@ -15,7 +15,9 @@ import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDo
 
 const book = book001;
 const P = pageCount(book); // pages = chapters (2 Get ready pages + lessons)
-const LAST = P - 1;
+const END = P; // ending spread after the last chapter: not a chapter, nothing is recorded
+const LAST = END;
+const PAGES = 2 * (P + 1);
 const WATCH_MS = 10 * 60 * 1000;
 const FLIP_MS = 600;
 const qa = () => new URLSearchParams(location.search).get("qa") ?? "";
@@ -42,8 +44,37 @@ function useChain(wallet: Address | null) {
 // ---------- page contents ----------
 /** Lesson copy marks key terms with **…**; they render ink 600 inside grey body text. */
 const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((t, i) => i % 2 ? <strong key={i}>{t}</strong> : t)}</>;
-const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut } as const;
+const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut, flag: Flag, list: ListChecks, award: Award } as const;
 const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span className="bk-icon" aria-hidden><C size={20} /></span>; };
+
+/** Ending spread, left: the book is over and how the certificate comes. */
+function EndPage() {
+  const t = useT();
+  const pts: [IconKey, string][] = [
+    ["flag", t("That was the **last chapter** of this book.", "Đó là **chương cuối** của cuốn sách.")],
+    ["list", t(`Mark **all ${P} chapters** done to finish the course.`, `Đánh dấu xong **đủ ${P} chương** để hoàn thành khoá học.`)],
+    ["award", t("Then your **certificate** is issued on-chain, by itself.", "Khi đó **chứng chỉ** tự được cấp on-chain.")],
+  ];
+  return (
+    <>
+      <h1 className="t-page">{t("You finished the book", "Bạn đã đọc xong sách")}</h1>
+      <ul className="bk-points">{pts.map(([k, s]) => <li key={k}><Icon k={k} /><p className="t-lead"><Rich text={s} /></p></li>)}</ul>
+    </>
+  );
+}
+
+/** Ending spread, right: progress toward the certificate. */
+function EndCertificate({ done }: { done: number }) {
+  const t = useT();
+  return (
+    <>
+      <h2 className="t-page">{t("Your certificate", "Chứng chỉ của bạn")}</h2>
+      <p className="t-lead">{t(`${done} of ${P} chapters marked done.`, `Đã đánh dấu xong ${done}/${P} chương.`)}</p>
+      <p className="t-lead">{t("Missed one? Go back and mark it done. Anyone can check your certificate with your wallet address.", "Còn sót chương? Quay lại đánh dấu xong. Ai cũng kiểm tra được chứng chỉ bằng địa chỉ ví của bạn.")}</p>
+      <div><a className="btn btn-primary t-button" href="/certificate">{t("See your certificate", "Xem chứng chỉ")}</a></div>
+    </>
+  );
+}
 
 function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: React.Ref<HTMLHeadingElement> }) {
   const t = useT();
@@ -251,6 +282,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   // Chapters 1-2 come before the wallet and gas, so they say nothing about recording; chapter 3 records 1-3.
   const deferred = (p: number) => isDone(p) ? record(p) : null;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
+    if (p === END) return which === "learn" ? <EndPage /> : <EndCertificate done={count} />;
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
     if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;
     const dd = localDay(dayAt(book, p)!, lang);
@@ -270,7 +302,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
 
       <main className="bk-stage">
         {spreadMode ? (
-          <article ref={bookRef} className="bk-book" aria-label={t(`Pages ${pagesOf(shown)} of ${2 * P}`, `Trang ${pagesOf(shown)}/${2 * P}`)} inert={!!turning}>
+          <article ref={bookRef} className="bk-book" aria-label={t(`Pages ${pagesOf(shown)} of ${PAGES}`, `Trang ${pagesOf(shown)}/${PAGES}`)} inert={!!turning}>
             {turning ? (
               <>
                 <Page side="left" folio={2 * (turning.dir === "fwd" ? turning.from : turning.to) + 1}>{page(turning.dir === "fwd" ? turning.from : turning.to, "learn", false)}</Page>
@@ -305,13 +337,13 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
         </button>
         <div className="bk-days">
           <button className="btn btn-ghost t-button bk-contents" onClick={() => tocRef.current?.showModal()} aria-label={t("Contents", "Mục lục")}><List size={16} /> <span className="bk-hide-sm">{t("Contents", "Mục lục")}</span></button>
-          <ol aria-label={t(`${P} pages`, `${P} trang`)}>
-            {[...Array(P)].map((_, p) => (
+          <ol aria-label={t(`${P + 1} pages`, `${P + 1} trang`)}>
+            {[...Array(P + 1)].map((_, p) => (
               <li key={p}><button aria-label={`${t("Pages", "Trang")} ${pagesOf(p)}${isDone(p) ? t(", recorded", ", đã ghi nhận") : ""}`} aria-current={p === target ? "step" : undefined}
                 className={`bk-dotbtn ${isDone(p) ? "done" : ""} ${p === target ? "on" : ""}`} onClick={() => nav(p)} /></li>
             ))}
           </ol>
-          <span className="t-label">{spreadMode ? t(`Pages ${pagesOf(target)} of ${2 * P}`, `Trang ${pagesOf(target)}/${2 * P}`) : t(`Page ${2 * target + (side === "learn" ? 1 : 2)} of ${2 * P}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}/${2 * P}`)}</span>
+          <span className="t-label">{spreadMode ? t(`Pages ${pagesOf(target)} of ${PAGES}`, `Trang ${pagesOf(target)}/${PAGES}`) : t(`Page ${2 * target + (side === "learn" ? 1 : 2)} of ${PAGES}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}/${PAGES}`)}</span>
         </div>
         <button className="btn btn-ghost t-button" onClick={() => stepPage(1)} disabled={target === LAST && (spreadMode || side === "practice")} aria-label={t("Next", "Tiếp")}>
           <span className={spreadMode ? "bk-hide-sm" : ""}>{t("Next", "Tiếp")}</span> <ArrowRight size={16} />
@@ -323,7 +355,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           <button className="btn btn-ghost" aria-label={t("Close", "Đóng")} onClick={() => tocRef.current?.close()} style={{ padding: 0, width: "var(--ds-control-height)" }}><X size={20} /></button>
         </div>
         <ol className="dialog-body contents">
-          {titles.map((name, i) => (
+          {[...titles, t("The end", "Kết thúc")].map((name, i) => (
             <li key={i}><button className="contents-row link-btn" onClick={() => { tocRef.current?.close(); nav(i); }} aria-current={i === target ? "page" : undefined}>
               <span className="t-data contents-no">{pagesOf(i)}</span>
               <span className="t-content contents-title">{name}</span>

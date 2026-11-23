@@ -4,7 +4,7 @@
 // Chapters 2-3 (setup, with inputs) live in views/Onboard.tsx; every other chapter is a `Day` below (`day` = chapter number).
 
 /** Icon names for lesson points and steps; mapped to Lucide icons in Reader.tsx. */
-export type IconKey = "bot" | "card" | "shield" | "key" | "zap" | "sliders" | "logout";
+export type IconKey = "bot" | "card" | "shield" | "key" | "zap" | "sliders" | "logout" | "flag" | "list" | "award";
 export type Point = { icon: IconKey; text: string };
 export type Step = { title: string; text: string; prompt?: string; icon?: IconKey };
 export type Day = {
