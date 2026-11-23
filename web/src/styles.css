@@ -312,3 +312,5 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-days .bk-contents { height: 40px; padding: 0 var(--ds-space-16); }
 .door-cover .cover-frame > .t-label:last-child { display: none; }
 .shelf-book { align-items: flex-start; }
+.bk-goal { padding: var(--ds-space-8) var(--ds-space-12); border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-tile); color: var(--ds-color-grey); }
+.bk-goal strong { color: var(--ds-color-ink); font-weight: 600; }

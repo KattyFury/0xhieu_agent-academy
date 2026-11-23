@@ -11,7 +11,7 @@ import { AddressForm, Cover, Footer, Nav } from "./Shell";
 export function usePageTitles() {
   const t = useT();
   const { lang } = useLang();
-  return [t("Get ready", "Chuẩn bị"), ...book001.days.map((d) => localDay(d, lang).title)];
+  return [t("Get ready: your Agent ID and agent", "Chuẩn bị: Agent ID và agent"), t("Get ready: gas and Developer Mode", "Chuẩn bị: gas và Developer Mode"), ...book001.days.map((d) => localDay(d, lang).title)];
 }
 
 /** Library: every book with its contents; each page shows New or Done for the saved wallet address. */

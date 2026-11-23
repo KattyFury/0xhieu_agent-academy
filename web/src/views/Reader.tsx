@@ -6,15 +6,15 @@ import type { Address, Hash } from "viem";
 import { ArrowLeft, ArrowRight, Check, Copy, List, Loader2 } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
-import { SetupAgent, SetupGas } from "./Onboard";
+import { SetupAgent, SetupDevMode, SetupGas, SetupId } from "./Onboard";
 import { useLang, useT } from "../i18n";
 import { book001Vi, localDay } from "../book001.vi";
-import { book001, completionPrompt, pageCount, type Day } from "../book001";
+import { SETUP_PAGES, book001, completionPrompt, pageCount, type Day } from "../book001";
 import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDone, progressOf } from "../chain";
 
 const book = book001;
-const N = book.days.length; // lessons
-const P = pageCount(book); // pages = chapters (Get ready + lessons)
+const P = pageCount(book); // pages = chapters (2 Get ready pages + lessons)
+const LAST = P - 1;
 const WATCH_MS = 10 * 60 * 1000;
 const FLIP_MS = 600;
 const qa = () => new URLSearchParams(location.search).get("qa") ?? "";
@@ -41,12 +41,13 @@ function useChain(wallet: Address | null) {
 // ---------- page contents ----------
 /** Lesson copy marks key terms with **…**; they render ink 600 inside grey body text. */
 const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((t, i) => i % 2 ? <strong key={i}>{t}</strong> : t)}</>;
-function LearnPage({ d, titleRef }: { d: Day; titleRef?: React.Ref<HTMLHeadingElement> }) {
+function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: React.Ref<HTMLHeadingElement> }) {
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span><span>{t(`Page ${d.day + 1} of ${P}`, `Trang ${d.day + 1}/${P}`)}</span></p>
+      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span><span>{t(`Page ${page + 1} of ${P}`, `Trang ${page + 1}/${P}`)}</span></p>
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
+      <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
       <ol className="bk-flow" aria-label="How it works">
         {d.learn.flow.map((s, i, a) => <li key={s} className="t-label"><span className="bk-step-pill">{s}</span>{i < a.length - 1 && <ArrowRight size={14} aria-hidden />}</li>)}
@@ -110,11 +111,11 @@ function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash
 }
 
 /** "Record this page": the learner's own agent sends completeChapters(book, mask | this page). */
-function RecordBlock({ page, text, wallet, mask, done, published, allDone, rec, onCopy, setHash }: {
-  page: number; text?: string; wallet: Address | null; mask: bigint; done: boolean; published: boolean | null; allDone: boolean; rec: Rec; onCopy: () => void; setHash: (h: Hash) => void;
+function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone, rec, onCopy, setHash }: {
+  page: number; bits?: bigint; text?: string; wallet: Address | null; mask: bigint; done: boolean; published: boolean | null; allDone: boolean; rec: Rec; onCopy: () => void; setHash: (h: Hash) => void;
 }) {
   const t = useT();
-  const next = mask | (1n << BigInt(page));
+  const next = mask | (bits ?? 1n << BigInt(page));
   const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }) : "";
   return (
     <>
@@ -162,7 +163,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const chain = useChain(realWallet);
   const published = q === "unpublished" ? false : q ? true : chain.published;
   const mask = chain.mask;
-  const target = Math.max(0, Math.min(N, Number.isNaN(day) ? 0 : day));
+  const target = Math.max(0, Math.min(LAST, Number.isNaN(day) ? 0 : day));
   const spreadMode = useMedia("(min-width: 1024px) and (min-height: 700px)");
   const reduce = useMedia("(prefers-reduced-motion: reduce)");
 
@@ -205,7 +206,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const turning = qaFlip ?? flip;
 
   const nav = useCallback((p: number, s: "learn" | "practice" = "learn") => {
-    const pp = Math.max(0, Math.min(N, p));
+    const pp = Math.max(0, Math.min(LAST, p));
     go(`/book/${book.id}/${pp}${s === "practice" ? "/practice" : ""}`);
   }, []);
   // Single-page order: page0 left, page0 right, page1 left …
@@ -218,20 +219,26 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
     const on = (e: KeyboardEvent) => {
       const el = e.target as Element | null; if (el instanceof Element && el.closest("input, textarea")) return;
       if (e.key === "ArrowRight") stepPage(1); else if (e.key === "ArrowLeft") stepPage(-1);
-      else if (e.key === "Home") nav(0); else if (e.key === "End") nav(N);
+      else if (e.key === "Home") nav(0); else if (e.key === "End") nav(LAST);
     };
     addEventListener("keydown", on); return () => removeEventListener("keydown", on);
   });
   const touch = useRef<{ x: number; y: number } | null>(null);
 
-  const record = (p: number, text?: string) => (
-    <RecordBlock page={p} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
+  const record = (p: number, text?: string, bits?: bigint) => (
+    <RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
       rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} />
   );
+  // Page 1 can't be recorded before Developer Mode (page 2), so pages 1 and 2 are recorded together on page 2.
+  const deferred = isDone(0) ? record(0) : <>
+    <p className="t-content">{t("You record this page on page 2, with Developer Mode.", "Bạn ghi nhận trang này ở trang 2, cùng Developer Mode.")}</p>
+    <div><button className="btn btn-primary t-button" onClick={() => nav(1)}>{t("Next: gas and Developer Mode", "Tiếp: gas và Developer Mode")}</button></div>
+  </>;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
-    if (p === 0) return which === "learn" ? <SetupAgent /> : <><SetupGas wallet={realWallet} setWallet={setWallet} onReady={() => nav(1)} /><div className="bk-record-block">{record(0)}</div></>;
-    const dd = localDay(book.days[p - 1], lang);
-    return which === "learn" ? <LearnPage d={dd} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
+    if (p === 0) return which === "learn" ? <SetupId total={P} /> : <SetupAgent record={deferred} />;
+    if (p === 1) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(1, undefined, 0b11n)} />;
+    const dd = localDay(book.days[p - SETUP_PAGES], lang);
+    return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={record(p, dd.practice.recordText)} />;
   };
 
   const bookRef = useRef<HTMLElement>(null);
@@ -285,7 +292,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           </ol>
           <span className="t-label">{spreadMode ? t(`Page ${target + 1} of ${P}, ${count} recorded`, `Trang ${target + 1}/${P}, đã ghi ${count}`) : t(`Page ${target + 1}, ${side === "learn" ? "1/2" : "2/2"}`, `Trang ${target + 1}, ${side === "learn" ? "1/2" : "2/2"}`)}</span>
         </div>
-        <button className="btn btn-ghost t-button" onClick={() => stepPage(1)} disabled={target === N && (spreadMode || side === "practice")} aria-label={t("Next", "Tiếp")}>
+        <button className="btn btn-ghost t-button" onClick={() => stepPage(1)} disabled={target === LAST && (spreadMode || side === "practice")} aria-label={t("Next", "Tiếp")}>
           <span className={spreadMode ? "bk-hide-sm" : ""}>{t("Next", "Tiếp")}</span> <ArrowRight size={16} />
         </button>
       </footer>
@@ -304,7 +311,6 @@ function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"
       <div className="bk-body" ref={body} onScroll={check}>{children}
         {more && <p className="bk-more t-label" aria-hidden>{t("More below", "Còn tiếp bên dưới")}</p>}
       </div>
-      <span className="bk-folio t-label">{folio}</span>
     </section>
   );
 }

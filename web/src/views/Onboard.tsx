@@ -1,3 +1,5 @@
+// Book 1, pages 1-2 ("Get ready"), written from the official skill docs (authentication.md, preflight.md,
+// external-sign.md, agent-id-claim-status.md) and the Day-0 test (record fee measured 2026-11-23).
 import { useState, type ReactNode } from "react";
 import type { Address } from "viem";
 import { Bot, Check, Copy, Loader2, Smartphone } from "lucide-react";
@@ -17,8 +19,30 @@ export function CopyBtn({ text, label }: { text: string; label?: string }) {
   );
 }
 
-/** Book 001, "Get ready" spread, left page: Agent ID + an AI that uses the wallet. */
-export function SetupAgent() {
+const Meta = ({ left, right }: { left: string; right: string }) => <p className="bk-meta t-label"><span className="bk-kicker">{left}</span><span>{right}</span></p>;
+const Goal = ({ children }: { children: ReactNode }) => <p className="bk-goal t-content">{children}</p>;
+
+/** Page 1, left: Binance account, Agentic Wallet, Agent ID. */
+export function SetupId({ total }: { total: number }) {
+  const t = useT();
+  return (
+    <>
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Page 1 of ${total}`, `Trang 1/${total}`)} />
+      <h1 className="t-page">{t("Your Agent ID", "Agent ID của bạn")}</h1>
+      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a Binance account, an Agentic Wallet and your Agent ID.", "Có tài khoản Binance, Agentic Wallet và Agent ID.")}</Goal>
+      <p className="t-lead">{t("This book runs on ", "Sách này học trên ")}<strong>Binance Agentic Wallet</strong>{t(": a wallet your AI agent can use, with rules you set in the Binance app.", ": một ví mà AI agent của bạn dùng được, với quy tắc do bạn đặt trong app Binance.")}</p>
+      <ol className="bk-steps">
+        <li><p className="t-content">{t("Create a Binance account, then create your Agentic Wallet in the Binance app.", "Tạo tài khoản Binance, rồi tạo Agentic Wallet trong app Binance.")}</p></li>
+        <li><p className="t-content">{t("Claim your Agent ID: Binance app, ", "Nhận Agent ID: app Binance, ")}<strong>{t("Wallet, then the Agent ID banner", "Ví, rồi banner Agent ID")}</strong>{t(" on the home screen. One per user, free apart from the BNB network fee.", " ở màn hình chính. Mỗi người một tên, miễn phí ngoài phí mạng BNB.")}</p></li>
+        <li><p className="t-content">{t("Your Agent ID is your ", "Agent ID là ")}<strong>{t(".ai name", "tên .ai")}</strong>{t(", like you.ai. Only Agent ID holders can record pages and earn the certificate.", " của bạn, ví dụ you.ai. Chỉ người có Agent ID mới ghi nhận trang và nhận chứng chỉ được.")}</p></li>
+      </ol>
+      <p className="t-note">{t("Never share your recovery phrase or pairing code. Not here, not with anyone.", "Không bao giờ chia sẻ cụm từ khôi phục hay mã ghép nối. Không ở đây, không với ai.")}</p>
+    </>
+  );
+}
+
+/** Page 1, right: pick an AI, install the skill, sign in with the pairing code. */
+export function SetupAgent({ record }: { record: ReactNode }) {
   const t = useT();
   const [path, setPath] = useState<Path>("own");
   const card = (p: Path, icon: ReactNode, title: string, tag: string | null, line: string) => (
@@ -29,30 +53,29 @@ export function SetupAgent() {
   );
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Get ready", "Chuẩn bị")}</span><span>{t("Step 1 of 2", "Bước 1/2")}</span></p>
-      <h1 className="t-page">{t("Your agent", "Agent của bạn")}</h1>
-      <p className="t-lead">{t("This book runs on ", "Sách này học trên ")}<strong>Binance Agentic Wallet</strong>{t(". Pick the AI that uses it for you:", ". Chọn AI dùng ví thay bạn:")}</p>
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t("About 10 minutes", "Khoảng 10 phút")} />
+      <h2 className="t-page">{t("Your agent", "Agent của bạn")}</h2>
       <div className="setup-cards">
-        {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex or Gemini CLI on your computer.", "Claude Code, Codex hoặc Gemini CLI trên máy tính."))}
-        {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("Built into the Binance app. Free credits run out fast.", "Có sẵn trong app Binance. Credit miễn phí hết nhanh."))}
+        {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex, Gemini CLI. Node.js 18+.", "Claude Code, Codex, Gemini CLI. Node.js 18+."))}
+        {card("aipro", <Smartphone size={16} />, "Binance AI Pro", null, t("In the Binance app. Free credits run out fast.", "Trong app Binance. Credit miễn phí hết nhanh."))}
       </div>
       <ol className="bk-steps">
-        <li><p className="t-content">{t("Get an Agent ID in the Binance app: Wallet, then the Agent ID banner.", "Lấy Agent ID trong app Binance: Ví, rồi banner Agent ID.")}</p></li>
         {path === "own" ? <>
           <li><p className="t-content">{t("Paste this in your computer's terminal:", "Dán lệnh này vào terminal trên máy tính:")}</p>
             <div className="bk-prompt bk-prompt-row"><p className="t-data">{INSTALL}</p><CopyBtn text={INSTALL} /></div></li>
-          <li><p className="t-content">{t("Tell your AI ", "Nói với AI ")}<strong>“Sign in to Binance Agentic Wallet”</strong>{t(" and scan its QR code with the Binance app.", " và quét mã QR bằng app Binance.")}</p></li>
+          <li><p className="t-content">{t("Tell your AI ", "Nói với AI ")}<strong>“Sign in to Binance Agentic Wallet”</strong>{t(". It shows a 6-character pairing code. Check the same code in the Binance app, then confirm.", ". Nó hiện một mã ghép nối 6 ký tự. Kiểm tra đúng mã đó trong app Binance rồi xác nhận.")}</p></li>
         </> : <>
           <li><p className="t-content">{t("Open the AI tab in the Binance app.", "Mở tab AI trong app Binance.")}</p></li>
           <li><p className="t-content">{t("Ask ", "Hỏi ")}<strong>“Is my Agentic Wallet connected?”</strong></p></li>
         </>}
       </ol>
+      <div className="bk-record-block">{record}</div>
     </>
   );
 }
 
-/** Right page: link the wallet address and get free gas for recording lessons. */
-export function SetupGas({ wallet, setWallet, onReady }: { wallet: Address | null; setWallet: (a: Address | null) => void; onReady: () => void }) {
+/** Page 2, left: free gas for recording. */
+export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null; setWallet: (a: Address | null) => void; total: number }) {
   const t = useT();
   const [v, setV] = useState(wallet ?? "");
   const [busy, setBusy] = useState(false);
@@ -71,30 +94,45 @@ export function SetupGas({ wallet, setWallet, onReady }: { wallet: Address | nul
     setBusy(false);
   };
   const msg: Record<string, ReactNode> = {
-    sent: <>{t("Sent ", "Đã gửi ")}<strong>{res?.amount} BNB</strong>{t(" to your wallet. You're ready. ", " vào ví của bạn. Bạn đã sẵn sàng. ")}{res?.txHash && <a className="link" href={`${BSCSCAN}/tx/${res.txHash}`} target="_blank" rel="noreferrer">{t("See it on BscScan", "Xem trên BscScan")}</a>}</>,
-    already: <>{t("This wallet already got its free gas. You're ready.", "Ví này đã nhận gas miễn phí rồi. Bạn đã sẵn sàng.")}</>,
-    enough: <>{t("Your wallet already has ", "Ví của bạn đã có ")}<strong>{res?.balance} BNB</strong>{t(", enough for every lesson. You're ready.", ", đủ cho mọi bài học. Bạn đã sẵn sàng.")}</>,
-    cap: <>{t("Today's free gas is gone. Come back after 00:00 UTC. You can still read the lessons now.", "Gas miễn phí hôm nay đã hết. Quay lại sau 00:00 UTC. Bạn vẫn đọc bài được ngay.")}</>,
-    out: <>{t("Free gas is out for now. You can still read the lessons now.", "Gas miễn phí tạm hết. Bạn vẫn đọc bài được ngay.")}</>,
+    sent: <>{t("Sent ", "Đã gửi ")}<strong>{res?.amount} BNB</strong>{t(" to your wallet. ", " vào ví của bạn. ")}{res?.txHash && <a className="link" href={`${BSCSCAN}/tx/${res.txHash}`} target="_blank" rel="noreferrer">{t("See it on BscScan", "Xem trên BscScan")}</a>}</>,
+    already: <>{t("This wallet already got its free gas.", "Ví này đã nhận gas miễn phí rồi.")}</>,
+    enough: <>{t("Your wallet already has ", "Ví của bạn đã có ")}<strong>{res?.balance} BNB</strong>{t(", enough for every page.", ", đủ cho mọi trang.")}</>,
+    cap: <>{t("Today's free gas is gone. Come back after 00:00 UTC.", "Gas miễn phí hôm nay đã hết. Quay lại sau 00:00 UTC.")}</>,
+    out: <>{t("Free gas is out for now.", "Gas miễn phí tạm hết.")}</>,
   };
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Get ready", "Chuẩn bị")}</span><span>{t("Step 2 of 2", "Bước 2/2")}</span></p>
-      <h2 className="t-page">{t("Free gas", "Gas miễn phí")}</h2>
-      <p className="t-note">{t("Never share your recovery phrase or login codes. Not here, not with anyone.", "Không bao giờ chia sẻ cụm từ khôi phục hay mã đăng nhập. Không ở đây, không với ai.")}</p>
-      {res ? <>
-        <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p>
-        <div><button className="btn btn-primary t-button" onClick={onReady}>{t("Start lesson 1", "Bắt đầu bài 1")}</button></div>
-      </> : <>
-        <p className="t-lead"><strong>{t("Give us your wallet address and we'll send you some gas.", "Đưa địa chỉ ví, chúng tôi gửi bạn một ít gas.")}</strong>{t(" Gas is the tiny fee for saving each lesson.", " Gas là khoản phí nhỏ để lưu mỗi bài học.")}</p>
-        <p className="t-secondary">{t("Ask your AI “What's my wallet address?”. It starts with 0x and is safe to share.", "Hỏi AI “What's my wallet address?”. Địa chỉ bắt đầu bằng 0x và chia sẻ được an toàn.")}</p>
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t(`Page 2 of ${total}`, `Trang 2/${total}`)} />
+      <h1 className="t-page">{t("Gas", "Gas")}</h1>
+      <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have a little BNB so your agent can record pages.", "Có một ít BNB để agent ghi nhận trang.")}</Goal>
+      <p className="t-lead">{t("Each record is a small transaction on BNB Smart Chain, paid in BNB. On Nov 23 one record cost about ", "Mỗi lần ghi nhận là một giao dịch nhỏ trên BNB Smart Chain, trả bằng BNB. Ngày 23/11 một lần ghi tốn khoảng ")}<strong>0.000006 BNB</strong>.</p>
+      {res ? <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p> : <>
+        <p className="t-secondary">{t("Agent ID holders can get free gas once. Ask your AI “What's my wallet address?” (starts with 0x, safe to share) and paste it here.", "Người có Agent ID được nhận gas miễn phí một lần. Hỏi AI “What's my wallet address?” (bắt đầu bằng 0x, chia sẻ an toàn) rồi dán vào đây.")}</p>
         <input className="input t-input" aria-label={t("Wallet address", "Địa chỉ ví")} value={v} onChange={(e) => { setV(e.target.value); setErr(""); }} onKeyDown={(e) => { if (e.key === "Enter") send(); }} placeholder="0x…" spellCheck={false} autoComplete="off" />
         {err && <p className="t-note" role="alert" style={{ color: "var(--ds-color-red-text)" }}>{err}</p>}
         <div className="actions">
           <button className="btn btn-primary t-button" onClick={send} disabled={busy}>{busy && <Loader2 size={16} className="animate-spin" />} {t("Send me gas", "Gửi gas cho tôi")}</button>
-          <button className="btn btn-ghost t-button" onClick={() => { if (isAddr(v.trim())) setWallet(v.trim() as Address); onReady(); }}>{t("Skip, I have BNB", "Bỏ qua, tôi có BNB")}</button>
+          <button className="btn btn-ghost t-button" onClick={() => { if (isAddr(v.trim())) setWallet(v.trim() as Address); }}>{t("I have BNB, just save", "Tôi có BNB, chỉ lưu")}</button>
         </div>
       </>}
+    </>
+  );
+}
+
+/** Page 2, right: Developer Mode (needed to record), then record pages 1 and 2. */
+export function SetupDevMode({ record }: { record: ReactNode }) {
+  const t = useT();
+  return (
+    <>
+      <Meta left={t("Get ready", "Chuẩn bị")} right={t("About 3 minutes", "Khoảng 3 phút")} />
+      <h2 className="t-page">Developer Mode</h2>
+      <p className="t-content">{t("Recording a page calls the Agent Academy contract. Your agent can only call a contract when ", "Ghi nhận trang là gọi hợp đồng Agent Academy. Agent chỉ gọi được hợp đồng khi ")}<strong>{t("Developer Mode is on", "Developer Mode đang bật")}</strong>.</p>
+      <ol className="bk-steps">
+        <li><p className="t-content">{t("Binance app: Agentic Wallet page, Settings (top right), ", "App Binance: trang Agentic Wallet, Cài đặt (góc trên phải), ")}<strong>Developer Mode</strong>.</p></li>
+        <li><p className="t-content">{t("Read the risk warning, confirm, then approve the request in the app.", "Đọc cảnh báo rủi ro, xác nhận, rồi duyệt yêu cầu trong app.")}</p></li>
+        <li><p className="t-content">{t("It lasts ", "Có hiệu lực ")}<strong>{t("7 days", "7 ngày")}</strong>{t("; each successful use extends it. The app refuses if your total balance is over the Developer Mode cap.", "; mỗi lần dùng thành công được gia hạn. App từ chối nếu tổng số dư vượt giới hạn của Developer Mode.")}</p></li>
+      </ol>
+      <div className="bk-record-block">{record}</div>
     </>
   );
 }

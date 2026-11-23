@@ -1,10 +1,11 @@
-// Book 1 content (en). Page 0 = Get ready (Onboard.tsx); page n = lesson n, one two-page spread each. Every page = one on-chain chapter (bit = page index). Facts checked 2026-11-23 against `baw` skill docs and real `baw` runs.
+// Book 1 content (en), written from the official binance-agentic-wallet skill docs (v1.15.0) and checked with real read-only baw runs on 2026-11-23. Pages 0-1 = Get ready (Onboard.tsx); page n = lesson n-1, one two-page spread each. Every page = one on-chain chapter (bit = page index).
 // Budget per spread (must fit 1440×900): Learn = 3 short paragraphs + flow + 3 points; Practice = 1–2 steps + record.
 
 export type Step = { title: string; text: string; prompt?: string };
 export type Day = {
-  day: number;
+  day: number; // lesson number (page index = day + 1; pages 0-1 are Get ready)
   title: string;
+  goal: string;
   learn: { paragraphs: string[]; flow: string[]; remember: string[] };
   practice: { minutes: number; title?: string; risk?: boolean; steps: Step[]; recordText?: string };
 };
@@ -19,146 +20,234 @@ export const book001: Book = {
   days: [
     {
       day: 1,
-      title: "Meet your Agentic Wallet",
+      title: "Your wallet and its addresses",
+      goal: "Check that your agent is connected and find your wallet addresses.",
       learn: {
         paragraphs: [
-          "An **Agentic Wallet** is a separate wallet your AI agent can use for you. Ask in plain words, and it checks balances, gets quotes and prepares transactions.",
-          "**You set the limits.** Daily limits, Developer Mode and safety rules live in the Binance app, and the wallet's key never leaves Binance.",
-          "Your **Agent ID** is your .ai name, like you.ai. It is the name linked to this wallet.",
+          "Your agent talks to the wallet through a tool called **baw**. Before anything else it can check the **status**: connected or not.",
+          "One **EVM address** is shared by BNB Smart Chain, Ethereum, Base, Arbitrum, Polygon and Robinhood Chain. **Solana** has its own, different address.",
+          "Your address is public, like a bank account number. It is **safe to share**. Your recovery phrase and login codes are not.",
         ],
-        flow: ["You ask", "Agent prepares", "Preview", "Rules check", "Wallet signs"],
-        remember: ["Your agent acts within your wallet's rules.", "Set limits and safety in the Binance app.", "Know what your agent may do before it acts."],
+        flow: ["Check status", "Read addresses", "Compare networks"],
+        remember: ["One EVM address, plus one for Solana.", "An address is safe to share.", "Codes and phrases never are."],
       },
       practice: {
-        minutes: 5,
-        title: "Prepare your wallet",
+        minutes: 3,
+        title: "Find your addresses",
         steps: [
-          { title: "Turn on Developer Mode", text: "Binance app: Agentic Wallet, Settings. Needed to **record lessons**; lasts 7 days, and each use adds time." },
-          { title: "Meet your wallet", text: "Paste this into Claude Code, Codex or Binance AI Pro.", prompt: `Using Binance Agentic Wallet, tell me: is my wallet connected, my BNB Smart Chain address, my Agent ID (.ai name), and is Developer Mode on (until when)? ${RO}` },
+          { title: "Ask your agent", text: "Paste this into your agent, then compare with the Binance app.", prompt: `Using Binance Agentic Wallet: check if my wallet is connected, then show my wallet address for every network and tell me which networks share the same address. ${RO}` },
         ],
-        recordText: "A small on-chain record of your progress, **not a trade**. Type confirm only if the preview matches.",
       },
     },
     {
       day: 2,
-      title: "One wallet, many networks",
+      title: "Your balances",
+      goal: "Read what your wallet holds, network by network.",
       learn: {
         paragraphs: [
-          "One **EVM address** works on 6 networks: BNB Smart Chain, Ethereum, Base, Arbitrum, Polygon and Robinhood Chain. **Solana** has its own address.",
-          "Each network keeps **its own balance**. USDT on Base can't pay for anything on BNB Smart Chain, so always check the network first.",
-          "**Gas** is the fee the network charges to process a transaction. Low, medium or high: higher is faster and costs more. On BNB Smart Chain it's paid in BNB.",
+          "Your agent lists each token with its **network**, amount, price and **USD value**. Each network keeps **its own balance**.",
+          "Tokens with a zero balance are never shown. Tokens worth less than **$0.01**, or with no price yet, are hidden unless you ask for them.",
+          "USDT on Base cannot pay for anything on BNB Smart Chain. That is why you **check the network** before you act.",
         ],
-        flow: ["Pick network", "Check balance", "Check gas", "Then act"],
-        remember: ["One EVM address, plus one for Solana.", "Balances are per network.", "Right network first, then act."],
+        flow: ["Pick a network", "Read balances", "Check USD value"],
+        remember: ["Balances are per network.", "Tiny tokens are hidden by default.", "Right network first, then act."],
       },
       practice: {
-        minutes: 5,
-        title: "Map your wallet",
+        minutes: 3,
+        title: "Read your balances",
         steps: [
-          { title: "Ask your agent", text: "Paste this, then compare with the Binance app.", prompt: `Using Binance Agentic Wallet: show my EVM and Solana addresses, which networks have a balance (with USD value), my 3 most recent transactions, and the BNB Smart Chain gas price at all 3 levels. Then explain in one line why balances on different networks can't be spent as one. ${RO}` },
+          { title: "Ask your agent", text: "Paste this. It only reads.", prompt: `Using Binance Agentic Wallet: show my token balances on BNB Smart Chain with amount and USD value, and explain why some very small tokens might not be listed. ${RO}` },
         ],
       },
     },
     {
       day: 3,
-      title: "How your agent helps you trade",
+      title: "Networks and history",
+      goal: "See which networks your wallet uses and what it did before.",
       learn: {
         paragraphs: [
-          "A **quote** is an estimate, not a promise. Example from Nov 23: 0.001 BNB for about 0.56 USDT. The price can move before the swap runs.",
-          "**Slippage** is the most the price may move against you before the swap fails. Auto is the default. **Price impact** is the move your own trade causes, bigger in small pools.",
-          "A **limit order** waits until the price reaches your level, then trades. It works on BNB Smart Chain and Solana.",
+          "Your wallet supports **7 networks** today: BNB Smart Chain, Ethereum, Base, Arbitrum, Polygon, Robinhood Chain and Solana. Your agent can list them.",
+          "The **history** shows each transaction with its network, time, status and **network fee**. By default it covers the last 3 months.",
+          "A transaction is **pending** until the network confirms it, then **confirmed**. History is how you check what your agent really did.",
         ],
-        flow: ["Get a quote", "Read amounts", "Check slippage", "Decide"],
-        remember: ["A quote is an estimate.", "Slippage is the move you accept.", "Limit orders wait for your price."],
+        flow: ["List networks", "Read history", "Check fees"],
+        remember: ["History shows what your agent did.", "Pending is not done yet.", "Every transaction pays a network fee."],
       },
       practice: {
-        minutes: 5,
-        title: "Read a quote, don't trade",
-        risk: true,
+        minutes: 3,
+        title: "Check your history",
         steps: [
-          { title: "Ask for a quote", text: "Paste this. It only asks for a price.", prompt: `Using Binance Agentic Wallet: get a quote to swap 0.001 BNB to USDT on BNB Smart Chain. Show the amount in, the estimated amount out and the slippage as a percent, and explain why the amount out is not guaranteed. Then list my open limit orders. ${RO} Quote only, no swap.` },
+          { title: "Ask your agent", text: "Paste this, then open one transaction on BscScan.", prompt: `Using Binance Agentic Wallet: list the networks my wallet supports, then show my 5 most recent confirmed transactions on BNB Smart Chain with time, type and network fee. ${RO}` },
         ],
       },
     },
     {
       day: 4,
-      title: "Exploring DeFi",
+      title: "Gas, the network fee",
+      goal: "Understand gas before your agent ever sends anything.",
       learn: {
         paragraphs: [
-          "DeFi apps are smart contracts. Earn pays you for a deposit; a Liquidity Pool uses your tokens for trading. **TVL** is the money inside; **APY** is the yearly yield.",
-          "Made-up example: App A holds $100M at 5%. App B holds $500K at 3,000%. Neither proves safety, but ask B harder questions: **where does that yield come from?**",
-          "**Risks:** contract bugs, hard exits, falling prices and yield that stops. An app's APY is its best pool, and it changes often.",
+          "**Gas** is the fee a network charges to process a transaction. On BNB Smart Chain it is paid in **BNB**.",
+          "Your agent can show three levels: **low, medium and high**. Higher is faster and costs more. Medium is the default. Example from Nov 23: about 0.09, 0.11 and 0.31 gwei.",
+          "A gas price is a **snapshot**, not the final fee. The real fee is set when a transaction is built and confirmed.",
         ],
-        flow: ["List apps", "Read TVL and APY", "Ask why", "You decide"],
-        remember: ["High APY is not free money.", "TVL shows size, not safety.", "Depositing is your call."],
+        flow: ["Read levels", "Compare wait times", "Expect change"],
+        remember: ["Gas is paid in BNB on BNB Smart Chain.", "Medium is the default level.", "A gas price is not the final fee."],
       },
       practice: {
-        minutes: 5,
-        title: "Compare 2 apps",
-        risk: true,
+        minutes: 3,
+        title: "Read the gas price",
         steps: [
-          { title: "Ask your agent", text: "Paste this. It only looks things up.", prompt: `Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. Compare the highest-APY one with the largest-TVL one: TVL, APY, the token rewards are paid in, and the main risks. Do not tell me which is best. ${RO} Do not deposit.` },
+          { title: "Ask your agent", text: "Paste this. It only reads.", prompt: `Using Binance Agentic Wallet: show the current gas price on BNB Smart Chain at all 3 levels with their wait times, and explain why this is not the final fee of a transaction. ${RO}` },
         ],
       },
     },
     {
       day: 5,
-      title: "Read the market, don't follow it",
+      title: "Your wallet's rules",
+      goal: "Read the limits and safety rules your agent must follow.",
       learn: {
         paragraphs: [
-          "**Leaderboard:** who made money. **Signals:** what a strategy says and how it did before. **Tracker:** what big wallets buy.",
-          "Nov 23: the week's #1 trader on BNB Smart Chain made about $35,000, **all from one token**. Skill, or one lucky bet?",
-          "**Ask:** how many trades? How much from one token? A few wins prove little, a backtest is the past, and a big wallet buying doesn't mean the price will rise.",
-        ],
-        flow: ["Who won", "How", "How often", "What's missing"],
-        remember: ["Data shows the past, not the future.", "Profit from one token is a warning sign.", "Verify before you act."],
-      },
-      practice: {
-        minutes: 5,
-        title: "Question a top trader",
-        risk: true,
-        steps: [
-          { title: "Ask your agent", text: "Paste this and read what the data can't tell you.", prompt: `Using Binance Agentic Wallet: show the top 3 traders on the 7-day leaderboard on BNB Smart Chain (profit, win rate, number of trades, top earning tokens). Pick one and tell me how much of their profit came from a single token. Then answer: would you copy this trader based on this data alone? What data is missing? ${RO}` },
-        ],
-      },
-    },
-    {
-      day: 6,
-      title: "The wallet's limits",
-      learn: {
-        paragraphs: [
-          "Example: your daily limit is $100 and your agent has used $40. **$60 is left**, even if you hold $1,000. Your agent can't raise it to $200. **Only you can**, in the Binance app.",
-          "DeFi, prediction markets, x402 payments and Developer Mode each have **their own limit**. They reset at **00:00 UTC**.",
-          "Your sign-in ends after a set time or a stretch without use. Developer Mode lasts 7 days, and each use extends it. They **expire separately**.",
+          "Your wallet has a **daily limit**, plus separate limits for DeFi, prediction markets, x402 payments and Developer Mode. **Limit left is not your balance.**",
+          "**Abnormal transactions** (high-risk, or abnormal price impact) are rejected automatically or sent to the Binance app for a second OK.",
+          "Your sign-in ends after a set time or a stretch without use. Your agent **reads** the rules; **only you change them**, in the app.",
         ],
         flow: ["You set rules", "Agent reads them", "Agent acts within them"],
         remember: ["Limit left is not your balance.", "Each type has its own limit.", "Only you change the rules."],
       },
       practice: {
-        minutes: 5,
+        minutes: 4,
         title: "Read your rules",
         steps: [
-          { title: "Ask your agent", text: "Paste this, then open Settings in the app and compare.", prompt: `Using Binance Agentic Wallet: read my wallet settings and show a table with each limit type, its daily limit, used today and left today. Then tell me how abnormal transactions are handled, when my session expires, when Developer Mode expires, and which of these settings my agent can change. ${RO}` },
+          { title: "Ask your agent", text: "Paste this, then open Settings in the Binance app and compare.", prompt: `Using Binance Agentic Wallet: read my wallet settings and show a table with each limit type, its daily limit, used today and left today. Then tell me how abnormal transactions are handled and when my session and Developer Mode expire. ${RO}` },
+        ],
+      },
+    },
+    {
+      day: 6,
+      title: "Approvals",
+      goal: "Know which apps may spend your tokens.",
+      learn: {
+        paragraphs: [
+          "An **approval** lets an app (the **spender**) move one of your tokens, up to an amount. It stays active until it is revoked.",
+          "An **unlimited** approval lets the spender move all of that token. Your agent shows each approval's **risk level**, for example when the spender contract is unverified.",
+          "This book only **reads** approvals. Before you ever approve something, check who the spender is and how much it may take.",
+        ],
+        flow: ["List approvals", "Check spender", "Check amount and risk"],
+        remember: ["Approvals stay until revoked.", "Unlimited is a big permission.", "Unknown spender? Stop."],
+      },
+      practice: {
+        minutes: 3,
+        title: "List your approvals",
+        steps: [
+          { title: "Ask your agent", text: "Paste this. It changes nothing.", prompt: `Using Binance Agentic Wallet: list my token approvals with token, spender, amount and risk level. If any is unlimited or high-risk, explain what that permission allows. ${RO} Do not revoke anything.` },
         ],
       },
     },
     {
       day: 7,
-      title: "Staying safe",
+      title: "Pending and locked",
+      goal: "Know why your wallet sometimes cannot send.",
       learn: {
         paragraphs: [
-          "Before any OK, **check 4 things**: where it goes, which token and how much, any approval it grants, and any warning.",
-          "Case: the preview shows a contract you don't know and an unlimited token approval. **Stop. Don't confirm** until you know what that contract is.",
-          "The wallet can auto-reject transactions it flags as high-risk, or ask you again in the app. It **can't catch a normal-looking order** you gave by mistake. **Never share** your recovery phrase, login QR or pairing code.",
+          "Your wallet is **locked** for new transactions on a network while an earlier one is still **pending** there.",
+          "It is also locked when a risk check needs your **second confirmation** in the Binance app. That request waits about 5 minutes.",
+          "When it is **unlocked**, your agent can work normally. Your agent can check this before it starts.",
         ],
-        flow: ["Destination", "Amount", "Approvals", "Warnings"],
-        remember: ["Unknown contract? Stop.", "Unlimited approval is a big permission.", "Never share login codes."],
+        flow: ["Check lock", "Find the reason", "Wait or confirm in the app"],
+        remember: ["Pending locks new transactions.", "Some checks need your OK in the app.", "Unlocked means ready."],
+      },
+      practice: {
+        minutes: 3,
+        title: "Check the lock",
+        steps: [
+          { title: "Ask your agent", text: "Paste this. It only reads.", prompt: `Using Binance Agentic Wallet: check whether my wallet is locked on BNB Smart Chain and list any pending transactions. If it is locked, explain why and what I should do. ${RO}` },
+        ],
+      },
+    },
+    {
+      day: 8,
+      title: "Quotes before trades",
+      goal: "Read a swap quote without trading.",
+      learn: {
+        paragraphs: [
+          "A **quote** shows what you put in and roughly what you get back. It is an **estimate**, not a promise. Example from Nov 23: 0.001 BNB for about 0.56 USDT.",
+          "**Slippage** is the most the price may move against you before the swap fails. The default is auto.",
+          "A submitted swap is **not yet done**: it can still fail on-chain. Only a confirmed transaction counts.",
+        ],
+        flow: ["Get a quote", "Read amounts", "Check slippage", "Decide"],
+        remember: ["A quote is an estimate.", "Slippage is the move you accept.", "Submitted is not executed."],
+      },
+      practice: {
+        minutes: 4,
+        title: "Read a quote, don't trade",
+        risk: true,
+        steps: [
+          { title: "Ask for a quote", text: "Paste this. It only asks for a price.", prompt: `Using Binance Agentic Wallet: get a quote to swap 0.001 BNB to USDT on BNB Smart Chain. Show the amount in, the estimated amount out and the slippage as a percent, and explain why the amount out is not guaranteed. ${RO} Quote only, no swap.` },
+        ],
+      },
+    },
+    {
+      day: 9,
+      title: "DeFi, preview only",
+      goal: "Compare DeFi apps and preview a deposit without sending it.",
+      learn: {
+        paragraphs: [
+          "DeFi apps are smart contracts. **TVL** is the money inside; **APY** is the yearly yield shown (for an app, its best pool). It changes often.",
+          "A **preview** shows a deposit's balance changes, estimated network fee and contract. **Nothing is sent.**",
+          "**High APY is not free money.** Risks: contract bugs, hard exits, falling prices, yield that stops.",
+        ],
+        flow: ["List apps", "Read TVL and APY", "Preview", "You decide"],
+        remember: ["TVL shows size, not safety.", "A preview sends nothing.", "High APY is not free money."],
       },
       practice: {
         minutes: 5,
+        title: "Compare and preview",
+        risk: true,
+        steps: [
+          { title: "Ask your agent", text: "Paste this. It looks things up and previews only.", prompt: `Using Binance Agentic Wallet: list 3 DeFi protocols on BNB Smart Chain with TVL and max APY. If I hold USDT on BNB Smart Chain, preview (do not execute) a deposit of 1 USDT into one Earn product and show the balance changes, estimated network fee and the contract it would interact with. Do not tell me which is best. ${RO} Preview only.` },
+        ],
+      },
+    },
+    {
+      day: 10,
+      title: "Your Agent ID",
+      goal: "Check your .ai name and where it points.",
+      learn: {
+        paragraphs: [
+          "Your **Agent ID** is a **.ai name**, like you.ai, claimed in the Binance app. One per user, free apart from the BNB network fee.",
+          "A name **resolves** to an address. Your .ai name points to your own wallet. Resolve results also say if the address is a normal wallet or a contract.",
+          "Only Agent ID holders can record pages in this book. **Check every resolved address** before you ever send anything to a name.",
+        ],
+        flow: ["Check Agent ID", "Resolve your name", "Match your address"],
+        remember: ["Your .ai name points to your wallet.", "Always check a resolved address.", "Resolve is not send."],
+      },
+      practice: {
+        minutes: 3,
+        title: "Check your name",
+        steps: [
+          { title: "Ask your agent", text: "Paste this. It checks only your own name.", prompt: `Using Binance Agentic Wallet: tell me whether I have claimed an Agent ID and what it is. Then resolve my own .ai name on BNB Smart Chain and check it matches my wallet address. ${RO} Do not send anything.` },
+        ],
+      },
+    },
+    {
+      day: 11,
+      title: "Staying safe",
+      goal: "Check four things before you ever confirm.",
+      learn: {
+        paragraphs: [
+          "Before any OK, **check 4 things**: where it goes, which token and how much, any approval it grants, and any warning in the preview.",
+          "Case: the preview shows a contract you don't know and an unlimited approval. **Stop. Don't confirm** until you know what that contract is.",
+          "Your wallet can reject or re-check high-risk transactions, but it **can't catch a normal-looking mistake**. **Never share** your recovery phrase, login QR or pairing code.",
+        ],
+        flow: ["Destination", "Amount", "Approvals", "Warnings"],
+        remember: ["Unknown contract? Stop.", "Your limits are the safety net.", "Never share login codes."],
+      },
+      practice: {
+        minutes: 4,
         title: "Run a safety check",
         steps: [
-          { title: "Ask your agent", text: "Paste this. It changes nothing.", prompt: `Using Binance Agentic Wallet: list my token approvals (token, spender, amount, risk level), tell me if a transaction is pending or my wallet is locked waiting for a confirm in the Binance app, and summarize my 5 most recent transactions. Explain how an approval, a pending transaction and a locked wallet differ. ${RO} Do not revoke or change anything.` },
+          { title: "Ask your agent", text: "Paste this. It changes nothing.", prompt: `Using Binance Agentic Wallet: run a safety check. Is my wallet connected? Is it locked? Do I have any unlimited or high-risk approvals? When does Developer Mode expire? Answer in 4 short lines. ${RO} Do not revoke or change anything.` },
         ],
         recordText: "When every page of the book is recorded, your certificate is issued in that same transaction.",
       },
@@ -166,8 +255,9 @@ export const book001: Book = {
   ],
 };
 
-/** Pages in the book: Get ready + one per lesson. Each page is one chapter on-chain. */
-export const pageCount = (b: Book) => b.days.length + 1;
+/** Pages in the book: 2 Get ready pages + one per lesson. Each page is one chapter on-chain. */
+export const SETUP_PAGES = 2;
+export const pageCount = (b: Book) => b.days.length + SETUP_PAGES;
 
 /** Record prompt (spec v1.2 §6). The site fills the values; the learner pastes it into their own agent. */
 export function completionPrompt(p: { wallet: string; academy: string; bookId: number; mask: bigint; calldata: string }) {
