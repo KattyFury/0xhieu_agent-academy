@@ -30,7 +30,6 @@ export default function Entrance(_: { wallet: Address | null }) {
                 "Agent Academy là thư viện những cuốn sách ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
             <div className="actions">
               <a className="btn btn-primary t-button" href="/library">{t("Start learning", "Bắt đầu học")}</a>
-              <a className="btn btn-ghost t-button" href="/library">{t("Browse the library", "Xem thư viện")}</a>
             </div>
           </div>
           <a className="tile tile-accent door" href="/library">
