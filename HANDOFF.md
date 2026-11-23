@@ -32,4 +32,3 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 
 ## Notes
 - Foundry on the PC: `~/bin/forge.exe` (1.5.1). `contracts/lib` is not committed; README has the install command. `ETHERSCAN` key in `<code root>\.secrets\keys.env`.
-- StillAlive daily check-in task (personal, `0xhieu\tools\stillalive`) runs Nov 24-29; the Agentic Wallet session expires Nov 25 10:53 (+07), sign in again before Nov 26.
