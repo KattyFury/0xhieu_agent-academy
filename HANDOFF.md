@@ -1,4 +1,4 @@
-# HANDOFF: Agent Academy (2026-11-23)
+# HANDOFF: Agent Academy (2026-11-24)
 
 Spec: `docs/spec-v1.2.md` (owner; §14 = decisions). Rules: `CLAUDE.md`. History: `docs/archive/`.
 
@@ -19,6 +19,10 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - Chapter 2 is one numbered guide (steps 1-4 left, 5-9 right), each step with its own prompt.
 - Recording: one sign per 3 chapters. "Save your progress: chapters 1–N" ends chapters 4, 7, 10, 13 (`SAVE_AT` in Reader.tsx); each save marks every chapter up to N, so a missed save is caught by the next. First save is chapter 4 because it needs Developer Mode. Other chapters show nothing about recording. Certificate is issued by the contract at 13/13.
 - No "Learn / Get ready / Practice" labels above titles. Close X (top right) returns to Library; navbar shows Library active while reading.
+
+## Lesson length (2026-11-24, deployed)
+- Theory pages: max 3 icon points, no "Remember" list. "If not" lines kept only on chapters 10 and 12 (safety). Still 28 pages, 2 per chapter; owner rejected merging theory + practice and dropping the ending spread.
+- Save block ("Save your progress") has a fixed height (button row + 3-line status box) so nothing jumps when the status changes. Keep it that way.
 
 ## Layout rules (measured)
 - A page never scrolls. `Page` in `Reader.tsx` steps `data-fit1..4` (gaps, bottom padding, text down to 13px); **top padding never changes**, so titles sit at the same spot on every page. Phones: one page = one screen.
