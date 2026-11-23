@@ -1,7 +1,7 @@
 // Book #1, Vietnamese display text (owner's v2, ELI12). Same order as book001.days. Prompts stay English.
 import { book001, type Day } from "./book001";
 
-type ViDay = { title: string; goal: string; paragraphs: string[]; remember: string[]; practiceTitle: string; riskText?: string; steps: { title: string; text: string }[]; check?: string; ifNot?: string; recordText?: string };
+type ViDay = { title: string; goal: string; paragraphs: string[]; points?: string[]; remember: string[]; practiceTitle: string; riskText?: string; steps: { title: string; text: string }[]; check?: string; ifNot?: string; recordText?: string };
 
 export const book001Vi = {
   title: "Học Binance Agentic Wallet",
@@ -9,13 +9,15 @@ export const book001Vi = {
     {
       title: "Binance Agentic Wallet là gì?",
       goal: "Hiểu Binance Agentic Wallet làm gì trước khi cài.",
-      paragraphs: [
-        "**Binance Agentic Wallet** là ví để AI làm việc với tiền mã hoá giúp bạn. Bạn nhờ bằng lời thường, ví dụ “xem số dư”, AI sẽ làm.",
-        "Giống **thẻ phụ có hạn mức mỗi ngày**. **Bạn** đặt hạn mức trong app Binance. **AI** chỉ làm trong hạn mức đó. **Hệ thống** chặn, hoặc hỏi lại bạn, nếu AI làm quá.",
-        "AI **không bao giờ cầm chìa khoá** ví. Chìa khoá được chia nhỏ và giữ an toàn (**MPC Keyless**). Bạn đăng xuất là AI hết quyền.",
-        "Khi bật **Secure Auto Sign**, việc nằm trong hạn mức có thể chạy luôn mà không hỏi lại. Vì vậy **hạn mức bạn đặt chính là lưới an toàn**.",
+      paragraphs: [],
+      points: [
+        "Ví để **AI dùng giúp bạn**. Nhờ bằng lời thường, ví dụ “xem số dư”.",
+        "Giống **thẻ phụ có hạn mức mỗi ngày**. **Bạn** đặt hạn mức trong app Binance.",
+        "AI làm quá? **Hệ thống chặn** hoặc hỏi lại bạn.",
+        "AI **không bao giờ cầm chìa khoá** (**MPC Keyless**). Đăng xuất là AI hết quyền.",
+        "**Secure Auto Sign**: việc trong hạn mức chạy luôn, không hỏi lại.",
       ],
-      remember: ["Bạn đặt luật, AI làm trong luật.", "AI không bao giờ cầm chìa khoá.", "Hạn mức là lưới an toàn."],
+      remember: ["Bạn đặt luật.", "AI không bao giờ cầm chìa khoá.", "Hạn mức là lưới an toàn."],
       practiceTitle: "Tự kiểm tra",
       steps: [
         { title: "AI có lấy chìa khoá Binance Agentic Wallet của bạn ra được không?", text: "Không. Chìa khoá không lấy ra được." },
@@ -176,7 +178,7 @@ export function localDay(d: Day, lang: "en" | "vi"): Day {
   const v = book001Vi.days[book001.days.findIndex((x) => x.day === d.day)];
   return {
     ...d, title: v.title, goal: v.goal,
-    learn: { paragraphs: v.paragraphs, remember: v.remember },
+    learn: { paragraphs: v.paragraphs, points: d.learn.points?.map((p, i) => ({ ...p, text: v.points?.[i] ?? p.text })), remember: v.remember },
     practice: { ...d.practice, title: v.practiceTitle, riskText: v.riskText, check: v.check, ifNot: v.ifNot, recordText: v.recordText, steps: d.practice.steps.map((s, i) => ({ ...s, ...v.steps[i] })) },
   };
 }

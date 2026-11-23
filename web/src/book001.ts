@@ -3,12 +3,15 @@
 // 13 chapters = 13 spreads (26 pages). Chapter n = spread n-1 = on-chain bit n-1.
 // Chapters 2-3 (setup, with inputs) live in views/Onboard.tsx; every other chapter is a `Day` below (`day` = chapter number).
 
-export type Step = { title: string; text: string; prompt?: string };
+/** Icon names for lesson points and steps; mapped to Lucide icons in Reader.tsx. */
+export type IconKey = "bot" | "card" | "shield" | "key" | "zap" | "sliders" | "logout";
+export type Point = { icon: IconKey; text: string };
+export type Step = { title: string; text: string; prompt?: string; icon?: IconKey };
 export type Day = {
   day: number; // chapter number (spread index = day - 1)
   title: string;
   goal: string;
-  learn: { paragraphs: string[]; flow?: string[]; remember: string[] };
+  learn: { paragraphs: string[]; points?: Point[]; flow?: string[]; remember: string[] };
   practice: { minutes: number; title?: string; riskText?: string; steps: Step[]; check?: string; ifNot?: string; recordText?: string };
 };
 export type Book = { id: number; number: string; title: string; days: Day[] };
@@ -25,21 +28,23 @@ export const book001: Book = {
       title: "What is Binance Agentic Wallet?",
       goal: "Know what it does before you install it.",
       learn: {
-        paragraphs: [
-          "**Binance Agentic Wallet** is a wallet your AI helper can use for you. You ask in plain words, like “show my balance”, and the AI does it.",
-          "Think of a **spending card with a daily limit**. **You** set the limit in the Binance app. The **AI** only works inside it. The **system** blocks it, or asks you, if the AI goes too far.",
-          "The AI **never holds the wallet's key**. The key is split up and kept safe (**MPC Keyless**). Sign out, and the AI loses access.",
-          "With **Secure Auto Sign** on, actions inside your limits run without asking you. So **your limits are your safety net**.",
+        paragraphs: [],
+        points: [
+          { icon: "bot", text: "A wallet your **AI uses for you**. Ask in plain words, like “show my balance”." },
+          { icon: "card", text: "Like a **spending card with a daily limit**. **You** set it in the Binance app." },
+          { icon: "shield", text: "AI goes too far? The **system blocks it** or asks you." },
+          { icon: "key", text: "The AI **never holds the key** (**MPC Keyless**). Sign out, and it loses access." },
+          { icon: "zap", text: "**Secure Auto Sign**: actions inside your limits run without asking you." },
         ],
-        remember: ["You set the rules; the AI works inside them.", "The AI never holds your key.", "Your limits are your safety net."],
+        remember: ["You set the rules.", "The AI never holds your key.", "Your limits are your safety net."],
       },
       practice: {
         minutes: 2,
         title: "Quick check",
         steps: [
-          { title: "Can the AI take your Binance Agentic Wallet's key out?", text: "No. The key can't be taken out." },
-          { title: "Who can change the daily limit?", text: "Only you, in the Binance app. The AI can only read it." },
-          { title: "What happens if you sign out?", text: "The AI loses access to your Binance Agentic Wallet." },
+          { icon: "key", title: "Can the AI take your Binance Agentic Wallet's key out?", text: "No. The key can't be taken out." },
+          { icon: "sliders", title: "Who can change the daily limit?", text: "Only you, in the Binance app. The AI can only read it." },
+          { icon: "logout", title: "What happens if you sign out?", text: "The AI loses access to your Binance Agentic Wallet." },
         ],
       },
     },

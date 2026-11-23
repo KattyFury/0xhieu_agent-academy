@@ -3,14 +3,14 @@
 // QA: every state has a URL, e.g. /book/1/3?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Address, Hash } from "viem";
-import { ArrowLeft, ArrowRight, Check, CircleCheck, Copy, List, Loader2, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, Check, Copy, CreditCard, KeyRound, List, Loader2, LogOut, ShieldCheck, SlidersHorizontal, X, Zap } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { usePageTitles } from "./Library";
 import { ResultLines, SetupAccount, SetupAgent, SetupDevMode, SetupGas } from "./Onboard";
 import { useLang, useT } from "../i18n";
 import { book001Vi, localDay } from "../book001.vi";
-import { book001, completionPrompt, dayAt, pageCount, pagesOf, type Day } from "../book001";
+import { book001, completionPrompt, dayAt, pageCount, pagesOf, type Day, type IconKey } from "../book001";
 import { ACADEMY, BSCSCAN, chapterCount, client, completeCalldata, done as bitDone, progressOf } from "../chain";
 
 const book = book001;
@@ -42,6 +42,9 @@ function useChain(wallet: Address | null) {
 // ---------- page contents ----------
 /** Lesson copy marks key terms with **…**; they render ink 600 inside grey body text. */
 const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((t, i) => i % 2 ? <strong key={i}>{t}</strong> : t)}</>;
+const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut } as const;
+const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span className="bk-icon" aria-hidden><C size={20} /></span>; };
+
 function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: React.Ref<HTMLHeadingElement> }) {
   const t = useT();
   return (
@@ -50,6 +53,7 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
       <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
+      {d.learn.points && <ul className="bk-points">{d.learn.points.map((p) => <li key={p.text}><Icon k={p.icon} /><p className="t-lead"><Rich text={p.text} /></p></li>)}</ul>}
       {d.learn.flow && <ol className="bk-flow" aria-label="How it works">
         {d.learn.flow.map((s, i, a) => <li key={s} className="t-label"><span className="bk-step-pill">{s}</span>{i < a.length - 1 && <ArrowRight size={14} aria-hidden />}</li>)}
       </ol>}
@@ -143,7 +147,8 @@ function PracticePage({ d, record, note }: { d: Day; record?: ReactNode; note?: 
       {d.practice.riskText && <p className="bk-risk t-note" role="note"><strong>{t("Risk:", "Cảnh báo rủi ro:")}</strong> {d.practice.riskText}</p>}
       <ol className="bk-steps">
         {d.practice.steps.map((s, i, all) => (
-          <li key={s.title}>
+          <li key={s.title} className={s.icon ? "bk-step-icon" : undefined}>
+            {s.icon && <Icon k={s.icon} />}
             <h3 className="t-header">{s.title}</h3>
             <p className="t-content"><Rich text={s.text} /></p>
             {s.prompt && <PromptBox text={s.prompt} />}
@@ -230,13 +235,13 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const tocRef = useRef<HTMLDialogElement>(null);
   const titles = usePageTitles();
 
-  const record = (p: number, text?: string, bits?: bigint) => (
+  // Book not on-chain yet: no record step at all (no placeholder text).
+  const record = (p: number, text?: string, bits?: bigint) => published === false ? null : (
     <RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={isDone(p)} published={published} allDone={count === P}
       rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} />
   );
   // Chapters 1-2 can't be recorded before Developer Mode (chapter 3), so chapters 1-3 are recorded together on pages 5–6.
-  const deferred = (p: number) => isDone(p) ? record(p) :
-    <p className="bk-status bk-recorded t-content"><CircleCheck size={18} aria-hidden /> {t("Recorded with chapter 3 (pages 5–6).", "Ghi nhận cùng chương 3 (trang 5–6).")}</p>;
+  const deferred = (p: number) => isDone(p) ? record(p) : null;
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
     if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={deferred(1)} />;
     if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2, undefined, 0b111n)} />;

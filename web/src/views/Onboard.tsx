@@ -83,7 +83,7 @@ export function SetupAgent({ record }: { record: ReactNode }) {
       <p className="t-content">{t("After steps 3–4, ask:", "Sau bước 3–4, hỏi:")}</p>
       <Box text={CONNECTED} />
       <ResultLines check={t("Your AI says the wallet is connected.", "AI báo ví đã kết nối.")} ifNot={t("Ask it to sign in again. Read any error word for word.", "Nhờ AI đăng nhập lại. Có lỗi thì đọc đúng từng chữ.")} />
-      <div className="bk-record-block">{record}</div>
+      {record && <div className="bk-record-block">{record}</div>}
     </>
   );
 }
@@ -147,7 +147,7 @@ export function SetupDevMode({ record }: { record: ReactNode }) {
         <li><p className="t-content">{t("Check it:", "Kiểm tra:")}</p><Box text={DEVMODE} /></li>
       </ol>
       <ResultLines check={t("Developer Mode is on, with an end date.", "Developer Mode đang bật, có ngày hết hạn.")} />
-      <div className="bk-record-block">{record}</div>
+      {record && <div className="bk-record-block">{record}</div>}
     </>
   );
 }

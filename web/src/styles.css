@@ -361,6 +361,28 @@ h1, h2, h3 { text-wrap: balance; }
   .cert-card > .cert-seal { width: 96px; height: 96px; }
 }
 
+/* ===== Lesson look (owner 2026-11-23): text one step smaller, icon points, more air ===== */
+.bk-body .t-page { font-size: 28px; line-height: 32px; }
+.bk-body .t-lead { font-size: var(--ds-web-body-size); line-height: var(--ds-web-body-line); }
+.bk-body .t-content, .bk-remember li { font-size: 14px; line-height: 20px; }
+.bk-steps .t-header { font-size: 16px; line-height: 22px; }
+.bk-points { display: flex; flex-direction: column; gap: var(--ds-space-24); }
+.bk-points li { display: flex; align-items: center; gap: var(--ds-space-16); }
+.bk-icon { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ds-bento-tile); color: var(--ds-color-ink); }
+.bk-steps > li.bk-step-icon::before { display: none; }
+.bk-step-icon > .bk-icon { position: absolute; left: 0; top: -8px; }
+@media (max-width: 640px) {
+  .bk-body .t-page { font-size: 20px; line-height: 26px; }
+  .bk-body .t-lead, .bk-steps .t-header { font-size: 14px; line-height: 20px; letter-spacing: -0.006em; }
+  .bk-body .t-content, .bk-remember li { font-size: 13px; line-height: 18px; letter-spacing: -0.006em; }
+  .bk-points { gap: var(--ds-space-16); }
+  .bk-points li { gap: var(--ds-space-12); }
+  .bk-icon { width: 32px; height: 32px; }
+  .bk-step-icon > .bk-icon { top: -4px; }
+}
+.bk-page[data-fit1] .bk-points { gap: var(--ds-space-16); }
+.bk-page[data-fit2] .bk-points { gap: var(--ds-space-8); }
+
 /* ===== Auto-fit (Page in Reader.tsx): a page never scrolls. Levels add up: 1 spacing, 2 smaller text, 3-4 smallest (13px). ===== */
 .bk-page[data-fit1] .bk-body { gap: var(--ds-space-12); padding-top: var(--ds-space-24); padding-bottom: var(--ds-space-32); }
 .bk-page[data-fit1] .bk-steps { gap: var(--ds-space-12); }
@@ -371,15 +393,15 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-page[data-fit1] .bk-prompt-toggle { display: inline; }
 .bk-page[data-fit2] .bk-body { gap: var(--ds-space-8); }
 .bk-page[data-fit2] .t-page { font-size: 20px; line-height: 26px; }
-.bk-page[data-fit2] .bk-body .t-lead { font-size: 14px; line-height: 20px; }
+.bk-page[data-fit2] .bk-body .t-lead { font-size: 14px; line-height: 20px; letter-spacing: -0.006em; }
 .bk-page[data-fit2] .bk-steps .t-header { font-size: 14px; line-height: 20px; }
 .bk-page[data-fit2] .bk-steps { gap: var(--ds-space-8); }
 .bk-page[data-fit3] .bk-body { padding-top: var(--ds-space-16); padding-bottom: var(--ds-space-24); }
 .bk-page[data-fit3] .t-page { font-size: 16px; line-height: 22px; }
-.bk-page[data-fit3] .bk-body .t-content { font-size: 13px; line-height: 18px; }
+.bk-page[data-fit3] .bk-body .t-content { font-size: 13px; line-height: 18px; letter-spacing: -0.006em; }
 .bk-page[data-fit3] .bk-prompt:not(.full) p { -webkit-line-clamp: 1; }
 .bk-page[data-fit4] .bk-body { gap: var(--ds-space-4); padding-top: var(--ds-space-12); padding-bottom: var(--ds-space-12); }
-.bk-page[data-fit4] .bk-body .t-lead { font-size: 13px; line-height: 18px; }
+.bk-page[data-fit4] .bk-body .t-lead { font-size: 13px; line-height: 18px; letter-spacing: -0.006em; }
 .bk-page[data-fit4] .bk-goal { padding-top: var(--ds-space-4); padding-bottom: var(--ds-space-4); }
 .bk-page[data-fit4] .bk-prompt { padding-top: var(--ds-space-4); padding-bottom: var(--ds-space-4); }
 
