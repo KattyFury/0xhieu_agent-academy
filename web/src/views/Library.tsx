@@ -5,7 +5,7 @@ import { book001, pageCount } from "../book001";
 import { book001Vi, localDay } from "../book001.vi";
 import { done, progressOf, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
-import { AddressForm, Cover, Footer, Nav } from "./Shell";
+import { AddressForm, Cover, Nav } from "./Shell";
 
 /** Page titles in reading order (page 0 = Get ready). */
 export function usePageTitles() {
@@ -66,7 +66,6 @@ export default function Library({ wallet, setWallet }: { wallet: Address | null;
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

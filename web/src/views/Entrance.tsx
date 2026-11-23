@@ -3,7 +3,7 @@ import { ArrowRight, Award, BookOpen, Link2, Terminal } from "lucide-react";
 import { book001, pageCount } from "../book001";
 import { book001Vi } from "../book001.vi";
 import { useLang, useT } from "../i18n";
-import { Cover, Footer, Nav } from "./Shell";
+import { Cover, Nav } from "./Shell";
 
 /** Landing: what Agent Academy is. Yellow tile = Library, black tile = Certificate (like 0xhieu.xyz's yellow + dark tiles). */
 export default function Entrance(_: { wallet: Address | null }) {
@@ -57,7 +57,6 @@ export default function Entrance(_: { wallet: Address | null }) {
           ))}
         </section>
       </main>
-      <Footer />
     </div>
   );
 }

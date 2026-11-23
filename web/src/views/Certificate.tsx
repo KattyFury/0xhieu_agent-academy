@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Address } from "viem";
 import { Award, Check, ShieldCheck } from "lucide-react";
-import { AddressForm, Footer, Nav } from "./Shell";
+import { AddressForm, Nav } from "./Shell";
 import { usePageTitles } from "./Library";
 import { book001, pageCount } from "../book001";
 import { book001Vi } from "../book001.vi";
@@ -82,7 +82,6 @@ export default function Certificate({ wallet, setWallet, shared }: { wallet: Add
           </section>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

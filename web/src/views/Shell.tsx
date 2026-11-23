@@ -59,7 +59,3 @@ export function AddressForm({ wallet, setWallet }: { wallet: Address | null; set
   );
 }
 
-/** Fixed English disclaimer in every language (spec v1.2 §1). */
-export function Footer() {
-  return <footer className="page-foot t-note">Independent community project. Not affiliated with, endorsed by, or operated by Binance.</footer>;
-}
