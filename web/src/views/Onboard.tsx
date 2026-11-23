@@ -21,7 +21,6 @@ export function CopyBtn({ text, label }: { text: string; label?: string }) {
   );
 }
 
-const Meta = ({ left }: { left: string }) => <p className="bk-meta t-label"><span className="bk-kicker">{left}</span></p>;
 const Goal = ({ children }: { children: ReactNode }) => <p className="bk-goal t-content">{children}</p>;
 const Box = ({ text }: { text: string }) => <div className="bk-prompt bk-prompt-row"><p className="t-data">{text}</p><CopyBtn text={text} /></div>;
 /** "Right result" / "If not" lines under a practice. */
@@ -50,7 +49,6 @@ export function SetupAccount({ total }: { total: number }) {
   ];
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} />
       <h1 className="t-page">{t("From zero to signed in", "Từ số 0 đến đăng nhập")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Have an account, a Binance Agentic Wallet, an Agent ID, and your AI signed in.", "Có tài khoản, Binance Agentic Wallet, Agent ID và AI đã đăng nhập.")}</Goal>
       <ol className="bk-steps bk-steps-tight">{steps.map((s, i) => <li key={i}><p className="t-content">{s}</p></li>)}</ol>
@@ -71,7 +69,6 @@ export function SetupAgent({ record }: { record: ReactNode }) {
   );
   return (
     <>
-      <Meta left={t("Practice", "Thực hành")} />
       <h2 className="t-page">{t("Install and sign in", "Cài và đăng nhập")}</h2>
       <div className="setup-cards">
         {card("own", <Bot size={16} />, t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), t("Claude Code, Codex… Node.js 18+.", "Claude Code, Codex… Node.js 18+."))}
@@ -116,7 +113,6 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
   };
   return (
     <>
-      <Meta left={t("Get ready", "Chuẩn bị")} />
       <h1 className="t-page">{t("Gas and Developer Mode", "Gas và Developer Mode")}</h1>
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a little BNB for fees, and turn on Developer Mode.", "Có một ít BNB trả phí, và bật Developer Mode.")}</Goal>
       <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee you pay the network each time something is saved on it, paid in ", " là phí nhỏ trả cho mạng mỗi lần lưu gì đó lên mạng, trả bằng ")}<strong>BNB</strong>{t(". Recording a chapter costs very little.", ". Ghi nhận một chương tốn rất ít.")}</p>
@@ -138,7 +134,6 @@ export function SetupDevMode({ record }: { record: ReactNode }) {
   const t = useT();
   return (
     <>
-      <Meta left={t("Practice", "Thực hành")} />
       <h2 className="t-page">{t("Turn on Developer Mode", "Bật Developer Mode")}</h2>
       <p className="t-content">{t("Recording a chapter means your AI calls the Agent Academy contract. It may only do that when ", "Ghi nhận chương là AI gọi hợp đồng Agent Academy. AI chỉ được làm vậy khi ")}<strong>{t("Developer Mode is on", "Developer Mode đang bật")}</strong>.</p>
       <ol className="bk-steps bk-steps-tight">

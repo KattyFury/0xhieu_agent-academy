@@ -49,7 +49,6 @@ function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: Rea
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Learn", "Lý thuyết")}</span></p>
       <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
       <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
       {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
@@ -153,7 +152,6 @@ function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
   const t = useT();
   return (
     <>
-      <p className="bk-meta t-label"><span className="bk-kicker">{t("Practice", "Thực hành")}</span></p>
       <h2 className="t-page">{d.practice.title ?? "Try it yourself"}</h2>
       {d.practice.riskText && <p className="bk-risk t-note" role="note"><strong>{t("Risk:", "Cảnh báo rủi ro:")}</strong> {d.practice.riskText}</p>}
       <ol className="bk-steps">

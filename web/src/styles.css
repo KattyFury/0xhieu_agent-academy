@@ -426,7 +426,7 @@ h1, h2, h3 { text-wrap: balance; }
 /* Close the book: back to the Library */
 .bk-close { position: absolute; top: var(--ds-space-16); right: var(--ds-space-16); z-index: 4; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--ds-bento-tile); color: var(--ds-color-ink); box-shadow: var(--ds-shadow-elev-sm); }
 .bk-close:hover { background: var(--ds-bento-canvas); }
-.bk-meta + .t-page { padding-right: var(--ds-space-48); } /* room for the close button */
+.bk-body > .t-page:first-child { padding-right: var(--ds-space-48); } /* room for the close button */
 .bk-brand .t-header, .bk-days > .t-label { white-space: nowrap; }
 @media (max-width: 379px) { .bk-brand .t-header { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } } /* tiny phones: cat logo only */
 
