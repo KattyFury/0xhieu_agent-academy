@@ -1,0 +1,19 @@
+name = "academy-web"
+main = "worker/index.ts"
+compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[routes]]
+pattern = "academy.0xhieu.xyz"
+custom_domain = true
+
+# Secrets (wrangler secret put): RELAYER_KEY, TG_BOT_TOKEN, TG_CHAT_ID
+# Deploy: npx vite build && npx wrangler deploy
+
+[[kv_namespaces]]
+binding = "GAS"
+id = "85145b00fd1c450eacaf95f4b28c51bd"

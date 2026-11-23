@@ -1,0 +1,12 @@
+import { chromium } from "playwright-core";
+const [base, out] = process.argv.slice(2);
+const b = await chromium.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe" });
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const errors = []; p.on("pageerror", (e) => errors.push(e.message)); p.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+await p.goto(`${base}/#/library`, { waitUntil: "networkidle" }); await p.waitForTimeout(300);
+await p.click(".library-book");
+await p.waitForTimeout(250); await p.screenshot({ path: `${out}-open-250.png` });
+await p.waitForTimeout(300); await p.screenshot({ path: `${out}-open-550.png` });
+await p.waitForTimeout(700); await p.screenshot({ path: `${out}-open-end.png` });
+console.log(JSON.stringify({ url: await p.evaluate(() => location.hash), flyCoverLeft: await p.locator(".bk-flycover").count(), errors }));
+await b.close();
