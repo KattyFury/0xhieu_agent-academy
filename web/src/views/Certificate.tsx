@@ -90,7 +90,7 @@ export default function Certificate({ wallet }: { wallet: Address }) {
               </> : <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${2 * P} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${2 * P} trang.`)}</p>)}
               {c && !c.ok && <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
               {!valid && <form className="cert-actions" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
-                <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, like you.ai (optional)", "Agent ID, ví dụ ban.ai (tùy chọn)")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
+                <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, e.g. you.ai", "Agent ID, ví dụ ban.ai")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
                 <button className="btn btn-ghost t-button" type="submit">{t("Add my name", "Thêm tên")}</button>
               </form>}
               {valid && <button className="link t-label link-btn" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
