@@ -568,3 +568,5 @@ h1, h2, h3 { text-wrap: balance; }
   .book-card-cover .cover-mark { display: none; }
   .book-card-cover .cover-title { margin-top: auto; }
 }
+/* Round icon button (library: open certificate). */
+.btn-round { width: var(--ds-control-height); height: var(--ds-control-height); padding: 0; justify-content: center; border-radius: 50%; }

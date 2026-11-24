@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Award } from "lucide-react";
 import type { Address } from "viem";
 import { BOOKS } from "../books";
 import { useLang, useT } from "../i18n";
@@ -33,7 +34,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
                 <span className="t-secondary">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</span>
                 <span className="btn btn-primary t-button">{t("Open the book", "Mở sách")}</span>
               </a>
-              {certified[b.id] && wallet && <a className="btn btn-ghost t-button" href={`/certificate/${b.id}/${wallet}`}>{t("Open certificate", "Mở chứng chỉ")}</a>}
+              {certified[b.id] && wallet && <a className="btn btn-ghost btn-round" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}
             </div>
           ))}
         </section>
