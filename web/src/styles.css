@@ -226,7 +226,8 @@ h1, h2, h3 { text-wrap: balance; }
 .cover { position: relative; display: flex; width: 100%; aspect-ratio: 7 / 10; overflow: hidden; border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-dark-tile); color: var(--ds-accent); box-shadow: var(--ds-shadow-elev); }
 .cover-spine { flex: none; width: 12%; background: var(--ds-palette-neutral-800); }
 .cover-frame { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: var(--ds-space-8); margin: var(--ds-space-12); padding: var(--ds-space-16) var(--ds-space-8); border: 1px solid var(--ds-accent); border-radius: var(--ds-bento-radius-inner); text-align: center; }
-.cover-title { text-wrap: balance; }
+.cover-title { text-wrap: balance; font-size: 16px; line-height: 20px; overflow-wrap: anywhere; }
+.book-card-cover .cover-title, .door-cover .cover-title { font-size: 14px; line-height: 18px; } /* small covers (112-176px) */
 .cover-muted { background: var(--ds-bento-canvas); color: var(--ds-color-grey); box-shadow: none; }
 .cover-muted .cover-spine { background: var(--ds-bento-hair); }
 .cover-muted .cover-frame { border-color: var(--ds-color-line); }
@@ -345,8 +346,8 @@ h1, h2, h3 { text-wrap: balance; }
 .book-card-cover .cover-frame > .t-label:last-child { visibility: hidden; }
 /* Book / certificate cards: half the page on desktop; art on the left, text on the right */
 .book-card, .cert-card { display: grid; grid-template-columns: 176px minmax(0, 1fr); column-gap: var(--ds-space-32); row-gap: var(--ds-space-8); align-content: start; align-items: start; }
-.book-card > *, .cert-card > * { grid-column: 2; justify-self: start; }
-.book-card > .book-card-cover { grid-column: 1; grid-row: 1 / span 6; width: 176px; margin: 0; align-self: start; }
+.book-card > *, .book-card-link > *, .cert-card > * { grid-column: 2; justify-self: start; }
+.book-card .book-card-cover { grid-column: 1; grid-row: 1 / span 7; width: 176px; margin: 0; align-self: start; }
 .cert-card > .cert-seal { grid-column: 1; grid-row: 1 / span 8; width: 176px; height: 176px; justify-self: center; }
 .cert-card > .cert-seal svg { width: 64px; height: 64px; }
 .book-card .btn, .cert-card .btn { margin-top: var(--ds-space-8); }
@@ -356,8 +357,9 @@ h1, h2, h3 { text-wrap: balance; }
   .cert-card > * { grid-column: 1; }
   .cert-card > .cert-seal { grid-row: auto; height: auto; justify-self: center; }
   /* Phone: book on the left, text on the right */
-  .book-card { grid-template-columns: 112px minmax(0, 1fr); column-gap: var(--ds-space-16); }
-  .book-card > .book-card-cover { width: 112px; }
+  .book-card { grid-template-columns: 128px minmax(0, 1fr); column-gap: var(--ds-space-16); }
+  .book-card .book-card-cover { width: 128px; }
+  .book-card-cover .cover-frame { margin: var(--ds-space-8); padding: var(--ds-space-8) var(--ds-space-4); }
   .cert-card > .cert-seal { width: 96px; height: 96px; }
 }
 
