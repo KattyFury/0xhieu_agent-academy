@@ -2,7 +2,7 @@
 
 Learn Binance Agentic Wallet. Earn Certificates.
 
-A library of short books that teach people to use AI agents by doing. Each page has a goal, an explanation, steps and a hands-on practice task the learner runs with their own agent. Progress is recorded on BNB Smart Chain by the learner's own agent; when every chapter of a book is recorded, the contract issues an on-chain certificate.
+A learning platform of short courses about AI agents: read a little, practice a little, finish to get a certificate. Each page has a goal, an explanation, steps and a hands-on practice task the learner runs with their own agent. Progress is recorded on BNB Smart Chain by the learner's own agent; when every page of a course is recorded, the contract issues an on-chain certificate.
 
 Independent community project. Not affiliated with, endorsed by, or operated by Binance.
 

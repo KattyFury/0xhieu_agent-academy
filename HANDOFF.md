@@ -3,7 +3,7 @@
 Spec: `docs/spec-v1.2.md` (platform; §14 = decisions). Course text: `web/src/views/Pages.tsx` (course 1), `Pages2.tsx` (course 2), owner-approved. Rules: `CLAUDE.md`. History: `docs/archive/`.
 
 ## Core
-Agent Academy = a library of courses (UI never says "book"; code still does: `book1`, `BOOKS`, `bookId`). Each page = short theory or a small practice; finishing = on-chain certificate. Site-wide copy (home, Courses, certificate) fits ANY course.
+Agent Academy = a learning platform of short courses about AI agents: read a little, practice a little, finish to get a certificate (UI never says "book" or "library"; code still does: `book1`, `BOOKS`, `bookId`). Each page = short theory or a small practice; finishing = on-chain certificate. Site-wide copy (home, Courses, certificate) fits ANY course.
 
 ## Live
 - Contract **AgentAcademy `0x66Ae47EAE1aacFd70148808AE63a5B4A5e882753`** (BSC, verified). Owner 0xhieu.ai `0xe0a34AC1da06423e1e67345828bd629dFAbd4Ca2`; only power = `createBook`.

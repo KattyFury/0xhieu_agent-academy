@@ -22,9 +22,9 @@ export default function Entrance(_: { wallet: Address | null }) {
         <section className="sw-hero">
           <h1 className="sw-hero-title">{t("Learn by doing.", "Học bằng cách làm.")}</h1>
           <div className="sw-hero-side">
-            <Label>{t("A library of short courses", "Thư viện khóa học ngắn")}</Label>
-            <p className="t-content">{t("Agent Academy is a library of short courses about AI agents. Every piece of theory comes with a small hands-on practice.",
-              "Agent Academy là thư viện những khóa học ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
+            <Label>{t("A learning platform", "Nền tảng học tập")}</Label>
+            <p className="t-content">{t("Short courses about AI agents. Read a little, practice a little, finish to get a certificate.",
+              "Những khóa học ngắn về AI agent. Đọc một chút, thực hành một chút, học xong nhận chứng chỉ.")}</p>
             <a className="btn btn-primary t-button" href="/courses">{t("Start learning", "Bắt đầu học")} <ArrowRight size={16} aria-hidden /></a>
           </div>
         </section>
