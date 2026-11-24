@@ -162,8 +162,8 @@ export default function Reader({ bookId, day, side, wallet: realWallet, setWalle
         <div className="mz-bar">
           <Label>{t("Course", "Khóa học")} {two(book.id)} — {book.title[lang]}</Label>
           <span className="mz-bar-right">
-            <Label>{t(`Page ${pageNo} / ${PAGES}`, `Trang ${pageNo} / ${PAGES}`)}</Label>
-            <a className="sw-x" href="/library" aria-label={t("Close course", "Đóng khóa học")}><X size={16} aria-hidden /></a>
+            <Label>{t(`Page ${pageNo} / ${PAGES}`, `Trang ${pageNo} / ${PAGES}`)}{wide && pageNo < PAGES && <span className="mz-hint">{t(" · Space → next", " · Space → trang sau")}</span>}</Label>
+            <a className="sw-x" href="/courses" aria-label={t("Close course", "Đóng khóa học")}><X size={16} aria-hidden /></a>
           </span>
         </div>
 

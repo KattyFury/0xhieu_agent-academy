@@ -25,7 +25,7 @@ export default function Entrance(_: { wallet: Address | null }) {
             <Label>{t("A library of short courses", "Thư viện khóa học ngắn")}</Label>
             <p className="t-content">{t("Agent Academy is a library of short courses about AI agents. Every piece of theory comes with a small hands-on practice.",
               "Agent Academy là thư viện những khóa học ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
-            <a className="btn btn-primary t-button" href="/library">{t("Start learning", "Bắt đầu học")} <ArrowRight size={16} aria-hidden /></a>
+            <a className="btn btn-primary t-button" href="/courses">{t("Start learning", "Bắt đầu học")} <ArrowRight size={16} aria-hidden /></a>
           </div>
         </section>
 
@@ -36,7 +36,7 @@ export default function Entrance(_: { wallet: Address | null }) {
         </ol>
 
         <section className="sw-sec">
-          <Label>{t(`Library — ${BOOKS.length} courses`, `Thư viện — ${BOOKS.length} khóa học`)}</Label>
+          <Label>{t(`Courses — ${BOOKS.length}`, `Khóa học — ${BOOKS.length}`)}</Label>
           <ul className="sw-rows">
             {BOOKS.map((b, i) => (
               <li key={b.id}><a className="sw-row" href={`/course/${b.id}/0`}>

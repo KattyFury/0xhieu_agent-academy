@@ -5,7 +5,7 @@ import { BOOKS } from "../books";
 import { useLang, useT } from "../i18n";
 import { Nav, two } from "./Shell";
 
-/** Library (Swiss): one row per book — big number, title, text, then chips + buttons. A finished book gets a "Certified" chip and a certificate button. */
+/** Courses page (Swiss; file name kept): one row per course — big number, title, text, then chips + buttons. A finished book gets a "Certified" chip and a certificate button. */
 export default function Library({ wallet }: { wallet: Address | null; setWallet: (a: Address | null) => void }) {
   const t = useT();
   const { lang } = useLang();
@@ -21,7 +21,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
     <div className="page">
       <Nav active="library" />
       <main className="sw-wrap">
-        <h1 className="sw-title">{t("Library", "Thư viện")}</h1>
+        <h1 className="sw-title">{t("Courses", "Khóa học")}</h1>
         <ul className="sw-lib">
           {BOOKS.map((b, i) => (
             <li key={b.id}>

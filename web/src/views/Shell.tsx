@@ -16,7 +16,7 @@ export function Nav({ active, banner }: { active?: Tab; banner?: ReactNode }) {
         <a className="sw-logo" href="/"><img src="/icon.png" alt="" /><span>Agent Academy</span></a>
         {banner}
         <div className="sw-head-right">
-          {tab("library", "/library", t("Library", "Thư viện"))}
+          {tab("library", "/courses", t("Courses", "Khóa học"))}
           {tab("cert", "/certificate", t("Certificate", "Chứng chỉ"))}
           <LangSwitch />
         </div>

@@ -13,7 +13,7 @@ const CertificateList = lazy(() => import("./views/Certificate").then((m) => ({ 
 
 const KEY = "academy.wallet";
 
-/** Clean URLs: /, /library, /course/1/3, /course/1/3/practice, /certificate, /certificate/0x… (/book/… = old links, same view) */
+/** Clean URLs: /, /courses (old /library), /course/1/3, /course/1/3/practice, /certificate, /certificate/0x… (/book/… = old links, same view) */
 export const go = (path: string, replace = false) => {
   if (replace) history.replaceState(null, "", path); else history.pushState(null, "", path);
   dispatchEvent(new PopStateEvent("popstate"));
@@ -60,7 +60,7 @@ export default function App() {
   const [, a, b, c] = route;
   const view = pickView(route);
   useEffect(() => {
-    if (view === "library") document.title = `${t("Library", "Thư viện")} · Agent Academy`;
+    if (view === "library") document.title = `${t("Courses", "Khóa học")} · Agent Academy`;
     else if (view === "certificate") document.title = `${t("Certificate", "Chứng chỉ")} · Agent Academy`;
     else if (view === "home") document.title = "Agent Academy";
   }, [view, t]); // the reader sets its own title per page; NotFound sets its own
@@ -82,7 +82,7 @@ export default function App() {
 /** Which view a URL shows. Keep in sync with VALID_PATH in worker/index.ts (the Worker answers 404 for the rest). */
 function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "certificate" | "404" {
   if (!page) return "home";
-  if (page === "library") return a === undefined ? "library" : "404";
+  if (page === "courses" || page === "library") return a === undefined ? "library" : "404"; // /library = old link
   if (page === "course" || page === "book") {
     // /course/<1|2>, /course/<id>/<0-13>, /course/<id>/<0-13>/practice (/book/… and 6-13 are old links: the reader clamps them to the last pair)
     return (a === "1" || a === "2") && (b === undefined || /^(\d|1[0-3])$/.test(b)) && (c === undefined || c === "practice") && d === undefined ? "book" : "404";
