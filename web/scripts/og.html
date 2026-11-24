@@ -1,0 +1,49 @@
+<!doctype html>
+<!-- Share card source (1200x630). Render: node scripts/shot.mjs file:///D:/Codes/0xhieu_agent-academy/web/scripts/og.html public/og.png 1200 630 -->
+<html lang="en" data-ds-product="0xhieu-xyz">
+<head>
+<meta charset="UTF-8" />
+<link rel="stylesheet" href="../src/ds/web.css" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; width: 1200px; height: 630px; overflow: hidden; background: #fff; color: #000; font-family: var(--ds-font-web); -webkit-font-smoothing: antialiased; }
+  .card { height: 100%; padding: 0 48px 48px; display: flex; flex-direction: column; }
+  .t { font-size: var(--s); line-height: var(--l); font-weight: var(--w); letter-spacing: var(--k); }
+  .hero { --s: var(--ds-type-swiss-hero-size); --l: var(--ds-type-swiss-hero-line); --w: var(--ds-type-swiss-hero-weight); --k: var(--ds-type-swiss-hero-tracking); margin: 0; }
+  .logo { --s: var(--ds-type-swiss-logo-size); --l: var(--ds-type-swiss-logo-line); --w: var(--ds-type-swiss-logo-weight); --k: var(--ds-type-swiss-logo-tracking); display: flex; align-items: center; gap: 8px; }
+  .logo img { width: 32px; height: 32px; }
+  .label { --s: var(--ds-type-swiss-label-size); --l: var(--ds-type-swiss-label-line); --w: var(--ds-type-swiss-label-weight); --k: var(--ds-type-swiss-label-tracking); text-transform: uppercase; }
+  .statement { --s: var(--ds-type-swiss-statement-size); --l: var(--ds-type-swiss-statement-line); --w: var(--ds-type-swiss-statement-weight); --k: var(--ds-type-swiss-statement-tracking); margin: 0; }
+  .number { --s: var(--ds-type-swiss-number-size); --l: var(--ds-type-swiss-number-line); --w: var(--ds-type-swiss-number-weight); --k: var(--ds-type-swiss-number-tracking); }
+  .row { --s: var(--ds-type-swiss-row-size); --l: var(--ds-type-swiss-row-line); --w: var(--ds-type-swiss-row-weight); --k: var(--ds-type-swiss-row-tracking); }
+  header { height: 80px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #000; }
+  .mid { flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 48px; }
+  .side { width: 296px; display: flex; flex-direction: column; gap: 24px; }
+  .seal { background: #F5B301; color: #000; padding: 8px 16px; width: max-content; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 3px solid #000; }
+  .steps div { padding: 16px 24px 0 0; display: flex; flex-direction: column; gap: 8px; }
+  .steps div + div { padding-left: 24px; border-left: 1px solid #000; }
+</style>
+</head>
+<body data-ds-style="swiss">
+  <div class="card">
+    <header>
+      <span class="t logo"><img src="../public/icon.png" alt="" />Agent Academy</span>
+      <span class="t label">A learning platform</span>
+    </header>
+    <div class="mid">
+      <h1 class="t hero">Learn by<br />doing.</h1>
+      <div class="side">
+        <p class="t statement">Short courses about AI agents. Finish to get a certificate.</p>
+        <span class="t label seal">academy.0xhieu.xyz</span>
+      </div>
+    </div>
+    <div class="steps">
+      <div><span class="t number">01</span><span class="t row">Learn</span></div>
+      <div><span class="t number">02</span><span class="t row">Practice</span></div>
+      <div><span class="t number">03</span><span class="t row">Save progress</span></div>
+      <div><span class="t number">04</span><span class="t row">Get certificate</span></div>
+    </div>
+  </div>
+</body>
+</html>
