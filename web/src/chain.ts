@@ -40,15 +40,12 @@ export async function certificate(addr: Address, bookId: number): Promise<{ ok: 
   return { ok, issuedAt: Number(issuedAt) };
 }
 
-// ---- Config (owner fills) ----
-/** On-chain bookId of the 12-page Book 1. Owner runs createBook(BOOK_ID, 12) once the content is frozen; until then the site shows "Opens soon". */
-export const BOOK_ID = 2;
-/** 12 pages = 12 chapters on-chain; one save sets them all (0xFFF) and issues the certificate. */
+// On-chain bookIds live in books.ts (chainId). Every book has 12 pages = 12 chapters; all 12 bits (0xFFF) = certificate.
 export const FULL_MASK = 0xfffn;
 export const BOOK_PAGES = 12;
 
-/** Pages saved so far: 12 when the save is on-chain, else 0. */
-export const savedPages = (mask: bigint) => ((mask & FULL_MASK) === FULL_MASK ? BOOK_PAGES : 0);
+/** Pages saved so far = bits set (book 1 saves all 12 at once; book 2 saves 4, 8, then 12). */
+export const savedPages = (mask: bigint) => { let n = 0; for (let i = 0n; i < BigInt(BOOK_PAGES); i++) if ((mask >> i) & 1n) n++; return n; };
 
 /** Cumulative mask: everything already recorded plus this save. */
 export const completeCalldata = (bookId: number, mask: bigint) =>

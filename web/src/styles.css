@@ -483,3 +483,27 @@ h1, h2, h3 { text-wrap: balance; }
 .cert-x { position: absolute; top: var(--ds-space-8); right: var(--ds-space-8); padding: 0; width: 40px; z-index: 1; }
 .cert-buttons { margin-top: 0; }
 .cert-buttons .btn { flex: 1 1 0; justify-content: center; }
+/* Book 2 */
+.bk-read { color: var(--ds-color-grey); }
+.bk-table { width: 100%; border-collapse: collapse; color: var(--ds-color-grey); }
+.bk-table th { text-align: left; color: var(--ds-color-ink); font-weight: 600; padding: var(--ds-space-4) var(--ds-space-8) var(--ds-space-4) 0; border-bottom: 1px solid var(--ds-color-line); }
+.bk-table td { padding: var(--ds-space-4) var(--ds-space-8) var(--ds-space-4) 0; border-bottom: 1px solid var(--ds-color-line); vertical-align: top; }
+.bk-table td:first-child { color: var(--ds-color-ink); }
+.bk-table .bk-num { white-space: nowrap; }
+.bk-page[data-fit3] .bk-table { font-size: 13px; line-height: 18px; }
+.bk-result + .bk-list { margin-top: calc(-1 * var(--ds-space-4)); }
+.bk-addr-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--ds-space-8); row-gap: var(--ds-space-4); align-items: end; }
+.bk-addr-row > [role="alert"] { grid-column: 1 / -1; grid-row: 2; }
+.bk-page[data-fit4] .bk-list { gap: 2px; }
+.bk-page[data-fit4] .bk-result { padding: var(--ds-space-4) var(--ds-space-8); }
+.bk-page[data-fit4] .bk-code pre { padding-top: 2px; padding-bottom: 2px; }
+.bk-page[data-fit4] .bk-code .btn { height: 28px; }
+.bk-page[data-fit4] .bk-steps > li { gap: 2px; }
+/* Fit 5-6 (owner OK'd smaller text, 2026-11-24): only pages that still don't fit, mostly phones. */
+.bk-page[data-fit5] .bk-body, .bk-page[data-fit5] .bk-body .t-lead, .bk-page[data-fit5] .bk-body .t-content, .bk-page[data-fit5] .bk-body .t-data, .bk-page[data-fit5] .bk-body .t-label, .bk-page[data-fit5] .bk-table { font-size: 12px; line-height: 16px; letter-spacing: 0; }
+.bk-page[data-fit5] .bk-body h3.t-header, .bk-page[data-fit5] .t-page { font-size: 14px; line-height: 18px; }
+.bk-page[data-fit5] .bk-code .btn { height: 24px; font-size: 12px; }
+.bk-page[data-fit5] .bk-steps-tight > li::before { width: 20px; height: 20px; font-size: 11px; }
+.bk-page[data-fit5] .bk-steps-tight > li { padding-left: var(--ds-space-24); }
+.bk-page[data-fit6] .bk-body, .bk-page[data-fit6] .bk-body .t-lead, .bk-page[data-fit6] .bk-body .t-content, .bk-page[data-fit6] .bk-body .t-data, .bk-page[data-fit6] .bk-body .t-label, .bk-page[data-fit6] .bk-table { font-size: 11px; line-height: 15px; }
+.bk-page[data-fit6] .bk-body { gap: 2px; }

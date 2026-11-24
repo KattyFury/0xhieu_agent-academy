@@ -4,7 +4,7 @@ import { onRequestPost } from "../functions/api/claim";
 interface Env { ASSETS: Fetcher; RELAYER_KEY: string; GAS: KVNamespace; TG_BOT_TOKEN?: string; TG_CHAT_ID?: string }
 
 /** Real pages (the SPA's routes). Keep in sync with pickView in src/App.tsx. Anything else that would serve the HTML shell gets a 404. */
-const VALID_PATH = /^\/(?:(?:library|certificate|book\/1(?:\/(?:\d|1[0-3])(?:\/practice)?)?|certificate\/(?:1\/)?0x[0-9a-fA-F]{40})\/?)?$/;
+const VALID_PATH = /^\/(?:(?:library|certificate|book\/[12](?:\/(?:\d|1[0-3])(?:\/practice)?)?|certificate\/(?:[12]\/)?0x[0-9a-fA-F]{40})\/?)?$/;
 
 const SECURITY_HEADERS: Record<string, string> = {
   "content-security-policy": "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://bsc-dataseed.binance.org https://bsc-rpc.publicnode.com https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",

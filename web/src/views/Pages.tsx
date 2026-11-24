@@ -9,6 +9,15 @@ import { useT } from "../i18n";
 
 export type Track = "own" | "pro";
 
+/** What the reader hands to a book's pages. `save(i, sentence)` = save point i (wallet box if needed + the command; copy adds the technical block). `status` = the last save's status line. */
+export type Ctx = {
+  titleRef?: Ref<HTMLHeadingElement>; track: Track; setTrack: (t: Track) => void;
+  wallet: Address | null; setWallet: (a: Address | null) => void;
+  save: (i: number, sentence: string) => ReactNode; status: ReactNode;
+};
+/** A book's content: its save points (cumulative masks, the last = all 12 pages), page names, and pages. */
+export type BookContent = { saves: bigint[]; usePageNames: (track: Track) => string[]; page: (p: number, which: "learn" | "practice", c: Ctx) => ReactNode };
+
 // ---------- shared bits ----------
 /** **bold** inside text. */
 export const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((s, i) => (i % 2 ? <strong key={i}>{s}</strong> : s))}</>;
@@ -40,17 +49,17 @@ export function Code({ text, copy, onCopied }: { text: string; copy?: string; on
   );
 }
 
-const Ok = ({ text }: { text: string }) => {
+export const Ok = ({ text }: { text: string }) => {
   const t = useT();
   return <p className="bk-result t-content"><CircleCheck size={18} aria-hidden /><span><strong>{t("Right result:", "Kết quả đúng:")}</strong> <Rich text={text} /></span></p>;
 };
-const List = ({ items }: { items: string[] }) => <ul className="bk-list">{items.map((s) => <li key={s} className="t-lead"><Rich text={s} /></li>)}</ul>;
-const P = ({ text }: { text: string }) => <p className="t-lead"><Rich text={text} /></p>;
-const Steps = ({ start = 0, children }: { start?: number; children: ReactNode }) => <ol className="bk-steps bk-steps-tight" style={start ? { counterReset: `s ${start}` } : undefined}>{children}</ol>;
-const S = ({ text, children }: { text?: string; children?: ReactNode }) => <li>{text && <p className="t-content"><Rich text={text} /></p>}{children}</li>;
-type TitleRef = { titleRef?: Ref<HTMLHeadingElement> };
-const H1 = ({ text, titleRef }: { text: string } & TitleRef) => <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{text}</h1>;
-const H2 = ({ text }: { text: string }) => <h2 className="t-page">{text}</h2>;
+export const List = ({ items }: { items: string[] }) => <ul className="bk-list">{items.map((s) => <li key={s} className="t-lead"><Rich text={s} /></li>)}</ul>;
+export const P = ({ text }: { text: string }) => <p className="t-lead"><Rich text={text} /></p>;
+export const Steps = ({ start = 0, children }: { start?: number; children: ReactNode }) => <ol className="bk-steps bk-steps-tight" style={start ? { counterReset: `s ${start}` } : undefined}>{children}</ol>;
+export const S = ({ text, children }: { text?: string; children?: ReactNode }) => <li>{text && <p className="t-content"><Rich text={text} /></p>}{children}</li>;
+export type TitleRef = { titleRef?: Ref<HTMLHeadingElement> };
+export const H1 = ({ text, titleRef }: { text: string } & TitleRef) => <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{text}</h1>;
+export const H2 = ({ text }: { text: string }) => <h2 className="t-page">{text}</h2>;
 
 // ---------- prompts ----------
 const INSTALL = "npx skills add binance/binance-skills-hub/skills/binance-web3/binance-agentic-wallet";
@@ -68,7 +77,7 @@ export const usePrompts = () => {
 };
 
 /** Page titles in reading order (12). Pages 4 and 6 depend on the track. */
-export function usePageNames(track: Track | null) {
+function usePageNames(track: Track) {
   const t = useT();
   return [
     t("What is Binance Agentic Wallet?", "Binance Agentic Wallet là gì?"),
@@ -121,7 +130,7 @@ export function Page2() {
   </>;
 }
 
-export function Page3({ track, setTrack, titleRef }: { track: Track | null; setTrack: (t: Track) => void } & TitleRef) {
+export function Page3({ track, setTrack, titleRef }: { track: Track; setTrack: (t: Track) => void } & TitleRef) {
   const t = useT();
   const card = (k: Track, title: string, tag: string | null, sub: string | null, pros: string[], cons: string[], button: string) => (
     <div className={`setup-card pick-card ${track === k ? "on" : ""}`}>
@@ -331,7 +340,7 @@ export function Page11({ titleRef }: TitleRef) {
 }
 
 /** Page 12. `save` = the copy-and-watch block for step 1 of part 2 (built by the reader: it knows the wallet and the chain). */
-export function Page12({ save, status, wallet }: { save: ReactNode; status: ReactNode; wallet?: ReactNode }) {
+export function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
   const t = useT();
   const pr = usePrompts();
   return <>
@@ -343,9 +352,8 @@ export function Page12({ save, status, wallet }: { save: ReactNode; status: Reac
     </Steps>
     <Ok text={t("Your AI says the limit is 1,000 USD, 0 used, 1,000 USD left. Developer Mode is on, with an end date. Each successful use extends it.", "AI báo hạn mức 1.000 USD, đã dùng 0, còn lại 1.000 USD. Developer Mode đang bật, kèm ngày hết hạn. Mỗi lần dùng thành công sẽ kéo dài thời hạn.")} />
     <h3 className="t-header">{t("Part 2: Save your progress", "Phần 2: Lưu tiến độ")}</h3>
-    {wallet}
     <Steps>
-      <S text={t("Send your AI this command:", "Gửi AI lệnh này:")}>{save}</S>
+      <S text={t("Send your AI this command:", "Gửi AI lệnh này:")}>{save(0, pr.save)}</S>
       <S text={t("Your AI shows you a preview. Check whether any token leaves your wallet.", "AI cho bạn xem trước. Đọc xem có token nào bị chuyển đi không.")} />
       <S text={t("If it's right, type “confirm”.", "Thấy đúng thì gõ \"xác nhận\".")} />
     </Steps>
@@ -353,3 +361,24 @@ export function Page12({ save, status, wallet }: { save: ReactNode; status: Reac
     {status}
   </>;
 }
+
+export const book1: BookContent = {
+  saves: [0xfffn], // one save, page 12
+  usePageNames,
+  page: (p, which, c) => {
+    switch (`${p}${which[0]}`) {
+      case "0l": return <Page1 titleRef={c.titleRef} />;
+      case "0p": return <Page2 />;
+      case "1l": return <Page3 track={c.track} setTrack={c.setTrack} titleRef={c.titleRef} />;
+      case "1p": return <Page4 track={c.track} />;
+      case "2l": return <Page5 titleRef={c.titleRef} />;
+      case "2p": return <Page6 track={c.track} />;
+      case "3l": return <Page7 wallet={c.wallet} setWallet={c.setWallet} titleRef={c.titleRef} />;
+      case "3p": return <Page8 />;
+      case "4l": return <Page9 titleRef={c.titleRef} />;
+      case "4p": return <Page10 />;
+      case "5l": return <Page11 titleRef={c.titleRef} />;
+      default: return <Page12 save={c.save} status={c.status} />;
+    }
+  },
+};

@@ -3,20 +3,19 @@
 import { forwardRef, useState } from "react";
 import type { Address } from "viem";
 import { Award, Download, X } from "lucide-react";
-import { book001 } from "../book001";
-import { book001Vi } from "../book001.vi";
+import type { BookMeta } from "../books";
 import { short } from "../chain";
 import { useLang, useT } from "../i18n";
 
-/** Temporary share text (owner writes the final one). */
-const SHARE = { en: "I finished “Get started with Binance Agentic Wallet” on Agent Academy and got my on-chain certificate.", vi: "Mình vừa học xong “Bắt đầu với Binance Agentic Wallet” trên Agent Academy và nhận chứng chỉ on-chain." };
+/** Share text (owner-approved 2026-11-24). */
+const share = (title: string, lang: "en" | "vi") => (lang === "vi" ? `Mình vừa học xong “${title}” trên Agent Academy và nhận chứng chỉ on-chain.` : `I finished “${title}” on Agent Academy and got my on-chain certificate.`);
 
-export const CertPopup = forwardRef<HTMLDialogElement, { wallet: Address; issuedAt: number; onClose: () => void }>(function CertPopup({ wallet, issuedAt, onClose }, ref) {
+export const CertPopup = forwardRef<HTMLDialogElement, { book: BookMeta; wallet: Address; issuedAt: number; onClose: () => void }>(function CertPopup({ book, wallet, issuedAt, onClose }, ref) {
   const t = useT();
   const { lang } = useLang();
   const [name, setName] = useState(() => localStorage.getItem("academy.agentid") ?? "");
   const shown = name.trim() || short(wallet);
-  const title = lang === "vi" ? book001Vi.title : book001.title;
+  const title = book.title[lang];
   const date = new Date((issuedAt || Date.now() / 1000) * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" });
   const setN = (v: string) => { setName(v); if (v.trim()) localStorage.setItem("academy.agentid", v.trim()); else localStorage.removeItem("academy.agentid"); };
 
@@ -45,8 +44,8 @@ export const CertPopup = forwardRef<HTMLDialogElement, { wallet: Address; issued
   };
   const shareX = () => {
     const u = new URL("https://x.com/intent/post");
-    u.searchParams.set("text", SHARE[lang]);
-    u.searchParams.set("url", `${location.origin}/certificate/1/${wallet}`);
+    u.searchParams.set("text", share(title, lang));
+    u.searchParams.set("url", `${location.origin}/certificate/${book.id}/${wallet}`);
     open(u.toString(), "_blank", "noopener,noreferrer");
   };
 

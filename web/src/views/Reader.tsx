@@ -1,5 +1,5 @@
-// Book reader: one open-book spread = 2 pages (learn left, practice right). Book 1 = 12 pages = 6 spreads.
-// One save at page 12 (FULL_MASK in chain.ts). When the chain shows it, the book folds shut and the certificate popup opens.
+// Book reader: one open-book spread = 2 pages (learn left, practice right). Every book = 12 pages = 6 spreads.
+// Save points come from the book (book 1: page 12; book 2: pages 4, 8, 12). When the chain shows all 12 pages after the last save, the book folds shut and the certificate popup opens.
 // Next / Space / → turn the page; Shift+Space / ← go back.
 // QA: every state has a URL, e.g. /book/1/5?qa=copied (qa: nowallet|copied|timeout|confirmed|unpublished|error|flip|own|pro|cert).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -8,14 +8,14 @@ import { ArrowLeft, ArrowRight, Award, Check, List, Loader2, Lock, X } from "luc
 import { go } from "../App";
 import { Nav } from "./Shell";
 import { useLang, useT } from "../i18n";
-import { book001Vi } from "../book001.vi";
-import { book001, pageCount, pagesOf, savePrompt } from "../book001";
-import { ACADEMY, BOOK_ID, BOOK_PAGES, FULL_MASK, certificate, chapterCount, completeCalldata, isAddr, progressOf, savedPages } from "../chain";
-import { Code, Page1, Page10, Page11, Page12, Page2, Page3, Page4, Page5, Page6, Page7, Page8, Page9, WalletInput, usePageNames, usePrompts, type Track } from "./Pages";
+import { SPREADS, bookById, pagesOf, savePrompt } from "../books";
+import { ACADEMY, BOOK_PAGES, certificate, chapterCount, completeCalldata, isAddr, progressOf, savedPages } from "../chain";
+import { Code, WalletInput, book1, type Ctx, type Track } from "./Pages";
+import { book2 } from "./Pages2";
 import { CertPopup } from "./CertPopup";
 
-const book = book001;
-const P = pageCount(); // spreads
+const CONTENT = { 1: book1, 2: book2 } as const;
+const P = SPREADS;
 const LAST = P - 1;
 const PAGES = 2 * P;
 const WATCH_MS = 5 * 60 * 1000;
@@ -28,29 +28,30 @@ const qa = () => new URLSearchParams(location.search).get("qa") ?? "";
 type Rec = { phase: "idle" } | { phase: "copied"; since: number } | { phase: "timeout" };
 
 // ---------- chain state ----------
-function useChain(wallet: Address | null) {
+function useChain(wallet: Address | null, chainId: number) {
   const [published, setPublished] = useState<boolean | null>(null);
   const [mask, setMask] = useState(0n);
   const [error, setError] = useState(false);
-  const loadBook = useCallback(() => chapterCount(BOOK_ID).then((n) => { setPublished(n > 0); setError(false); }).catch(() => setError(true)), []);
+  const loadBook = useCallback(() => chapterCount(chainId).then((n) => { setPublished(n > 0); setError(false); }).catch(() => setError(true)), [chainId]);
   const loadMask = useCallback(() => {
     if (!wallet) return Promise.resolve();
-    return progressOf(wallet, BOOK_ID).then((p) => { setMask(p.mask); setError(false); }).catch(() => setError(true));
-  }, [wallet]);
+    return progressOf(wallet, chainId).then((p) => { setMask(p.mask); setError(false); }).catch(() => setError(true));
+  }, [wallet, chainId]);
   useEffect(() => { loadBook(); loadMask(); }, [loadBook, loadMask]);
   useEffect(() => { if (!error) return; const t = setInterval(() => { loadBook(); loadMask(); }, 30000); return () => clearInterval(t); }, [error, loadBook, loadMask]);
   return { published, mask, error, loadMask };
 }
 
 // ---------- reader ----------
-export default function Reader({ day, side, wallet: realWallet, setWallet }: { day: number; side: "learn" | "practice"; wallet: Address | null; setWallet: (a: Address | null) => void }) {
+export default function Reader({ bookId, day, side, wallet: realWallet, setWallet }: { bookId: number; day: number; side: "learn" | "practice"; wallet: Address | null; setWallet: (a: Address | null) => void }) {
+  const book = bookById(bookId);
+  const content = CONTENT[book.id as 1 | 2];
   const q = qa();
   const { lang } = useLang();
   const t = useT();
-  const pr = usePrompts();
   const demo = q && !["nowallet", "unpublished", "error", "flip", "own", "pro"].includes(q);
   const wallet = q === "nowallet" ? null : realWallet ?? (demo || q === "own" || q === "pro" ? ("0x0000000000000000000000000000000000000001" as Address) : null);
-  const chain = useChain(realWallet);
+  const chain = useChain(realWallet, book.chainId);
   const published = q === "unpublished" ? false : q ? true : chain.published;
   const target = Math.max(0, Math.min(LAST, Number.isNaN(day) ? 0 : day));
   const spreadMode = useMedia("(min-width: 1024px) and (min-height: 700px)");
@@ -78,9 +79,9 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const [issuedAt, setIssuedAt] = useState(0);
   const certRef = useRef<HTMLDialogElement>(null);
   const openCert = useCallback(() => {
-    if (wallet && !q) certificate(wallet, BOOK_ID).then((c) => setIssuedAt(c.issuedAt)).catch(() => {});
+    if (wallet && !q) certificate(wallet, book.chainId).then((c) => setIssuedAt(c.issuedAt)).catch(() => {});
     certRef.current?.showModal();
-  }, [wallet, q]);
+  }, [wallet, q, book.chainId]);
   const finish = useCallback(() => { setShut(true); setTimeout(openCert, reduce ? 0 : SHUT_MS); }, [openCert, reduce]);
   useEffect(() => { if (done && rec.phase === "copied" && !q) { setRec({ phase: "idle" }); finish(); } }, [done, rec.phase, q, finish]);
   useEffect(() => { if (q === "cert") finish(); }, [q, finish]);
@@ -105,7 +106,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const nav = useCallback((p: number, s: "learn" | "practice" = "learn") => {
     const pp = Math.max(0, Math.min(LAST, p));
     go(`/book/${book.id}/${pp}${s === "practice" ? "/practice" : ""}`);
-  }, []);
+  }, [book.id]);
   // Single-page order: page 1, page 2, page 3 …
   const stepPage = (delta: 1 | -1) => {
     if (spreadMode) return nav(target + delta);
@@ -126,17 +127,22 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   });
   const touch = useRef<{ x: number; y: number } | null>(null);
   const tocRef = useRef<HTMLDialogElement>(null);
-  const names = usePageNames(track);
+  const names = content.usePageNames(track);
   useEffect(() => { document.title = `${names[2 * target]} · Agent Academy`; }, [target, names]);
 
-  // Page 12, part 2 step 1: the save command (shown sentence; copy adds the technical block), or the address box first.
+  // A save point: the address box first if no wallet yet, then the command (copy adds the technical block). Only the last save is watched.
   const [addr, setAddr] = useState("");
   const [addrErr, setAddrErr] = useState("");
   const saveAddr = () => { const a = addr.trim(); if (isAddr(a)) setWallet(a as Address); else setAddrErr(t("That doesn't look like a wallet address (0x + 40 characters).", "Đây không giống địa chỉ ví (0x + 40 ký tự).")); };
-  const walletBox: ReactNode = !wallet && <div className="bk-gas"><WalletInput value={addr} onChange={(v) => { setAddr(v); setAddrErr(""); }} onEnter={saveAddr} err={addrErr} />
-    <div className="actions"><button className="btn btn-primary t-button" onClick={saveAddr}>OK</button></div></div>;
-  const saveBlock: ReactNode = !wallet || published === false ? <><div className="bk-code"><pre className="t-data">{pr.save}</pre></div>{wallet && <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p>}</>
-    : <Code text={pr.save} copy={savePrompt(pr.save, { wallet, academy: ACADEMY, bookId: BOOK_ID, mask: FULL_MASK, calldata: completeCalldata(BOOK_ID, FULL_MASK) }, lang)} onCopied={() => setRec({ phase: "copied", since: Date.now() })} />;
+  const walletBox: ReactNode = !wallet && <div className="bk-addr-row"><WalletInput value={addr} onChange={(v) => { setAddr(v); setAddrErr(""); }} onEnter={saveAddr} err={addrErr} />
+    <button className="btn btn-primary t-button" onClick={saveAddr}>OK</button></div>;
+  const save = (i: number, sentence: string): ReactNode => {
+    const mask = content.saves[i], last = i === content.saves.length - 1;
+    return <>{walletBox}{!wallet || published === false
+      ? <><div className="bk-code"><pre className="t-data">{sentence}</pre></div>{wallet && <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p>}</>
+      : <Code text={sentence} copy={savePrompt(sentence, { wallet, academy: ACADEMY, bookId: book.chainId, mask, calldata: completeCalldata(book.chainId, mask) }, lang)}
+          onCopied={last ? () => setRec({ phase: "copied", since: Date.now() }) : undefined} />}</>;
+  };
   // Temporary status words (owner approves).
   const status: ReactNode = !wallet ? null
     : done ? <div className="bk-record"><p className="bk-status bk-recorded t-content" role="status"><Check size={18} aria-hidden /> {t("Saved.", "Đã lưu.")}</p>
@@ -147,25 +153,12 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
     : null;
 
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
-    const r = interactive && p === shown ? titleRef : undefined;
-    switch (`${p}${which[0]}`) {
-      case "0l": return <Page1 titleRef={r} />;
-      case "0p": return <Page2 />;
-      case "1l": return <Page3 track={track} setTrack={setTrack} titleRef={r} />;
-      case "1p": return <Page4 track={track} />;
-      case "2l": return <Page5 titleRef={r} />;
-      case "2p": return <Page6 track={track} />;
-      case "3l": return <Page7 wallet={wallet} setWallet={setWallet} titleRef={r} />;
-      case "3p": return <Page8 />;
-      case "4l": return <Page9 titleRef={r} />;
-      case "4p": return <Page10 />;
-      case "5l": return <Page11 titleRef={r} />;
-      default: return <Page12 save={saveBlock} status={status} wallet={walletBox} />;
-    }
+    const c: Ctx = { titleRef: interactive && p === shown ? titleRef : undefined, track, setTrack, wallet, setWallet, save, status };
+    return content.page(p, which, c);
   };
 
   const bookRef = useRef<HTMLElement>(null);
-  const opening = useOpenFromShelf(bookRef, spreadMode && !reduce, lang === "vi" ? book001Vi.title : book.title);
+  const opening = useOpenFromShelf(bookRef, spreadMode && !reduce, book.number, book.title[lang]);
   const close = <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>;
 
   return (
@@ -236,18 +229,18 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           ))}
         </ol>
       </dialog>
-      {wallet && <CertPopup ref={certRef} wallet={wallet} issuedAt={issuedAt} onClose={() => { if (shut) go("/library"); }} />}
+      {wallet && <CertPopup ref={certRef} book={book} wallet={wallet} issuedAt={issuedAt} onClose={() => { if (shut) go("/library"); }} />}
     </div>
   );
 }
 
 function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"; folio: number; children: ReactNode; extra?: string }) {
   const body = useRef<HTMLDivElement>(null);
-  // No scrollbar: step down spacing, then text size (data-fit1..4 in styles.css) until the page fits.
+  // No scrollbar: step down spacing, then text size (data-fit1..6 in styles.css) until the page fits.
   const fit = () => {
     const b = body.current, sec = b?.parentElement; if (!b || !sec) return;
-    for (let l = 0; l <= 4; l++) {
-      for (let i = 1; i <= 4; i++) sec.toggleAttribute(`data-fit${i}`, i <= l);
+    for (let l = 0; l <= 6; l++) {
+      for (let i = 1; i <= 6; i++) sec.toggleAttribute(`data-fit${i}`, i <= l);
       if (b.scrollHeight <= b.clientHeight) break;
     }
   };
@@ -268,7 +261,7 @@ function useMedia(query: string) {
 }
 
 /** Library → Book: the cover flies from its shelf spot to the closed-book spot, then opens around its spine. */
-function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled: boolean, title: string) {
+function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled: boolean, number: string, title: string) {
   const [opening, setOpening] = useState(false);
   const from = useMemo(() => { const v = sessionStorage.getItem("openFrom"); sessionStorage.removeItem("openFrom"); return v ? JSON.parse(v) as DOMRectInit : null; }, []);
   useLayoutEffect(() => {
@@ -279,7 +272,7 @@ function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled:
     const cover = document.createElement("div");
     cover.className = "cover bk-flycover";
     cover.innerHTML = '<span class="cover-spine"></span><span class="cover-frame"><span class="t-label"></span><span class="t-header cover-title"></span><span class="t-label">Agent Academy</span></span>';
-    cover.querySelectorAll<HTMLElement>(".t-label")[0].textContent = book.number;
+    cover.querySelectorAll<HTMLElement>(".t-label")[0].textContent = number;
     cover.querySelector<HTMLElement>(".cover-title")!.textContent = title;
     Object.assign(cover.style, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${h}px` });
     document.body.appendChild(cover);
@@ -292,6 +285,6 @@ function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled:
       { transform: "perspective(2000px) rotateY(-180deg)" },
     ], { duration: 950, easing: "cubic-bezier(.3,.7,.3,1)" }).finished.finally(() => { cover.remove(); setOpening(false); });
     setOpening(true);
-  }, [from, enabled, bookRef, title]);
+  }, [from, enabled, bookRef, number, title]);
   return opening;
 }

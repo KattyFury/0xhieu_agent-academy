@@ -68,10 +68,10 @@ export default function App() {
   return (
     <Suspense fallback={<div className="page" aria-busy="true" />}>
       {view === "library" ? <Library wallet={wallet} setWallet={setWallet} />
-        : view === "book" ? <Reader day={Number(b ?? 0)} side={c === "practice" ? "practice" : "learn"} wallet={wallet} setWallet={setWallet} />
+        : view === "book" ? <Reader key={a} bookId={Number(a)} day={Number(b ?? 0)} side={c === "practice" ? "practice" : "learn"} wallet={wallet} setWallet={setWallet} />
         : view === "certificate" ? (() => {
-          const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/1/0x… (or old /certificate/0x…)
-          return addr ? <Certificate wallet={addr as Address} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
+          const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/<book>/0x… (or old /certificate/0x… = book 1)
+          return addr ? <Certificate key={`${a}-${addr}`} wallet={addr as Address} bookId={b ? Number(a) : 1} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
         })()
         : view === "home" ? <Entrance wallet={wallet} />
         : <NotFound />}
@@ -84,12 +84,12 @@ function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "
   if (!page) return "home";
   if (page === "library") return a === undefined ? "library" : "404";
   if (page === "book") {
-    // /book/1, /book/1/<0-13>, /book/1/<0-13>/practice (10-13 are old links: the reader clamps them to the ending)
-    return a === "1" && (b === undefined || /^(\d|1[0-3])$/.test(b)) && (c === undefined || c === "practice") && d === undefined ? "book" : "404";
+    // /book/<1|2>, /book/<id>/<0-13>, /book/<id>/<0-13>/practice (6-13 are old links: the reader clamps them to the last spread)
+    return (a === "1" || a === "2") && (b === undefined || /^(\d|1[0-3])$/.test(b)) && (c === undefined || c === "practice") && d === undefined ? "book" : "404";
   }
   if (page === "certificate") {
     if (a === undefined) return "certificate";
-    if (a === "1") return b !== undefined && isAddr(b) && c === undefined ? "certificate" : "404";
+    if (a === "1" || a === "2") return b !== undefined && isAddr(b) && c === undefined ? "certificate" : "404";
     return isAddr(a) && b === undefined ? "certificate" : "404";
   }
   return "404";

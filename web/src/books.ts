@@ -1,18 +1,20 @@
-// Book #1 "Get started with Binance Agentic Wallet": 12 pages = 6 spreads (owner's spec, 2026-11-24).
-// Page text lives in views/Pages.tsx. On-chain config (bookId, mask) lives in chain.ts.
+// Library: every book's id, on-chain id and title. Page text lives in views/Pages.tsx (book 1) and views/Pages2.tsx (book 2).
 
-export const book001 = {
-  id: 1, // URL id (/book/1); the on-chain id is BOOK_ID in chain.ts
-  number: "#1",
-  title: "Get started with Binance Agentic Wallet",
-};
+export type BookMeta = { id: number; chainId: number; number: string; title: { en: string; vi: string } };
 
-/** 6 spreads; spread p holds pages 2p+1 (learn) and 2p+2 (practice). */
-export const pageCount = () => 6;
+/** id = URL id (/book/<id>); chainId = bookId on the AgentAcademy contract (createBook(chainId, 12) done 2026-11-24). */
+export const BOOKS: BookMeta[] = [
+  { id: 1, chainId: 2, number: "#1", title: { en: "Get started with Binance Agentic Wallet", vi: "Bắt đầu với Binance Agentic Wallet" } },
+  { id: 2, chainId: 3, number: "#2", title: { en: "Explore what Binance Agentic Wallet can do", vi: "Khám phá Binance Agentic Wallet" } },
+];
+export const bookById = (id: number) => BOOKS.find((b) => b.id === id) ?? BOOKS[0];
+
+/** Every book: 12 pages = 6 spreads; spread p holds pages 2p+1 (learn) and 2p+2 (practice). */
+export const SPREADS = 6;
 /** Printed pages of spread p ("1–2", "3–4", …). */
 export const pagesOf = (p: number) => `${2 * p + 1}–${2 * p + 2}`;
 
-/** Save prompt for page 12: the sentence the learner sees + a technical block added on copy (spec §6 p12, §7.1). */
+/** Save prompt: the sentence the learner sees + a technical block added on copy. */
 export function savePrompt(sentence: string, p: { wallet: string; academy: string; bookId: number; mask: bigint; calldata: string }, lang: "en" | "vi") {
   if (lang === "vi") return `${sentence}
 
