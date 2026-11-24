@@ -16,7 +16,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
     import("../chain").then((m) => Promise.all(BOOKS.map((b) => m.certificate(wallet, b.chainId).then((c) => [b.id, c.ok] as const))))
       .then((r) => setCertified(Object.fromEntries(r))).catch(() => {});
   }, [wallet]);
-  const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const c = e.currentTarget.querySelector(".cover"), r = c?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height, html: c!.innerHTML })); };
+  const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const c = e.currentTarget.closest(".book-card")?.querySelector(".cover"), r = c?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height, html: c!.innerHTML })); };
 
   return (
     <div className="page">
@@ -32,9 +32,11 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
                 <span className="t-header">{b.title[lang]}</span>
                 <span className="t-secondary">{b.blurb[lang]}</span>
                 <span className="t-secondary">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</span>
-                <span className="btn btn-primary t-button">{t("Open the book", "Mở sách")}</span>
               </a>
-              {certified[b.id] && wallet && <a className="btn btn-ghost btn-round" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}
+              <div className="actions book-card-actions">
+                <a className="btn btn-primary t-button" href={`/book/${b.id}/0`} onClick={remember}>{t("Open the book", "Mở sách")}</a>
+                {certified[b.id] && wallet && <a className="btn btn-ghost btn-round" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}
+              </div>
             </div>
           ))}
         </section>
