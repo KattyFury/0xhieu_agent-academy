@@ -24,7 +24,7 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - Need >= 30 real Agent ID addresses calling the contract. Red lines: no Binance/BNB in project/domain, no web login/QR, prompts always wait for "confirm", Agent ID never used to look up others. No fake interactions.
 
 ## Next
-1. Test real saves end to end from a wallet with an Agent ID: book 1 page 12, book 2 pages 4/8/12 (VI and EN); confirm the popup opens.
+1. Deploy the 2026-11-24 fixes (tab title on practice pages, per-book library blurb in `books.ts`) — built, not deployed yet. Book 2 EN tested end to end 2026-11-24 with 0xhieu.ai (saves 4/8/12 via the site's prompts, popup opened). Still untested: VI prompts.
 2. Top up the relayer when low (`baw wallet send` only sends to addresses in the Binance app address book).
 3. Get >= 30 Agent ID holders saving; submit by 2026-12-09 08:00 UTC.
 

@@ -128,7 +128,9 @@ export default function Reader({ bookId, day, side, wallet: realWallet, setWalle
   const touch = useRef<{ x: number; y: number } | null>(null);
   const tocRef = useRef<HTMLDialogElement>(null);
   const names = content.usePageNames(track);
-  useEffect(() => { document.title = `${names[2 * target]} · Agent Academy`; }, [target, names]);
+  // Single-page mode on the practice side: title = the practice page's name.
+  const nameIdx = 2 * target + (!spreadMode && side === "practice" ? 1 : 0);
+  useEffect(() => { document.title = `${names[nameIdx]} · Agent Academy`; }, [nameIdx, names]);
 
   // A save point: the address box first if no wallet yet, then the command (copy adds the technical block). Only the last save is watched.
   const [addr, setAddr] = useState("");

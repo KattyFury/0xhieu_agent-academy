@@ -29,7 +29,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
                 <span className="book-card-cover"><Cover number={b.number} title={b.title[lang]} /></span>
                 <span className="t-label kicker">{b.number}</span>
                 <span className="t-header">{b.title[lang]}</span>
-                <span className="t-secondary">{t("A course to learn and practice using Binance Agentic Wallet.", "Khóa học cho bạn tìm hiểu và tập sử dụng Binance Agentic Wallet.")}</span>
+                <span className="t-secondary">{b.blurb[lang]}</span>
                 <span className="t-secondary">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</span>
                 <span className="btn btn-primary t-button">{t("Open the book", "Mở sách")}</span>
               </a>
