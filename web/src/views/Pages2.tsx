@@ -261,24 +261,14 @@ function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
     <Steps>
       <S text={t("Ask your AI:", "Hỏi AI:")}>
         <Code text={t("Run a safety check on my wallet.", "Kiểm tra an toàn ví của tôi.")} />
-        <Ok text={t("Your AI reports each item:", "AI báo từng mục:")} />
-        <List items={[
-          t("Wallet connected, with the time the sign-in session ends.", "Ví đang kết nối, kèm giờ phiên đăng nhập hết hạn."),
-          t("No open token approvals, no pending transactions.", "Không có quyền token nào đang mở, không có giao dịch đang chờ."),
-          t("Balances of the tokens in the wallet.", "Số dư các token trong ví."),
-          t("Unusual transactions are refused automatically.", "Giao dịch bất thường bị tự động từ chối."),
-          t("The wallet only trades tokens on the allowed list.", "Ví chỉ giao dịch token trong danh sách cho phép."),
-          t("Today's limit for each kind of task and how much is used.", "Hạn mức hôm nay của từng loại việc và số đã dùng."),
-          t("Developer Mode is on, with an end date. Each use extends it by 7 more days.", "Developer Mode đang bật, kèm ngày hết hạn. Mỗi lần dùng thì hạn được gia hạn thêm 7 ngày."),
-        ]} />
-        <Read text={t("Finally the AI concludes it found nothing unusual. It only reports what it could check and doesn't claim the wallet is “perfectly safe”.", "Cuối cùng AI kết luận không thấy dấu hiệu bất thường. Nó chỉ báo những gì kiểm tra được, không khẳng định ví \"an toàn tuyệt đối\".")} />
-        <Read text={t("How to read it: the AI may suggest turning off Developer Mode if you don't use it, and lowering limits that are high compared with your balance. To change them, use the Binance App.", "Cách đọc: AI có thể khuyên tắt Developer Mode nếu bạn không dùng, và hạ hạn mức nếu quá cao so với số dư. Muốn đổi thì làm trong Binance App.")} />
+        <Ok text={t("Your AI checks connection, approvals, pending transactions, balances, limits and Developer Mode, then says it found nothing unusual.", "AI kiểm tra kết nối, quyền đã cấp, giao dịch đang chờ, số dư, hạn mức và Developer Mode, rồi báo không thấy gì bất thường.")} />
+        <Read text={t("It only reports what it could check. It may suggest turning off Developer Mode or lowering high limits (change them in the Binance App).", "AI chỉ báo những gì kiểm tra được. Nó có thể khuyên tắt Developer Mode hoặc hạ hạn mức cao (đổi trong Binance App).")} />
       </S>
-      <S text={t("**Save your learning progress (save 3).** This step records on the blockchain that you finished reading pages 1 to 12 of Book 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 3).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 12 của Sách 2. Gửi AI:")}>
+      <S text={t("**Save your progress (save 3).** Send your AI:", "**Lưu tiến độ (ký lần 3).** Gửi AI:")}>
         {save(2, t("Save my learning progress on Agent Academy: finished reading pages 1 to 12 of book 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 12 của sách 2."))}
-        <Read text={t("Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”. Once saved, the book closes and shows your certificate.", "AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\". Lưu xong, sách tự đóng và hiện chứng chỉ.")} />
+        <Read text={t("Check that no token leaves your wallet, then type “confirm”. The book closes and shows your certificate.", "Xem không có token nào bị chuyển đi, rồi gõ \"xác nhận\". Sách tự đóng và hiện chứng chỉ.")} />
       </S>
-      <S text={t("When you're done, turn off Developer Mode if you won't use it anymore: Binance App → Agentic Wallet → settings icon at the top right.", "Xong rồi thì tắt Developer Mode nếu bạn không dùng nữa: Binance App → Agentic Wallet → biểu tượng cài đặt góc trên bên phải.")} />
+      <S text={t("Done? Turn off Developer Mode in the Binance App if you won't use it.", "Xong rồi thì tắt Developer Mode trong Binance App nếu không dùng nữa.")} />
     </Steps>
     {status as ReactNode}
   </>;

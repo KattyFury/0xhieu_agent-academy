@@ -161,7 +161,7 @@ export default function Reader({ bookId, day, side, wallet: realWallet, setWalle
 
   const bookRef = useRef<HTMLElement>(null);
   const opening = useOpenFromShelf(bookRef, spreadMode && !reduce, book.number, book.title[lang]);
-  const close = <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>;
+  const close = <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={16} aria-hidden /></a>;
 
   return (
     <div className={`bk-screen ${spreadMode ? "" : "bk-single"} ${opening ? "bk-opening" : ""}`}
