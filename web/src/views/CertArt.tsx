@@ -96,9 +96,15 @@ export function useCertPng() {
     text(x.proof.toUpperCase(), SPLIT + 24, rowB + 40, 14, 600, grey, 2, R - SPLIT - 48);
     g.font = `400 16px ui-monospace, Menlo, Consolas, monospace`; g.fillStyle = ink;
     g.fillText(wallet.slice(0, 22), SPLIT + 24, rowB + 76); g.fillText(wallet.slice(22), SPLIT + 24, rowB + 100);
-    const a = document.createElement("a");
-    a.download = "agent-academy-certificate.png";
-    a.href = c.toDataURL("image/png");
-    a.click();
+    const fname = "agent-academy-certificate.png", url = c.toDataURL("image/png");
+    const download = () => { const a = document.createElement("a"); a.download = fname; a.href = url; a.click(); };
+    // Phones: open the share sheet so iOS offers "Save Image" (Photos) instead of a download to Files.
+    // Blob built synchronously so share() runs inside the tap gesture (iOS requires it).
+    const bin = atob(url.split(",")[1]), buf = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    const file = new File([buf], fname, { type: "image/png" });
+    if (matchMedia("(pointer: coarse)").matches && navigator.canShare?.({ files: [file] })) {
+      navigator.share({ files: [file] }).catch((e) => { if (e?.name !== "AbortError") download(); });
+    } else download();
   };
 }
