@@ -10,7 +10,7 @@ import { go } from "../App";
 import { Label, Nav, two } from "./Shell";
 import { useLang, useT } from "../i18n";
 import { SPREADS, bookById, savePrompt } from "../books";
-import { ACADEMY, BOOK_PAGES, certificate, chapterCount, completeCalldata, isAddr, progressOf, savedPages } from "../chain";
+import { ACADEMY, BOOK_PAGES, certificate, chapterCount, completeCalldata, hasAgentId, isAddr, progressOf, savedPages } from "../chain";
 import { Code, WalletInput, book1, type Ctx, type Track } from "./Pages";
 import { book2 } from "./Pages2";
 import { CertPopup } from "./CertPopup";
@@ -65,6 +65,9 @@ export default function Reader({ bookId, day, side, wallet: realWallet, setWalle
   const saved = q === "confirmed" || q === "cert" ? BOOK_PAGES : savedPages(chain.mask);
   const done = saved === BOOK_PAGES;
   const { loadMask } = chain;
+  // The contract refuses a save with nothing new (NothingNew) or from a wallet without an Agent ID (NoAgentId): check both before showing a save prompt.
+  const [agentOk, setAgentOk] = useState<boolean | null>(null);
+  useEffect(() => { setAgentOk(null); if (realWallet && !q) hasAgentId(realWallet).then(setAgentOk).catch(() => setAgentOk(null)); }, [realWallet, q]);
   useEffect(() => {
     if (q || rec.phase !== "copied") return;
     const id = setInterval(() => { loadMask(); if (Date.now() - rec.since > WATCH_MS) setRec({ phase: "timeout" }); }, POLL_MS);
@@ -116,6 +119,10 @@ export default function Reader({ bookId, day, side, wallet: realWallet, setWalle
     <button className="btn btn-dark t-button" onClick={saveAddr}>OK</button></div>;
   const save = (i: number, sentence: string): ReactNode => {
     const mask = content.saves[i], last = i === content.saves.length - 1;
+    const already = !q && (chain.mask & mask) === mask;
+    if (wallet && already) return <><div className="bk-code"><pre className="t-data">{sentence}</pre></div>{!last && <p className="bk-status bk-recorded t-content" role="status"><Check size={16} aria-hidden /> {t("Already saved. Go on to the next page.", "Đã lưu rồi. Sang trang tiếp theo.")}</p>}</>;
+    if (wallet && agentOk === false) return <><div className="bk-code"><pre className="t-data">{sentence}</pre></div>
+      <p className="bk-status t-content sw-warn" role="alert"><Lock size={16} aria-hidden /> {t("This wallet has no Agent ID yet, so it can't save. Claim your Agent ID (app → Wallet → Agent ID banner), then come back.", "Ví này chưa có Agent ID nên chưa lưu được. Nhận Agent ID (app → Ví → banner Agent ID) rồi quay lại.")}</p></>;
     return <>{walletBox}{!wallet || published === false
       ? <><div className="bk-code"><pre className="t-data">{sentence}</pre></div>{wallet && <p className="bk-status t-content"><Lock size={16} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p>}</>
       : <Code text={sentence} copy={savePrompt(sentence, { wallet, academy: ACADEMY, bookId: book.chainId, mask, calldata: completeCalldata(book.chainId, mask) }, lang)}

@@ -56,7 +56,7 @@ function Page2() {
     <Ok text={t("Your AI lists each token in the wallet with amount, price and USD value, plus the total. Tokens under 0.01 USD are hidden by default.", "AI liệt kê từng token trong ví, gồm số lượng, giá và giá trị USD, kèm tổng giá trị. Token dưới 0,01 USD bị ẩn mặc định.")} />
     <P text={t("Then ask:", "Hỏi tiếp:")} />
     <Code text={t("What is my recent transaction history?", "Lịch sử giao dịch gần đây của tôi là gì?")} />
-    <Ok text={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Course 1 is in this list.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Khóa học 1 nằm trong danh sách này.")} />
+    <Ok text={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Course 1 is in this list; it shows as a contract call.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Khóa học 1 nằm trong danh sách này, hiện là một contract call.")} />
   </>;
 }
 
@@ -89,7 +89,7 @@ function Page4({ save }: Pick<Ctx, "save">) {
     <Steps>
       <S text={t("Ask your AI:", "Hỏi AI:")}>
         <Code text={t("Quote swapping 0.0001 BNB to USDT. Just show me, don't do it.", "Báo giá đổi 0,0001 BNB sang USDT. Chỉ xem, đừng thực hiện.")} />
-        <Ok text={t("Your AI gives the estimated USDT you'd get (about 0.055 USDT) and 0.5% slippage. No order has been placed.", "AI báo số USDT nhận được ước tính (khoảng 0,055 USDT) và slippage 0,5%. Chưa có lệnh nào được thực hiện.")} />
+        <Ok text={t("Your AI gives the estimated USDT you'd get (about 0.055 USDT; it changes with the BNB price) and 0.5% slippage. No order has been placed.", "AI báo số USDT nhận được ước tính (khoảng 0,055 USDT; số này đổi theo giá BNB) và slippage 0,5%. Chưa có lệnh nào được thực hiện.")} />
         <Read text={t("How to read it: “about” means an estimate; the real price can move. 0.5% slippage means the price may move at most 0.5%. “Just show me, don't do it” makes the AI only quote, not trade.", "Cách đọc: \"nhận khoảng\" là số ước tính, giá thật có thể lệch. Slippage 0,5% nghĩa là giá được phép lệch tối đa 0,5%. Câu \"Chỉ xem, đừng thực hiện\" để AI chỉ báo giá, không đổi thật.")} />
         <Read text={t("If you have a balance, you can try a real swap yourself. This lesson has no real-swap practice.", "Nếu có số dư, bạn có thể tự thử đổi thật. Bài học này không có phần thực hành đổi thật.")} />
       </S>

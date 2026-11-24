@@ -29,7 +29,7 @@ Thông tin kỹ thuật (dùng Binance Agentic Wallet skill \`baw\`, KHÔNG thay
 - inputData: ${p.calldata}
 Bước 1: chạy \`baw wallet settings --json\`. Nếu devMode.enabled không phải true thì dừng lại và hướng dẫn tôi bật Developer Mode.
 Bước 2: chạy \`baw contract-call preview --binanceChainId 56 --from ${p.wallet} --to ${p.academy} --value 0 --inputData ${p.calldata} --json\`.
-Bước 3: cho tôi xem parsedTx, risks và authorityChanges. Có lỗi hoặc rủi ro thì dừng lại và báo nguyên văn.
+Bước 3: cho tôi xem parsedTx, risks và authorityChanges. Có lỗi hoặc rủi ro thì dừng lại và báo nguyên văn. Nếu lỗi là "execution reverted", giải thích đơn giản: thường là các trang này đã được lưu rồi, hoặc ví chưa có Agent ID.
 Bước 4: CHỈ khi tôi trả lời "xác nhận", chạy \`baw contract-call execute --requestId <requestId> --json\`.
 Bước 5: báo txHash cho tôi.`;
   return `${sentence}
@@ -43,7 +43,7 @@ Technical details (use the Binance Agentic Wallet skill \`baw\`, do NOT change a
 - inputData: ${p.calldata}
 Step 1: run \`baw wallet settings --json\`. If devMode.enabled is not true, stop and guide me to turn on Developer Mode.
 Step 2: run \`baw contract-call preview --binanceChainId 56 --from ${p.wallet} --to ${p.academy} --value 0 --inputData ${p.calldata} --json\`.
-Step 3: show me parsedTx, risks and authorityChanges. If there is an error or any risk, stop and report it word for word.
+Step 3: show me parsedTx, risks and authorityChanges. If there is an error or any risk, stop and report it word for word. If the error is "execution reverted", explain it simply: usually these pages are already saved, or the wallet has no Agent ID.
 Step 4: ONLY when I reply "confirm", run \`baw contract-call execute --requestId <requestId> --json\`.
 Step 5: tell me the txHash.`;
 }

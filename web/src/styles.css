@@ -163,6 +163,8 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .bk-addr-row .bk-field { flex: 1; }
 .bk-status { display: inline-flex; align-items: center; gap: var(--ds-space-8); }
 .bk-recorded { color: var(--ds-color-green-text); font-weight: 700; }
+.sw-warn { color: var(--ds-color-red-text); align-items: flex-start; }
+.sw-warn svg { flex: none; margin-top: 3px; }
 .bk-record { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ds-space-16); padding-top: var(--ds-space-16); border-top: 1px solid #000; }
 /* pager */
 .mz-pager { display: flex; justify-content: space-between; align-items: center; gap: var(--ds-space-16); border-top: 1px solid #000; padding: var(--ds-space-16) 0 var(--ds-space-48); }

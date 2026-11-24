@@ -40,11 +40,12 @@ export function CopyButton({ text, label, primary, onCopied }: { text: string; l
 }
 
 /** A command for the AI: code frame, [Copy prompt] below. `copy` = what gets copied when it differs from what is shown. */
-export function Code({ text, copy, onCopied }: { text: string; copy?: string; onCopied?: () => void }) {
+export function Code({ text, copy, onCopied, command }: { text: string; copy?: string; onCopied?: () => void; command?: boolean }) {
+  const t = useT();
   return (
     <div className="bk-code">
       <pre className="t-data">{text}</pre>
-      <CopyButton text={copy ?? text} label="Copy prompt" onCopied={onCopied} />
+      <CopyButton text={copy ?? text} label={command ? t("Copy command", "Chép lệnh") : t("Copy prompt", "Chép prompt")} onCopied={onCopied} />
     </div>
   );
 }
@@ -126,7 +127,7 @@ export function Page2() {
       t("The AI does not hold the wallet's key", "AI không cầm chìa khoá của ví"),
       t("Sign out and the AI loses access", "Đăng xuất thì AI hết quyền"),
     ]} />
-    <P text={t("You set these limits yourself in the Binance app. The AI can see them but can't change them.", "Các giới hạn này do bạn tự đặt trong app Binance. AI chỉ xem được, không sửa được.")} />
+    <P text={t("You set these limits yourself in the Binance App. The AI can see them but can't change them.", "Các giới hạn này do bạn tự đặt trong app Binance. AI chỉ xem được, không sửa được.")} />
   </>;
 }
 
@@ -168,7 +169,7 @@ export function Page4({ track }: { track: Track }) {
   if (track === "own") return <>
     <H2 text={t("Install and sign in", "Cài và đăng nhập")} />
     <Steps>
-      <S text={t("Install the skill (type it in a terminal, or ask your AI to run it):", "Cài skill (gõ trong terminal, hoặc nhờ AI chạy):")}><Code text={INSTALL} /></S>
+      <S text={t("Install the skill (type it in a terminal, or ask your AI to run it):", "Cài skill (gõ trong terminal, hoặc nhờ AI chạy):")}><Code text={INSTALL} command /></S>
       <S text={t("Tell your AI:", "Nói với AI:")}><Code text={pr.login} /></S>
       <S text={t("Your AI gives you a link and a 6-character code. Open the link and sign in with the Binance App. The first time, the app guides you to create the wallet.", "AI đưa bạn một link và mã 6 ký tự. Mở link, đăng nhập bằng Binance App. Lần đầu, app sẽ hướng dẫn bạn tạo ví.")} />
       <S text={t("In the app, compare the 6-character code with the one your AI gave. If they match, confirm. If they don't match, or you didn't just ask for it (unknown IP warning), don't confirm.", "Trong app, so mã 6 ký tự với mã AI vừa đưa. Khớp thì xác nhận. Không khớp, hoặc không phải bạn vừa yêu cầu (cảnh báo IP lạ), thì đừng xác nhận.")} />
@@ -185,6 +186,7 @@ export function Page4({ track }: { track: Track }) {
       <S text={t("Ask:", "Hỏi:")}><Code text={pr.connected} /></S>
       <S text={t("Claim your Agent ID (app → Wallet → Agent ID banner; name 3–15 characters, lowercase letters and numbers).", "Nhận Agent ID (app → Ví → banner Agent ID; tên 3–15 ký tự, chữ thường và số).")} />
     </Steps>
+    <Ok text={t("Your AI says the wallet is connected (CONNECTED).", "AI báo ví đã kết nối (CONNECTED).")} />
     <P text={t("By default you can use 250K tokens a week.", "Mặc định bạn dùng được 250K token mỗi tuần.")} />
     <P text={t("**Do it now:** claim your Agent ID to get 2.5 million free AI Pro tokens. These free tokens are FCFS, first come first served, and nobody knows when it ends.", "**Làm ngay:** nhận Agent ID để được tặng 2,5 triệu token AI Pro. Số token tặng này theo FCFS, ai đến trước được trước, chưa biết khi nào kết thúc.")} />
   </>;
@@ -225,7 +227,7 @@ export function WalletInput({ value, onChange, onEnter, err }: { value: string; 
   const t = useT();
   return <>
     <label className="bk-field">
-      <span className="t-label">{t("Your wallet address (0x)", "Địa chỉ ví (địa chỉ 0x của bạn)")}</span>
+      <span className="t-label">{t("Your wallet address (0x)", "Địa chỉ ví (0x)")}</span>
       <input className="input t-input" value={value} onChange={(e) => onChange(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") onEnter?.(); }}
         placeholder="0x…" spellCheck={false} autoComplete="off" />
     </label>

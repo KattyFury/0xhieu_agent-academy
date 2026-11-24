@@ -51,4 +51,10 @@ export const savedPages = (mask: bigint) => { let n = 0; for (let i = 0n; i < Bi
 export const completeCalldata = (bookId: number, mask: bigint) =>
   encodeFunctionData({ abi: academyAbi, functionName: "completeChapters", args: [BigInt(bookId), mask] });
 
+const erc721Abi = parseAbi(["function balanceOf(address owner) view returns (uint256)"]);
+/** The contract refuses saves from wallets without an Agent ID (NoAgentId), so the site checks first. */
+export async function hasAgentId(addr: Address): Promise<boolean> {
+  return (await client.readContract({ address: AGENT_ID, abi: erc721Abi, functionName: "balanceOf", args: [addr] })) > 0n;
+}
+
 export const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
