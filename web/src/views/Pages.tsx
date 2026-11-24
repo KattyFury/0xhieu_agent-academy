@@ -231,29 +231,30 @@ export function Page7({ wallet, setWallet, titleRef }: { wallet: Address | null;
   const [err, setErr] = useState("");
   const [res, setRes] = useState<{ status: string; txHash?: string; amount?: string; balance?: string } | null>(null);
   const bad = t("That doesn't look like a wallet address (0x + 40 characters).", "Đây không giống địa chỉ ví (0x + 40 ký tự).");
-  const send = async () => {
+  // One button: save the wallet, then the server sends a little gas only if the wallet has none (Agent ID wallets, once each).
+  const submit = async () => {
     const a = v.trim();
     if (!isAddr(a)) return setErr(bad);
-    setBusy(true); setErr("");
+    setWallet(a as Address);
+    setBusy(true); setErr(""); setRes(null);
     try {
       const r = await fetch("/api/claim", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ address: a }) });
-      const j = await r.json();
-      if (j.error) setErr(j.error); else { setWallet(a as Address); setRes(j); }
-    } catch { setErr(t("Couldn't reach the server. Try again in a minute.", "Không kết nối được máy chủ. Thử lại sau một phút.")); }
+      setRes(await r.json());
+    } catch { setRes({ status: "error" }); }
     setBusy(false);
   };
-  const justSave = () => { const a = v.trim(); if (isAddr(a)) { setWallet(a as Address); setRes({ status: "saved" }); setErr(""); } else setErr(bad); };
   // Temporary status words (owner approves).
   const msg: Record<string, ReactNode> = {
-    sent: <>{t("Sent ", "Đã gửi ")}<strong>{res?.amount} BNB</strong>. {res?.txHash && <a className="link" href={`${BSCSCAN}/tx/${res.txHash}`} target="_blank" rel="noreferrer">{t("View", "Xem")}</a>}</>,
-    already: t("This wallet already got its gas.", "Ví này đã nhận gas rồi."),
-    enough: <>{t("Your wallet already has ", "Ví đã có ")}<strong>{res?.balance} BNB</strong>{t(", enough.", ", đủ dùng.")}</>,
-    cap: t("Free gas is out for today.", "Hết gas tặng hôm nay."),
-    out: t("Free gas is out.", "Hết quỹ gas."),
-    limit: t("Too many requests today.", "Quá nhiều yêu cầu hôm nay."),
-    saved: t("Saved.", "Đã lưu."),
+    sent: <>{t("Wallet saved. Sent you ", "Đã lưu ví và gửi bạn ")}<strong>{res?.amount} BNB</strong>{t(" for gas. ", " làm gas. ")}{res?.txHash && <a className="link" href={`${BSCSCAN}/tx/${res.txHash}`} target="_blank" rel="noreferrer">{t("View", "Xem")}</a>}</>,
+    enough: <>{t("Wallet saved. It already has ", "Đã lưu ví. Ví đã có ")}<strong>{res?.balance} BNB</strong>{t(" for gas, so no gas is sent.", " làm gas nên không được tặng thêm.")}</>,
+    already: t("Wallet saved. This wallet already got its gas.", "Đã lưu ví. Ví này đã nhận gas rồi."),
+    "no-agent-id": t("Wallet saved. This wallet has no Agent ID yet, so no gas is sent. Claim your Agent ID in the app first.", "Đã lưu ví. Ví này chưa có Agent ID nên chưa được tặng gas. Nhận Agent ID trong app trước."),
+    cap: t("Wallet saved. Free gas is out for today.", "Đã lưu ví. Hết gas tặng hôm nay."),
+    out: t("Wallet saved. Free gas is out.", "Đã lưu ví. Hết quỹ gas."),
+    limit: t("Wallet saved. Too many requests today.", "Đã lưu ví. Quá nhiều yêu cầu hôm nay."),
+    error: t("Wallet saved. Couldn't send gas right now. Try again in a minute.", "Đã lưu ví. Chưa gửi được gas, thử lại sau một phút."),
   };
-  const gasOut = res?.status === "cap" || res?.status === "out";
+  const good = res?.status === "sent" || res?.status === "enough" || res?.status === "already";
   return <>
     <H1 text="Gas" titleRef={titleRef} />
     <List items={[
@@ -261,15 +262,14 @@ export function Page7({ wallet, setWallet, titleRef }: { wallet: Address | null;
       t("Gas has 3 levels: low, medium, high.", "Gas có 3 mức: thấp, vừa, cao."),
       t("The real fee is only final when the transaction is done.", "Phí thật chỉ chốt khi giao dịch xong."),
       t("At the end of this book, you record that you finished it on the blockchain to get your certificate. That costs very little gas.", "Cuối sách, bạn ghi kết quả học xong lên blockchain để nhận chứng chỉ. Việc này tốn rất ít gas."),
-      t("Agent Academy gives you gas: 0.00025 BNB (under 0.20 USD), once per Agent ID.", "Agent Academy tặng bạn gas: 0,00025 BNB (dưới 0,20 USD), một lần cho mỗi Agent ID."),
+      t("No BNB for gas yet? Agent Academy gives you 0.00025 BNB (under 0.20 USD), once per Agent ID. Wallets that already have BNB don't get it.", "Chưa có BNB làm gas? Agent Academy tặng bạn 0,00025 BNB (dưới 0,20 USD), một lần cho mỗi Agent ID. Ví đã có BNB thì không được tặng."),
     ]} />
     <div className="bk-gas">
-      <WalletInput value={v} onChange={(s) => { setV(s); setErr(""); setRes(null); if (isAddr(s.trim())) setWallet(s.trim() as Address); }} onEnter={send} err={err} />
+      <WalletInput value={v} onChange={(s) => { setV(s); setErr(""); setRes(null); if (isAddr(s.trim())) setWallet(s.trim() as Address); }} onEnter={submit} err={err} />
       <div className="actions">
-        <button className="btn btn-primary t-button" onClick={send} disabled={busy || gasOut}>{busy && <Loader2 size={16} className="animate-spin" />} {busy ? t("Sending…", "Đang gửi…") : gasOut ? msg[res!.status] : t("Send me gas", "Gửi gas cho tôi")}</button>
-        <button className="btn btn-ghost t-button" onClick={justSave}>{t("I have BNB, just save", "Tôi có BNB, chỉ lưu")}</button>
+        <button className="btn btn-primary t-button" onClick={submit} disabled={busy}>{busy && <Loader2 size={16} className="animate-spin" />} {t("Enter wallet", "Nhập ví")}</button>
       </div>
-      {res && !gasOut && <p className="t-content" role="status" style={{ color: res.status === "limit" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p>}
+      {res && <p className="t-content" role="status" style={good ? { color: "var(--ds-color-green-text)" } : undefined}>{msg[res.status] ?? msg.error}</p>}
     </div>
   </>;
 }
