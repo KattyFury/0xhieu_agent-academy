@@ -88,10 +88,10 @@ export default function Certificate({ wallet }: { wallet: Address }) {
                 <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
                 <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
               </> : <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${2 * P} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${2 * P} trang.`)}</p>)}
-              <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>
+              {c && !c.ok && <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
               {!valid && <form className="cert-actions" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
-                <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Your Agent ID, like you.ai (optional)", "Agent ID của bạn, ví dụ ban.ai (không bắt buộc)")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
-                <button className="btn btn-ghost t-button" type="submit">{t("Show it", "Hiện tên")}</button>
+                <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, like you.ai (optional)", "Agent ID, ví dụ ban.ai (tùy chọn)")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
+                <button className="btn btn-ghost t-button" type="submit">{t("Add my name", "Thêm tên")}</button>
               </form>}
               {valid && <button className="link t-label link-btn" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
               <p className="t-note cert-note">{valid || edit ? t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.") : ""}</p>
