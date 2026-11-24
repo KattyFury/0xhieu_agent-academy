@@ -119,8 +119,9 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .bk-list li.t-lead { color: #000; }
 /* numbered steps: big numbers, rule above each */
 .bk-steps { counter-reset: s; display: flex; flex-direction: column; }
-.bk-steps > li { counter-increment: s; position: relative; display: flex; flex-direction: column; gap: var(--ds-space-8); padding: var(--ds-space-16) 0 var(--ds-space-16) var(--ds-space-48); border-top: 1px solid #000; }
-.bk-steps > li::before { content: counter(s); position: absolute; left: 0; top: var(--ds-space-12); }
+/* Numbered rows: each row is at least as tall as its number (min-height = number line + top/bottom padding), so the rule below never crosses the number (DS Swiss rule). */
+.bk-steps > li { counter-increment: s; position: relative; display: flex; flex-direction: column; gap: var(--ds-space-8); padding: var(--ds-space-16) 0 var(--ds-space-16) var(--ds-space-64); min-height: calc(var(--ds-type-swiss-number-line) + 2 * var(--ds-space-16)); border-top: 1px solid #000; }
+.bk-steps > li::before { content: counter(s); position: absolute; left: 0; top: var(--ds-space-16); }
 .bk-steps .t-content { color: #000; }
 /* prompt blocks */
 .bk-code { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ds-space-8); }
@@ -222,7 +223,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .sw-title { padding: var(--ds-space-40, 40px) 0 var(--ds-space-24); }
   .sw-lib li { grid-template-columns: 1fr; gap: var(--ds-space-12); padding: var(--ds-space-32) 0; }
   .mz-bar .sw-label:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bk-steps > li { padding-left: var(--ds-space-40, 40px); }
+  .bk-steps > li { padding-left: var(--ds-space-48); }
   .setup-cards { grid-template-columns: 1fr; }
   .setup-card + .setup-card { border-left: 0; border-top: 1px solid #000; padding-left: 0; }
   .sw-pg span { display: none; }
