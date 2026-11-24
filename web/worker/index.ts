@@ -7,7 +7,7 @@ interface Env { ASSETS: Fetcher; RELAYER_KEY: string; GAS: KVNamespace; TG_BOT_T
 const VALID_PATH = /^\/(?:(?:library|certificate|book\/1(?:\/(?:\d|1[0-3])(?:\/practice)?)?|certificate\/(?:1\/)?0x[0-9a-fA-F]{40})\/?)?$/;
 
 const SECURITY_HEADERS: Record<string, string> = {
-  "content-security-policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://bsc-dataseed.binance.org https://bsc-rpc.publicnode.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+  "content-security-policy": "default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://bsc-dataseed.binance.org https://bsc-rpc.publicnode.com https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
   "x-frame-options": "DENY",
   "x-content-type-options": "nosniff",
   "referrer-policy": "strict-origin-when-cross-origin",
