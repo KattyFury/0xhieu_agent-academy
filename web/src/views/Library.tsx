@@ -32,8 +32,10 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
                 <p className="t-content">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>
               </div>
               <div className="sw-lib-meta">
-                <span className="sw-chip">{t("12 pages", "12 trang")}</span>
-                {certified[b.id] && <span className="sw-chip sw-chip-on"><Check size={12} aria-hidden /> {t("Certified", "Đã có chứng chỉ")}</span>}
+                <div className="sw-chips">
+                  <span className="sw-chip">{t("12 pages", "12 trang")}</span>
+                  {certified[b.id] && <span className="sw-chip sw-chip-on"><Check size={12} aria-hidden /> {t("Certified", "Đã có chứng chỉ")}</span>}
+                </div>
                 <div className="sw-btns">
                   <a className="btn btn-dark t-button" href={`/course/${b.id}/0`}>{t("Open the course", "Mở khóa học")} <ArrowRight size={16} aria-hidden /></a>
                   {certified[b.id] && wallet && <a className="btn btn-primary btn-sq" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}

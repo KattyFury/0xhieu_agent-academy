@@ -55,6 +55,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .input { width: 100%; height: 48px; border: 1px solid #000; border-radius: 0; padding: 0 var(--ds-space-16); background: #fff; color: #000; font-family: inherit; }
 .input::placeholder { color: var(--ds-color-grey); }
 .bk-field { display: flex; flex-direction: column; gap: var(--ds-space-8); }
+.bk-field > .t-label { font-size: var(--ds-type-swiss-label-size); line-height: var(--ds-type-swiss-label-line); font-weight: var(--ds-type-swiss-label-weight); letter-spacing: var(--ds-type-swiss-label-tracking); text-transform: uppercase; color: var(--ds-color-grey); }
 .address-form { display: flex; flex-wrap: wrap; gap: var(--ds-space-8); max-width: 640px; }
 .address-form .input { flex: 1 1 280px; width: auto; }
 .sw-err { color: var(--ds-color-red-text); width: 100%; }
@@ -93,9 +94,10 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 
 /* ===== Library + certificate list ===== */
 .sw-title { padding: var(--ds-space-64) 0 var(--ds-space-32); border-bottom: 1px solid #000; }
-.sw-lib li { display: grid; grid-template-columns: 160px 2fr 3fr 248px; gap: var(--ds-space-32); padding: var(--ds-space-40, 40px) 0; border-bottom: 1px solid #000; align-items: start; }
+.sw-lib li { display: grid; grid-template-columns: 160px 3fr 2fr 248px; gap: var(--ds-space-32); padding: var(--ds-space-40, 40px) 0; border-bottom: 1px solid #000; align-items: start; }
 .sw-lib-text { display: flex; flex-direction: column; gap: var(--ds-space-12); color: var(--ds-color-grey); }
 .sw-lib-meta { display: flex; flex-direction: column; gap: var(--ds-space-12); align-items: flex-start; }
+.sw-chips { display: flex; flex-wrap: wrap; gap: var(--ds-space-8); }
 .sw-lib-meta .sw-btns { margin-top: var(--ds-space-4); flex-wrap: nowrap; }
 .sw-stack { display: flex; flex-direction: column; gap: var(--ds-space-16); }
 
@@ -111,9 +113,10 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .mz-col .t-page { outline: none; }
 .mz-col .t-lead { color: var(--ds-color-grey); }
 .mz-col .t-lead strong, .mz-col strong { color: #000; font-weight: 700; }
-.mz-col h3.t-header { font-size: 16px; line-height: 22px; margin-top: var(--ds-space-8); }
+.mz-col h3.t-header { margin-top: var(--ds-space-24); font-size: var(--ds-type-swiss-label-size); line-height: var(--ds-type-swiss-label-line); font-weight: var(--ds-type-swiss-label-weight); letter-spacing: var(--ds-type-swiss-label-tracking); text-transform: uppercase; color: #000; }
+.mz-col h3.t-header:first-of-type { margin-top: var(--ds-space-8); }
 /* lesson lists: • bullets, no rules (owner 2026-11-24) */
-.bk-list { display: flex; flex-direction: column; gap: var(--ds-space-4); margin-top: calc(-1 * var(--ds-space-8)); }
+.bk-list { display: flex; flex-direction: column; gap: var(--ds-space-4); }
 .bk-list li { position: relative; padding-left: var(--ds-space-24); }
 .bk-list li::before { content: "•"; position: absolute; left: var(--ds-space-8); top: 0; color: #000; }
 .bk-list li.t-lead { color: #000; }

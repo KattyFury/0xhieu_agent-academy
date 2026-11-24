@@ -29,7 +29,7 @@ export function CertificateList({ wallet, setWallet }: { wallet: Address | null;
       <main className="sw-wrap">
         <h1 className="sw-title">{t("Certificate", "Chứng chỉ")}</h1>
         {!wallet && <div className="sw-sec"><span className="sw-label">{t("Check your progress", "Xem tiến độ")}</span>
-          <div><p className="t-content sw-measure">{t("This course is checked with the wallet you studied with.", "Khóa học này kiểm tra bằng ví bạn dùng để học.")}</p><AddressForm wallet={wallet} setWallet={setWallet} /></div></div>}
+          <div className="sw-stack"><p className="t-content sw-measure">{t("This course is checked with the wallet you studied with.", "Khóa học này kiểm tra bằng ví bạn dùng để học.")}</p><AddressForm wallet={wallet} setWallet={setWallet} /></div></div>}
         <ul className="sw-lib">{BOOKS.map((b, i) => <CertRow key={b.id} book={b} i={i} wallet={wallet} setWallet={setWallet} />)}</ul>
       </main>
     </div>
@@ -45,7 +45,7 @@ function CertRow({ book, i, wallet, setWallet }: { book: BookMeta; i: number; wa
       <span className="sw-big">{two(i + 1)}</span>
       <h2 className="sw-lib-title">{book.title[lang]}</h2>
       <div className="sw-lib-text">
-        {!wallet ? <p className="t-content sw-grey">{t("Enter your wallet above to check.", "Nhập ví ở trên để kiểm tra.")}</p> : <>
+        {!wallet ? <p className="t-content sw-grey">{t("12 pages", "12 trang")}</p> : <>
           <p className="t-data" translate="no">{short(wallet)}</p>
           {err && <p className="t-content sw-grey">{t("Can't check right now. Try again in a minute.", "Chưa kiểm tra được. Thử lại sau một phút.")}</p>}
           {!err && !c && <p className="t-content sw-grey">{t("Checking…", "Đang kiểm tra…")}</p>}
@@ -85,11 +85,12 @@ export default function Certificate({ wallet, bookId }: { wallet: Address; bookI
             <span className="sw-label">{t("Certificate", "Chứng chỉ")} · {book.number}</span>
             <div className="sw-stack">
               <h1 className="sw-heading">{title}</h1>
-              <p className="t-data sw-break" translate="no">{wallet}</p>
+              <div className="bk-field"><span className="t-label">{t("Wallet", "Ví")}</span><p className="t-data sw-break" translate="no">{wallet}</p></div>
               {err && <p className="t-content sw-grey" role="status">{t("Can't check right now. Try again in a minute.", "Chưa kiểm tra được. Thử lại sau một phút.")}</p>}
               {!err && !c && <p className="t-content sw-grey" role="status">{t("Checking…", "Đang kiểm tra…")}</p>}
               {c && <p className="t-content">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${BOOK_PAGES} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${BOOK_PAGES} trang.`)}</p>}
               {c && <p className="t-content sw-grey">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
+              {c && <a className="btn btn-dark t-button" href={`/course/${book.id}/0`}>{t("Open the course", "Mở khóa học")} <ArrowRight size={16} aria-hidden /></a>}
             </div>
           </section>
         )}
