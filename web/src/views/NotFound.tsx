@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 import { useT } from "../i18n";
 import { Nav } from "./Shell";
 
@@ -9,12 +10,13 @@ export default function NotFound() {
   return (
     <div className="page">
       <Nav />
-      <main className="frame">
-        <section className="bento">
-          <div className="tile hero span-2">
-            <h1 className="t-hero">{t("Page not found", "Không tìm thấy trang")}</h1>
-            <p className="t-content measure">{t("This link doesn't lead anywhere. Check the address, or start from the library.", "Liên kết này không dẫn đến trang nào. Kiểm tra lại địa chỉ, hoặc bắt đầu từ thư viện.")}</p>
-            <div className="actions"><a className="btn btn-primary t-button" href="/library">{t("Go to the library", "Đến thư viện")}</a></div>
+      <main className="sw-wrap">
+        <section className="sw-hero">
+          <h1 className="sw-hero-title">404</h1>
+          <div className="sw-hero-side">
+            <span className="sw-label">{t("Page not found", "Không tìm thấy trang")}</span>
+            <p className="t-content">{t("This link doesn't lead anywhere. Check the address, or start from the library.", "Liên kết này không dẫn đến trang nào. Kiểm tra lại địa chỉ, hoặc bắt đầu từ thư viện.")}</p>
+            <a className="btn btn-primary t-button" href="/library">{t("Go to the library", "Đến thư viện")} <ArrowRight size={16} aria-hidden /></a>
           </div>
         </section>
       </main>

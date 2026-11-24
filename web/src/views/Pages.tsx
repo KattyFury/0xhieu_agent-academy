@@ -72,7 +72,7 @@ export const usePrompts = () => {
     balance: t("What is my BNB balance on BNB Smart Chain?", "Số dư BNB của tôi trên BNB Smart Chain là bao nhiêu?"),
     limit: t("What is my daily limit?", "Hạn mức mỗi ngày của tôi là bao nhiêu?"),
     devLimit: t("What is my Developer Mode daily limit?", "Hạn mức Developer Mode mỗi ngày của tôi là bao nhiêu?"),
-    save: t("Save my learning progress on Agent Academy: finished pages 1 to 12 of book 1.", "Lưu tiến độ học của tôi trên Agent Academy: đã xong trang 1 đến 12 của sách 1."),
+    save: t("Save my learning progress on Agent Academy: finished pages 1 to 12 of course 1.", "Lưu tiến độ học của tôi trên Agent Academy: đã xong trang 1 đến 12 của khóa học 1."),
   };
 };
 
@@ -200,7 +200,7 @@ export function Page5({ titleRef }: TitleRef) {
       t("One 0x address is shared across many networks: BNB Smart Chain, Ethereum, Base, Arbitrum, Polygon… Solana has its own address.", "Một địa chỉ 0x dùng chung cho nhiều mạng: BNB Smart Chain, Ethereum, Base, Arbitrum, Polygon… Solana có địa chỉ riêng."),
       t("Each network is a separate blockchain. Sending on the wrong network can lose your money, so always check the network before you send.", "Mỗi mạng là một blockchain riêng. Gửi nhầm mạng có thể mất tiền, nên luôn kiểm tra mạng trước khi gửi."),
       t("An Agent ID is a short name in place of your address, e.g. you.ai. One name per person, it can't be transferred.", "Agent ID là tên ngắn thay cho địa chỉ, ví dụ you.ai. Mỗi người một tên, không chuyển nhượng được."),
-      t("When you finish this book, you record it on the blockchain to get the Agent Academy certificate. That needs an Agent ID.", "Học xong sách này, bạn ghi kết quả lên blockchain để nhận chứng chỉ của Agent Academy. Việc ghi này cần có Agent ID."),
+      t("When you finish this course, you record it on the blockchain to get the Agent Academy certificate. That needs an Agent ID.", "Học xong khóa học này, bạn ghi kết quả lên blockchain để nhận chứng chỉ của Agent Academy. Việc ghi này cần có Agent ID."),
     ]} />
   </>;
 }
@@ -270,7 +270,7 @@ export function Page7({ wallet, setWallet, titleRef }: { wallet: Address | null;
       t("Gas is like fuel money. Every write to the blockchain costs gas, paid in BNB.", "Gas giống tiền xăng. Mỗi lần ghi lên blockchain đều tốn gas, trả bằng BNB."),
       t("Gas has 3 levels: low, medium, high.", "Gas có 3 mức: thấp, vừa, cao."),
       t("The real fee is only final when the transaction is done.", "Phí thật chỉ chốt khi giao dịch xong."),
-      t("At the end of this book, you record that you finished it on the blockchain to get your certificate. That costs very little gas.", "Cuối sách, bạn ghi kết quả học xong lên blockchain để nhận chứng chỉ. Việc này tốn rất ít gas."),
+      t("At the end of this course, you record that you finished it on the blockchain to get your certificate. That costs very little gas.", "Cuối khóa học, bạn ghi kết quả học xong lên blockchain để nhận chứng chỉ. Việc này tốn rất ít gas."),
       t("No BNB for gas yet? Agent Academy gives you 0.00025 BNB (under 0.20 USD), once per Agent ID. Wallets that already have BNB don't get it.", "Chưa có BNB làm gas? Agent Academy tặng bạn 0,00025 BNB (dưới 0,20 USD), một lần cho mỗi Agent ID. Ví đã có BNB thì không được tặng."),
     ]} />
     <div className="bk-gas">
@@ -357,7 +357,7 @@ export function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
       <S text={t("Your AI shows you a preview. Check whether any token leaves your wallet.", "AI cho bạn xem trước. Đọc xem có token nào bị chuyển đi không.")} />
       <S text={t("If it's right, type “confirm”.", "Thấy đúng thì gõ \"xác nhận\".")} />
     </Steps>
-    <Ok text={t("Your AI says it's saved. The book closes and shows your certificate.", "AI báo đã lưu xong. Sách tự đóng và hiện chứng chỉ.")} />
+    <Ok text={t("Your AI says it's saved. Your certificate opens.", "AI báo đã lưu xong. Chứng chỉ hiện ra.")} />
     {status}
   </>;
 }

@@ -13,7 +13,7 @@ const CertificateList = lazy(() => import("./views/Certificate").then((m) => ({ 
 
 const KEY = "academy.wallet";
 
-/** Clean URLs: /, /library, /book/1/3, /book/1/3/practice, /certificate, /certificate/0x… */
+/** Clean URLs: /, /library, /course/1/3, /course/1/3/practice, /certificate, /certificate/0x… (/book/… = old links, same view) */
 export const go = (path: string, replace = false) => {
   if (replace) history.replaceState(null, "", path); else history.pushState(null, "", path);
   dispatchEvent(new PopStateEvent("popstate"));
@@ -22,7 +22,7 @@ export const go = (path: string, replace = false) => {
 function useRoute() {
   const [path, setPath] = useState(() => {
     if (location.hash.startsWith("#/")) { // old hash links (#/library, #/book/001/3) → clean paths
-      const p = location.hash.slice(1).split("?")[0].replace(/^\/book\/001/, "/book/1").replace(/^\/join.*/, "/book/1/0");
+      const p = location.hash.slice(1).split("?")[0].replace(/^\/book\/001/, "/course/1").replace(/^\/join.*/, "/course/1/0");
       history.replaceState(null, "", p + location.search);
     }
     return location.pathname;
@@ -83,8 +83,8 @@ export default function App() {
 function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "certificate" | "404" {
   if (!page) return "home";
   if (page === "library") return a === undefined ? "library" : "404";
-  if (page === "book") {
-    // /book/<1|2>, /book/<id>/<0-13>, /book/<id>/<0-13>/practice (6-13 are old links: the reader clamps them to the last spread)
+  if (page === "course" || page === "book") {
+    // /course/<1|2>, /course/<id>/<0-13>, /course/<id>/<0-13>/practice (/book/… and 6-13 are old links: the reader clamps them to the last pair)
     return (a === "1" || a === "2") && (b === undefined || /^(\d|1[0-3])$/.test(b)) && (c === undefined || c === "practice") && d === undefined ? "book" : "404";
   }
   if (page === "certificate") {

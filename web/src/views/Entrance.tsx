@@ -1,55 +1,57 @@
 import type { Address } from "viem";
-import { ArrowRight, Award, BookOpen, ListChecks, PenLine } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { BOOKS } from "../books";
 import { useLang, useT } from "../i18n";
-import { Cover, Nav } from "./Shell";
+import { Label, Nav, two } from "./Shell";
 
-/** Landing: what Agent Academy is. Yellow tile = Library, black tile = Certificate (like 0xhieu.xyz's yellow + dark tiles). */
+/** Landing (Swiss): giant headline + side text, 4 numbered steps between rules, library rows, certificate line. */
 export default function Entrance(_: { wallet: Address | null }) {
   const t = useT();
   const { lang } = useLang();
   const steps = [
-    { icon: <BookOpen size={20} />, title: t("Learn", "Học"), text: t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.") },
-    { icon: <PenLine size={20} />, title: t("Practice", "Thực hành"), text: t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.") },
-    { icon: <ListChecks size={20} />, title: t("Save progress", "Lưu tiến độ"), text: t("Save your progress when you finish the course.", "Lưu tiến độ khi học xong khóa.") },
-    { icon: <Award size={20} />, title: t("Get certificate", "Nhận chứng chỉ"), text: t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.") },
+    [t("Learn", "Học"), t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.")],
+    [t("Practice", "Thực hành"), t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.")],
+    [t("Save progress", "Lưu tiến độ"), t("Save your progress when you finish the course.", "Lưu tiến độ khi học xong khóa.")],
+    [t("Get certificate", "Nhận chứng chỉ"), t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")],
   ];
 
   return (
     <div className="page">
       <Nav />
-      <main className="frame">
-        <section className="bento">
-          <div className="tile hero span-2">
-            <h1 className="t-hero">{t("Learn by doing.", "Học bằng cách làm.")}</h1>
-            <p className="t-content measure">
-              {t("Agent Academy is a library of short books about AI agents. Every piece of theory comes with a small hands-on practice.",
-                "Agent Academy là thư viện những cuốn sách ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
-            <div className="actions">
-              <a className="btn btn-primary t-button" href="/library">{t("Start learning", "Bắt đầu học")}</a>
-            </div>
+      <main className="sw-wrap">
+        <section className="sw-hero">
+          <h1 className="sw-hero-title">{t("Learn by doing.", "Học bằng cách làm.")}</h1>
+          <div className="sw-hero-side">
+            <Label>{t("A library of short courses", "Thư viện khóa học ngắn")}</Label>
+            <p className="t-content">{t("Agent Academy is a library of short courses about AI agents. Every piece of theory comes with a small hands-on practice.",
+              "Agent Academy là thư viện những khóa học ngắn về AI agent. Mỗi một lý thuyết sẽ đi đôi với một bài thực hành nhỏ.")}</p>
+            <a className="btn btn-primary t-button" href="/library">{t("Start learning", "Bắt đầu học")} <ArrowRight size={16} aria-hidden /></a>
           </div>
-          <a className="tile tile-accent door" href="/library">
-            <span className="door-head"><span className="t-header">{t("Library", "Thư viện")}</span><ArrowRight size={20} aria-hidden /></span>
-            <span className="door-cover door-stack">{BOOKS.slice(0, 2).map((b) => <Cover key={b.id} number={b.number} title={b.title[lang]} icon={b.icon} />)}</span>
-            <span className="t-secondary">{t("Every book is a course for you to explore.", "Mỗi cuốn sách là một khóa học cho bạn khám phá.")}</span>
-          </a>
-          <a className="tile tile-dark door" href="/certificate">
-            <span className="door-head"><span className="t-header">{t("Certificate", "Chứng chỉ")}</span><ArrowRight size={20} aria-hidden /></span>
-            <span className="door-seal" aria-hidden><Award size={48} /></span>
-          </a>
         </section>
 
-        <h2 className="t-header section-title">{t("How it works", "Cách hoạt động")}</h2>
-        <section className="bento">
-          {steps.map((s, i) => (
-            <div key={i} className="tile step-tile">
-              <span className="icon-box" aria-hidden>{s.icon}</span>
-              <p className="t-label step-no">{t("Step", "Bước")} {i + 1}</p>
-              <h3 className="t-header">{s.title}</h3>
-              <p className="t-secondary">{s.text}</p>
-            </div>
+        <ol className="sw-steps">
+          {steps.map(([h, p], i) => (
+            <li key={h}><span className="sw-num">{two(i + 1)}</span><h3 className="t-header">{h}</h3><p className="t-secondary">{p}</p></li>
           ))}
+        </ol>
+
+        <section className="sw-sec">
+          <Label>{t(`Library — ${BOOKS.length} courses`, `Thư viện — ${BOOKS.length} khóa học`)}</Label>
+          <ul className="sw-rows">
+            {BOOKS.map((b, i) => (
+              <li key={b.id}><a className="sw-row" href={`/course/${b.id}/0`}>
+                <span className="sw-num">{two(i + 1)}</span>
+                <span className="sw-row-title">{b.title[lang]}</span>
+                <span className="t-secondary sw-row-text">{b.blurb[lang]}</span>
+                <span className="sw-sq" aria-hidden><ArrowRight size={20} /></span>
+              </a></li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="sw-sec">
+          <Label>{t("Certificate", "Chứng chỉ")}</Label>
+          <a className="sw-statement" href="/certificate">{t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</a>
         </section>
       </main>
     </div>

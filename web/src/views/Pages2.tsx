@@ -56,7 +56,7 @@ function Page2() {
     <Ok text={t("Your AI lists each token in the wallet with amount, price and USD value, plus the total. Tokens under 0.01 USD are hidden by default.", "AI liệt kê từng token trong ví, gồm số lượng, giá và giá trị USD, kèm tổng giá trị. Token dưới 0,01 USD bị ẩn mặc định.")} />
     <P text={t("Then ask:", "Hỏi tiếp:")} />
     <Code text={t("What is my recent transaction history?", "Lịch sử giao dịch gần đây của tôi là gì?")} />
-    <Ok text={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Book 1 is in this list.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Sách 1 nằm trong danh sách này.")} />
+    <Ok text={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Course 1 is in this list.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Khóa học 1 nằm trong danh sách này.")} />
   </>;
 }
 
@@ -98,9 +98,9 @@ function Page4({ save }: Pick<Ctx, "save">) {
         <Ok text={t("Your AI says there are no limit orders waiting.", "AI báo không có lệnh limit nào đang chờ.")} />
         <Read text={t("How to read it: a limit order waits until the price hits your level. A new wallet has no orders, so the list is empty.", "Cách đọc: lệnh limit nằm chờ đến khi giá chạm mức bạn đặt. Ví mới chưa đặt lệnh nào nên danh sách trống.")} />
       </S>
-      <S text={t("**Save your learning progress (save 1).** This step records on the blockchain that you finished reading pages 1 to 4 of Book 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 1).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 4 của Sách 2. Gửi AI:")}>
-        {save(0, t("Save my learning progress on Agent Academy: finished reading pages 1 to 4 of book 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 4 của sách 2."))}
-        <Read text={t("This is the first save of Book 2. Developer Mode must be on; if it expired, turn it on again as in Book 1. Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”. Saving progress only costs a little gas.", "Đây là lần ký đầu tiên của Sách 2. Developer Mode phải đang bật, nếu đã hết hạn thì bật lại như ở Sách 1. AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\". Lưu tiến độ chỉ tốn một chút gas.")} />
+      <S text={t("**Save your learning progress (save 1).** This step records on the blockchain that you finished reading pages 1 to 4 of Course 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 1).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 4 của Khóa học 2. Gửi AI:")}>
+        {save(0, t("Save my learning progress on Agent Academy: finished reading pages 1 to 4 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 4 của khóa học 2."))}
+        <Read text={t("This is the first save of Course 2. Developer Mode must be on; if it expired, turn it on again as in Course 1. Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”. Saving progress only costs a little gas.", "Đây là lần ký đầu tiên của Khóa học 2. Developer Mode phải đang bật, nếu đã hết hạn thì bật lại như ở Khóa học 1. AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\". Lưu tiến độ chỉ tốn một chút gas.")} />
       </S>
     </Steps>
   </>;
@@ -174,10 +174,10 @@ function Page8({ save }: Pick<Ctx, "save">) {
       <S text={t("Ask your AI:", "Hỏi AI:")}>
         <Code text={t("What are my Prediction and x402 limits?", "Hạn mức Dự đoán và x402 của tôi là bao nhiêu?")} />
         <Ok text={t("Your AI gives the daily limit of both: Prediction 5,000 USD, x402 20 USD, 0 used. Prediction is off, so it can't be used yet. These two limits are separate and don't count toward the general trading limit.", "AI báo hạn mức mỗi ngày của hai loại: Dự đoán 5.000 USD, x402 20 USD, đã dùng 0. Dự đoán đang tắt nên chưa dùng được. Hai hạn mức này tính riêng, không trừ vào hạn mức giao dịch chung.")} />
-        <Read text={t("How to read it: “separate” means using up the Prediction or x402 limit leaves the 50,000 USD general trading limit untouched. Each kind of task has its own limit, as in Book 1.", "Cách đọc: \"tính riêng\" nghĩa là dùng hết hạn mức Dự đoán hay x402 thì hạn mức giao dịch chung 50.000 USD vẫn còn nguyên. Mỗi loại việc có một hạn mức riêng, như ở Sách 1.")} />
+        <Read text={t("How to read it: “separate” means using up the Prediction or x402 limit leaves the 50,000 USD general trading limit untouched. Each kind of task has its own limit, as in Course 1.", "Cách đọc: \"tính riêng\" nghĩa là dùng hết hạn mức Dự đoán hay x402 thì hạn mức giao dịch chung 50.000 USD vẫn còn nguyên. Mỗi loại việc có một hạn mức riêng, như ở Khóa học 1.")} />
       </S>
-      <S text={t("**Save your learning progress (save 2).** This step records on the blockchain that you finished reading pages 1 to 8 of Book 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 2).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 8 của Sách 2. Gửi AI:")}>
-        {save(1, t("Save my learning progress on Agent Academy: finished reading pages 1 to 8 of book 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 8 của sách 2."))}
+      <S text={t("**Save your learning progress (save 2).** This step records on the blockchain that you finished reading pages 1 to 8 of Course 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 2).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 8 của Khóa học 2. Gửi AI:")}>
+        {save(1, t("Save my learning progress on Agent Academy: finished reading pages 1 to 8 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 8 của khóa học 2."))}
         <Read text={t("If Developer Mode hasn't expired, keep using it; no need to turn it on again. Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”.", "Developer Mode còn hạn thì dùng tiếp, không cần bật lại. AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\".")} />
       </S>
     </Steps>
@@ -265,8 +265,8 @@ function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
         <Read text={t("It only reports what it could check. It may suggest turning off Developer Mode or lowering high limits (change them in the Binance App).", "AI chỉ báo những gì kiểm tra được. Nó có thể khuyên tắt Developer Mode hoặc hạ hạn mức cao (đổi trong Binance App).")} />
       </S>
       <S text={t("**Save your progress (save 3).** Send your AI:", "**Lưu tiến độ (ký lần 3).** Gửi AI:")}>
-        {save(2, t("Save my learning progress on Agent Academy: finished reading pages 1 to 12 of book 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 12 của sách 2."))}
-        <Read text={t("Check that no token leaves your wallet, then type “confirm”. The book closes and shows your certificate.", "Xem không có token nào bị chuyển đi, rồi gõ \"xác nhận\". Sách tự đóng và hiện chứng chỉ.")} />
+        {save(2, t("Save my learning progress on Agent Academy: finished reading pages 1 to 12 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 12 của khóa học 2."))}
+        <Read text={t("Check that no token leaves your wallet, then type “confirm”. Your certificate opens.", "Xem không có token nào bị chuyển đi, rồi gõ \"xác nhận\". Chứng chỉ hiện ra.")} />
       </S>
       <S text={t("Done? Turn off Developer Mode in the Binance App if you won't use it.", "Xong rồi thì tắt Developer Mode trong Binance App nếu không dùng nữa.")} />
     </Steps>

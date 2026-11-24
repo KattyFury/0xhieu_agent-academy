@@ -1,5 +1,5 @@
-// The certificate itself: one design for the popup, the share page and the saved PNG.
-// Double rule (ink outside, accent inside), recipient as the hero, footer = issued date · seal · course number, wallet as proof.
+// The certificate (Swiss poster): one design for the popup, the share page and the saved PNG.
+// Left: "Certified." + recipient + course. Right: yellow seal block, then a grid of rules: issued · course · on-chain proof.
 import { Award } from "lucide-react";
 import type { BookMeta } from "../books";
 import { useLang, useT } from "../i18n";
@@ -11,7 +11,8 @@ export const certDate = (issuedAt: number, lang: "en" | "vi") =>
 function useCertText() {
   const t = useT();
   return {
-    kicker: t("Certificate of completion", "Chứng chỉ hoàn thành"),
+    kicker: t("Agent Academy — Certificate of completion", "Agent Academy — Chứng chỉ hoàn thành"),
+    big: t("Certified.", "Hoàn thành."),
     certifies: t("This certifies that", "Chứng nhận"),
     completed: t("has completed the course", "đã hoàn thành khóa học"),
     issued: t("Issued", "Ngày cấp"),
@@ -20,76 +21,81 @@ function useCertText() {
   };
 }
 
-export function CertArt({ book, name, wallet, issuedAt }: { book: BookMeta; name: string; wallet: string; issuedAt: number }) {
+export function CertArt({ book, name, wallet, issuedAt, compact = false }: { book: BookMeta; name: string; wallet: string; issuedAt: number; compact?: boolean }) {
   const { lang } = useLang();
   const x = useCertText();
   return (
-    <div className="cert-art">
-      <div className="cert-inner">
-        <p className="cert-brand"><img src="/icon.png" alt="" /><span className="t-label">Agent Academy</span></p>
-        <p className="t-label cert-kicker">{x.kicker}</p>
-        <p className="t-secondary">{x.certifies}</p>
-        <p className="t-page cert-name" translate="no">{name}</p>
-        <p className="t-secondary">{x.completed}</p>
-        <p className="t-header cert-course">{book.title[lang]}</p>
-        <div className="cert-foot">
-          <span className="cert-foot-col"><span className="t-content">{certDate(issuedAt, lang)}</span><span className="t-label">{x.issued}</span></span>
-          <span className="cert-seal" aria-hidden><Award size={28} /></span>
-          <span className="cert-foot-col"><span className="t-content">{book.number}</span><span className="t-label">{x.course}</span></span>
-        </div>
-        <p className="t-note cert-proof" translate="no">{x.proof} · {wallet}</p>
+    <div className={`cert ${compact ? "cert-compact" : ""}`}>
+      <div className="cert-l">
+        <span className="sw-label">{x.kicker}</span>
+        <span className="cert-big">{x.big}</span>
+        <span className="sw-label">{x.certifies}</span>
+        <span className="cert-name" translate="no">{name}</span>
+        <span className="sw-label">{x.completed}</span>
+        <span className="cert-course">{book.title[lang]}</span>
+      </div>
+      <div className="cert-r">
+        <div className="cert-seal" aria-hidden><Award strokeWidth={1.5} /></div>
+        <dl className="cert-dl">
+          <div><dt className="sw-label">{x.issued}</dt><dd>{certDate(issuedAt, lang)}</dd></div>
+          <div><dt className="sw-label">{x.course}</dt><dd>{book.number}</dd></div>
+          <div className="cert-wide"><dt className="sw-label">{x.proof}</dt><dd className="cert-mono" translate="no">{wallet}</dd></div>
+        </dl>
       </div>
     </div>
   );
 }
 
-/** Same layout drawn on a 1200x800 canvas, colors from the DS variables. */
+/** Same poster drawn on a 1200x800 canvas, colors from the DS variables. */
 export function useCertPng() {
   const x = useCertText();
   const { lang } = useLang();
-  return async (book: BookMeta, name: string, wallet: string, issuedAt: number) => {
+  return (book: BookMeta, name: string, wallet: string, issuedAt: number) => {
     const css = getComputedStyle(document.documentElement);
     const v = (k: string, d: string) => css.getPropertyValue(k).trim() || d;
-    const ink = v("--ds-color-ink", "#000"), paper = v("--ds-color-yellow-soft", "#fff8d6"), accent = v("--ds-accent", "#f0b90b"), grey = v("--ds-color-grey", "#555");
+    const ink = "#000000", paper = "#FFFFFF", accent = v("--ds-accent", "#F5B301"), grey = v("--ds-color-grey", "#525252");
     const font = getComputedStyle(document.body).fontFamily;
     const W = 1200, H = 800, c = document.createElement("canvas");
     c.width = W; c.height = H;
     const g = c.getContext("2d")!;
     g.fillStyle = paper; g.fillRect(0, 0, W, H);
-    g.strokeStyle = ink; g.lineWidth = 4; g.strokeRect(24, 24, W - 48, H - 48);
-    g.strokeStyle = accent; g.lineWidth = 2; g.strokeRect(48, 48, W - 96, H - 96);
-    g.textAlign = "center"; g.textBaseline = "alphabetic";
-    const text = (s: string, x0: number, y: number, size: number, weight = 400, color = ink, max = W - 240) => { g.fillStyle = color; g.font = `${weight} ${size}px ${font}`; g.fillText(s, x0, y, max); };
+    const L = 48, T = 48, R = W - 48, B = H - 48, SPLIT = 744; // outer box, left/right split
+    const line = (x1: number, y1: number, x2: number, y2: number) => { g.strokeStyle = ink; g.lineWidth = 2; g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke(); };
+    const text = (s: string, x0: number, y: number, size: number, weight: number, color = ink, track = 0, max = SPLIT - L - 96) => {
+      g.fillStyle = color; g.font = `${weight} ${size}px ${font}`; g.letterSpacing = `${track}px`; g.fillText(s, x0, y, max); g.letterSpacing = "0px";
+    };
     const wrap = (s: string, size: number, weight: number, max: number) => {
       g.font = `${weight} ${size}px ${font}`;
-      const lines: string[] = []; let cur = "";
-      for (const w of s.split(" ")) { const tryL = cur ? `${cur} ${w}` : w; if (g.measureText(tryL).width > max && cur) { lines.push(cur); cur = w; } else cur = tryL; }
-      return [...lines, cur];
+      const out: string[] = []; let cur = "";
+      for (const w of s.split(" ")) { const tryL = cur ? `${cur} ${w}` : w; if (g.measureText(tryL).width > max && cur) { out.push(cur); cur = w; } else cur = tryL; }
+      return [...out, cur];
     };
-    // Brand: cat icon + name.
-    const icon = await new Promise<HTMLImageElement | null>((r) => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = "/icon.png"; });
-    g.font = `600 20px ${font}`;
-    const bw = g.measureText("Agent Academy").width, bx = W / 2 - (bw + 40) / 2;
-    if (icon) g.drawImage(icon, bx, 108, 32, 32);
-    g.textAlign = "left"; text("Agent Academy", bx + 40, 132, 20, 600); g.textAlign = "center";
-    text(x.kicker.toUpperCase(), W / 2, 196, 16, 600, grey);
-    text(x.certifies, W / 2, 256, 20, 400, grey);
-    text(name, W / 2, 330, 64, 700);
-    text(x.completed, W / 2, 388, 20, 400, grey);
-    const lines = wrap(book.title[lang], 32, 700, W - 320).slice(0, 2);
-    lines.forEach((l, i) => text(l, W / 2, 444 + i * 40, 32, 700));
-    // Footer: date · seal · course number, with hairlines above the labels.
-    const fy = 612;
-    for (const [cx, val, lab] of [[300, certDate(issuedAt, lang), x.issued], [900, book.number, x.course]] as const) {
-      text(val, cx, fy, 24, 400);
-      g.strokeStyle = ink; g.lineWidth = 1; g.beginPath(); g.moveTo(cx - 120, fy + 16); g.lineTo(cx + 120, fy + 16); g.stroke();
-      text(lab, cx, fy + 44, 16, 600, grey);
-    }
-    g.fillStyle = ink; g.beginPath(); g.arc(W / 2, fy - 8, 48, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = accent; g.lineWidth = 2; g.beginPath(); g.arc(W / 2, fy - 8, 56, 0, Math.PI * 2); g.stroke();
-    g.save(); g.translate(W / 2 - 24, fy - 32); g.scale(2, 2); g.strokeStyle = accent; g.lineWidth = 2; g.lineCap = "round"; g.lineJoin = "round";
+    g.textAlign = "left"; g.textBaseline = "alphabetic";
+    g.strokeStyle = ink; g.lineWidth = 2; g.strokeRect(L, T, R - L, B - T);
+    line(SPLIT, T, SPLIT, B);
+    // Left column
+    const lx = L + 48;
+    text(x.kicker.toUpperCase(), lx, T + 72, 14, 600, grey, 2);
+    text(x.big, lx, T + 176, 96, 800, ink, -4);
+    text(x.certifies.toUpperCase(), lx, T + 248, 14, 600, grey, 2);
+    text(name, lx, T + 330, 64, 800, ink, -2);
+    text(x.completed.toUpperCase(), lx, T + 392, 14, 600, grey, 2);
+    wrap(book.title[lang], 32, 700, SPLIT - lx - 48).slice(0, 3).forEach((l, i) => text(l, lx, T + 448 + i * 40, 32, 700, ink, -0.5));
+    // Right column: yellow seal block, then rule grid
+    const sealB = T + 400;
+    g.fillStyle = accent; g.fillRect(SPLIT + 1, T + 1, R - SPLIT - 2, sealB - T - 1);
+    g.save(); g.translate((SPLIT + R) / 2 - 72, (T + sealB) / 2 - 72); g.scale(6, 6); g.strokeStyle = ink; g.lineWidth = 1.5; g.lineCap = "round"; g.lineJoin = "round";
     g.stroke(new Path2D("m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526")); g.stroke(new Path2D("M18 8a6 6 0 1 1-12 0 6 6 0 0 1 12 0")); g.restore();
-    text(`${x.proof} · ${wallet}`, W / 2, 712, 16, 400, grey);
+    line(SPLIT, sealB, R, sealB);
+    const mid = (SPLIT + R) / 2, rowB = sealB + 112;
+    line(mid, sealB, mid, rowB); line(SPLIT, rowB, R, rowB);
+    text(x.issued.toUpperCase(), SPLIT + 24, sealB + 40, 14, 600, grey, 2, 180);
+    text(certDate(issuedAt, lang), SPLIT + 24, sealB + 80, 24, 700, ink, 0, 180);
+    text(x.course.toUpperCase(), mid + 24, sealB + 40, 14, 600, grey, 2, 180);
+    text(book.number, mid + 24, sealB + 80, 24, 700, ink, 0, 180);
+    text(x.proof.toUpperCase(), SPLIT + 24, rowB + 40, 14, 600, grey, 2, R - SPLIT - 48);
+    g.font = `400 16px ui-monospace, Menlo, Consolas, monospace`; g.fillStyle = ink;
+    g.fillText(wallet.slice(0, 22), SPLIT + 24, rowB + 76); g.fillText(wallet.slice(22), SPLIT + 24, rowB + 100);
     const a = document.createElement("a");
     a.download = "agent-academy-certificate.png";
     a.href = c.toDataURL("image/png");

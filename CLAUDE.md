@@ -5,6 +5,7 @@ Read `HANDOFF.md` first. Spec: `docs/spec-v1.2.md` (owner's, Vietnamese; §14 = 
 - Never invent facts. Book content comes from the official skill docs (`SKILL.md` + `references/` of binance-skills-hub `binance-agentic-wallet`); anything marked [CHƯA KIỂM CHỨNG] is tested or asked, not assumed.
 - Red lines (spec §3) are hard rules: no login QR/pairing code on the site, prompts never skip confirmation, no profit promises, risk notes on trade/DeFi pages, progress lookup by address only (never by `.ai` name), no "Binance"/"BNB" in project/domain/token names.
 - The website never sends transactions or connects a wallet; it builds calldata with viem and shows a prompt for the learner's own agent.
-- Design: nguyen0xhieu design system, theme `0xhieu-xyz` (yellow + black, same look as 0xhieu.xyz). EN default, VI optional.
+- Design: nguyen0xhieu design system, **Swiss Editorial style** (`data-ds-style="swiss"`, owner 2026-11-24; DS README "Swiss Editorial"), product `0xhieu-xyz` (yellow + black). Text uses only `--ds-type-swiss-*` / DS styles; `node D:/Codes/0xhieu/design/ds-check.mjs <url> --product 0xhieu-xyz` must show 0 issues. EN default, VI optional.
+- Words: a library of **courses** (not "books"); each course = 12 pages, one page at a time.
 - Contract is immutable: `createBook(1, chapterCount)` only after content is frozen and the owner says so. Any on-chain write needs the owner's explicit OK.
 - Core: Agent Academy = a library; each book = a course; each lesson = short theory + a small practice; complete the course = certificate. Site-wide copy (home, library, certificate, steps) must fit ANY course: no wallet/agent/chain words there, plain ELI12 (e.g. "Complete the course to get a certificate"). Book-specific words only inside that book.

@@ -29,16 +29,19 @@ export const CertPopup = forwardRef<HTMLDialogElement, { book: BookMeta; wallet:
   };
 
   return (
-    <dialog ref={ref} className="dialog cert-dialog" onClose={onClose} onClick={(e) => { if (e.target === e.currentTarget) e.currentTarget.close(); }}>
-      <button className="btn btn-ghost cert-x" aria-label={t("Close", "Đóng")} onClick={(e) => (e.currentTarget.closest("dialog") as HTMLDialogElement).close()}><X size={20} /></button>
-      <CertArt book={book} name={shown} wallet={wallet} issuedAt={issuedAt} />
-      <label className="bk-field cert-field">
-        <span className="t-label">{t("Your .ai name (Agent ID)", "Tên .ai (Agent ID) của bạn")}</span>
-        <input className="input t-input" value={name} onChange={(e) => setN(e.target.value)} placeholder={t("e.g. you.ai", "ví dụ you.ai")} spellCheck={false} autoCapitalize="none" autoComplete="off" maxLength={40} />
-      </label>
-      <div className="actions cert-buttons">
-        <button className="btn btn-primary t-button" onClick={savePng}><Download size={16} aria-hidden /> {t("Save image", "Lưu ảnh")}</button>
-        <button className="btn btn-ghost t-button" onClick={shareX}>{t("Share on X", "Chia sẻ lên X")}</button>
+    <dialog ref={ref} className="dialog sw-dialog cert-dialog" onClose={onClose} onClick={(e) => { if (e.target === e.currentTarget) e.currentTarget.close(); }}>
+      <div className="sw-dialog-head"><span className="sw-label">{t("Your certificate", "Chứng chỉ của bạn")}</span>
+        <button className="sw-x" aria-label={t("Close", "Đóng")} onClick={(e) => (e.currentTarget.closest("dialog") as HTMLDialogElement).close()}><X size={16} /></button></div>
+      <div className="dialog-body cert-dialog-body">
+        <CertArt book={book} name={shown} wallet={wallet} issuedAt={issuedAt} compact />
+        <label className="bk-field">
+          <span className="sw-label">{t("Your .ai name (Agent ID)", "Tên .ai (Agent ID) của bạn")}</span>
+          <input className="input t-input" value={name} onChange={(e) => setN(e.target.value)} placeholder={t("e.g. you.ai", "ví dụ you.ai")} spellCheck={false} autoCapitalize="none" autoComplete="off" maxLength={40} />
+        </label>
+        <div className="sw-btns">
+          <button className="btn btn-primary t-button" onClick={savePng}><Download size={16} aria-hidden /> {t("Save image", "Lưu ảnh")}</button>
+          <button className="btn btn-dark t-button" onClick={shareX}>{t("Share on X", "Chia sẻ lên X")}</button>
+        </div>
       </div>
     </dialog>
   );

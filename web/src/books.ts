@@ -1,15 +1,13 @@
 // Library: every book's id, on-chain id and title. Page text lives in views/Pages.tsx (book 1) and views/Pages2.tsx (book 2).
 
-import { Compass, Wallet, type LucideIcon } from "lucide-react";
+export type BookMeta = { id: number; chainId: number; number: string; title: { en: string; vi: string }; blurb: { en: string; vi: string } };
 
-export type BookMeta = { id: number; chainId: number; number: string; title: { en: string; vi: string }; blurb: { en: string; vi: string }; icon: LucideIcon };
-
-/** id = URL id (/book/<id>); chainId = bookId on the AgentAcademy contract (createBook(chainId, 12) done 2026-11-24). blurb = one line on the library card; icon = the mark on the cover. */
+/** id = URL id (/book/<id>); chainId = bookId on the AgentAcademy contract (createBook(chainId, 12) done 2026-11-24). blurb = one line on the library card. */
 export const BOOKS: BookMeta[] = [
   { id: 1, chainId: 2, number: "#1", title: { en: "Get started with Binance Agentic Wallet", vi: "Bắt đầu với Binance Agentic Wallet" },
-    blurb: { en: "A course to learn and practice using Binance Agentic Wallet.", vi: "Khóa học cho bạn tìm hiểu và tập sử dụng Binance Agentic Wallet." }, icon: Wallet },
+    blurb: { en: "A course to learn and practice using Binance Agentic Wallet.", vi: "Khóa học cho bạn tìm hiểu và tập sử dụng Binance Agentic Wallet." } },
   { id: 2, chainId: 3, number: "#2", title: { en: "Explore what Binance Agentic Wallet can do", vi: "Khám phá Binance Agentic Wallet" },
-    blurb: { en: "Send, swap, DeFi, limits and a safety check: see what the wallet can do.", vi: "Gửi, đổi token, DeFi, hạn mức và kiểm tra an toàn: xem ví làm được gì." }, icon: Compass },
+    blurb: { en: "Send, swap, DeFi, limits and a safety check: see what the wallet can do.", vi: "Gửi, đổi token, DeFi, hạn mức và kiểm tra an toàn: xem ví làm được gì." } },
 ];
 export const bookById = (id: number) => BOOKS.find((b) => b.id === id) ?? BOOKS[0];
 

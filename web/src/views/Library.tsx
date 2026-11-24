@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Award } from "lucide-react";
+import { ArrowRight, Award, Check } from "lucide-react";
 import type { Address } from "viem";
 import { BOOKS } from "../books";
 import { useLang, useT } from "../i18n";
-import { Cover, Nav } from "./Shell";
+import { Nav, two } from "./Shell";
 
-/** Library: a grid of small book cards (room for many books). A book the learner already finished gets a certificate button. */
+/** Library (Swiss): one row per book — big number, title, text, then chips + buttons. A finished book gets a "Certified" chip and a certificate button. */
 export default function Library({ wallet }: { wallet: Address | null; setWallet: (a: Address | null) => void }) {
   const t = useT();
   const { lang } = useLang();
@@ -16,30 +16,32 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
     import("../chain").then((m) => Promise.all(BOOKS.map((b) => m.certificate(wallet, b.chainId).then((c) => [b.id, c.ok] as const))))
       .then((r) => setCertified(Object.fromEntries(r))).catch(() => {});
   }, [wallet]);
-  const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const c = e.currentTarget.closest(".book-card")?.querySelector(".cover"), r = c?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height, html: c!.innerHTML })); };
 
   return (
     <div className="page">
       <Nav active="library" />
-      <main className="frame">
-        <div className="page-head"><h1 className="t-page">{t("Library", "Thư viện")}</h1></div>
-        <section className="bento">
-          {BOOKS.map((b) => (
-            <div key={b.id} className="tile book-card span-2">
-              <a className="book-card-link" href={`/book/${b.id}/0`} onClick={remember} aria-label={b.title[lang]}>
-                <span className="book-card-cover"><Cover number={b.number} title={b.title[lang]} icon={b.icon} /></span>
-                <span className="t-label kicker">{b.number}</span>
-                <span className="t-header">{b.title[lang]}</span>
-                <span className="t-secondary">{b.blurb[lang]}</span>
-                <span className="t-secondary">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</span>
-              </a>
-              <div className="actions book-card-actions">
-                <a className="btn btn-primary t-button" href={`/book/${b.id}/0`} onClick={remember}>{t("Open the book", "Mở sách")}</a>
-                {certified[b.id] && wallet && <a className="btn btn-ghost btn-round" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}
+      <main className="sw-wrap">
+        <h1 className="sw-title">{t("Library", "Thư viện")}</h1>
+        <ul className="sw-lib">
+          {BOOKS.map((b, i) => (
+            <li key={b.id}>
+              <span className="sw-big">{two(i + 1)}</span>
+              <h2 className="sw-lib-title">{b.title[lang]}</h2>
+              <div className="sw-lib-text">
+                <p className="t-content">{b.blurb[lang]}</p>
+                <p className="t-content">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>
               </div>
-            </div>
+              <div className="sw-lib-meta">
+                <span className="sw-chip">{t("12 pages", "12 trang")}</span>
+                {certified[b.id] && <span className="sw-chip sw-chip-on"><Check size={12} aria-hidden /> {t("Certified", "Đã có chứng chỉ")}</span>}
+                <div className="sw-btns">
+                  <a className="btn btn-dark t-button" href={`/course/${b.id}/0`}>{t("Open the course", "Mở khóa học")} <ArrowRight size={16} aria-hidden /></a>
+                  {certified[b.id] && wallet && <a className="btn btn-primary btn-sq" href={`/certificate/${b.id}/${wallet}`} aria-label={t("Open certificate", "Mở chứng chỉ")} title={t("Open certificate", "Mở chứng chỉ")}><Award size={20} aria-hidden /></a>}
+                </div>
+              </div>
+            </li>
           ))}
-        </section>
+        </ul>
       </main>
     </div>
   );
