@@ -12,7 +12,7 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - Routes: `/`, `/courses` (page named "Courses"; old `/library` works), `/course/<1|2>/<pair 0-5>[/practice]` (higher numbers clamp to 5; old `/book/…` links still work), `/certificate`, `/certificate/<1|2>/0x…`. Valid-route list in 2 places: `pickView` in `App.tsx` and `VALID_PATH` in `worker/index.ts` (keep in sync).
 - Lucky draw list: `cd web && npx tsx scripts/certified-wallets.ts <bookId 2|3> ../docs/certified-wallets.csv`.
 
-## Books (deployed 2026-11-24, Worker version 7d8cc9e9)
+## Books (deployed 2026-11-24, Worker version 1ad363db)
 - Every course (code still says `book`): 12 pages = 6 pairs, odd page = learn, even = practice. Reader = Swiss magazine: contents list left, ONE page at a time (desktop and phone), pages scroll; no flip/fit/flying cover since 2026-11-24. VI = owner's approved copy; EN = translation. A book = `BookContent` (`saves` masks, page names, pages); `Reader.tsx` is shared.
 - Book 1: page 3 picks `track` (`own` default / `pro`, localStorage `academy.track`) for pages 4 and 6. Page 7: one "Enter wallet" button (saves the wallet, asks for gas). One save at page 12 (0xFFF).
 - Book 2: no track, no gas page; uses the saved wallet (address box at the save if missing). Saves at pages 4, 8, 12 (0x00F, 0x0FF, 0xFFF; the contract keeps bits already saved). Saves 1-2 show no status (owner's spec).
