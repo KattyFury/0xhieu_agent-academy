@@ -8,7 +8,6 @@ import { Cover, Nav } from "./Shell";
 export default function Entrance(_: { wallet: Address | null }) {
   const t = useT();
   const { lang } = useLang();
-  const title = BOOKS[0].title[lang];
   const steps = [
     { icon: <BookOpen size={20} />, title: t("Learn", "Học"), text: t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.") },
     { icon: <PenLine size={20} />, title: t("Practice", "Thực hành"), text: t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.") },
@@ -32,7 +31,7 @@ export default function Entrance(_: { wallet: Address | null }) {
           </div>
           <a className="tile tile-accent door" href="/library">
             <span className="door-head"><span className="t-header">{t("Library", "Thư viện")}</span><ArrowRight size={20} aria-hidden /></span>
-            <span className="door-cover"><Cover number={BOOKS[0].number} title={title} /></span>
+            <span className="door-cover door-stack">{BOOKS.slice(0, 2).map((b) => <Cover key={b.id} number={b.number} title={b.title[lang]} icon={b.icon} />)}</span>
             <span className="t-secondary">{t("Every book is a course for you to explore.", "Mỗi cuốn sách là một khóa học cho bạn khám phá.")}</span>
           </a>
           <a className="tile tile-dark door" href="/certificate">

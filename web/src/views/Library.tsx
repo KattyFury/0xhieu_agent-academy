@@ -15,7 +15,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
     import("../chain").then((m) => Promise.all(BOOKS.map((b) => m.certificate(wallet, b.chainId).then((c) => [b.id, c.ok] as const))))
       .then((r) => setCertified(Object.fromEntries(r))).catch(() => {});
   }, [wallet]);
-  const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const r = e.currentTarget.querySelector(".cover")?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height })); };
+  const remember = (e: React.MouseEvent<HTMLAnchorElement>) => { const c = e.currentTarget.querySelector(".cover"), r = c?.getBoundingClientRect(); if (r) sessionStorage.setItem("openFrom", JSON.stringify({ x: r.x, y: r.y, width: r.width, height: r.height, html: c!.innerHTML })); };
 
   return (
     <div className="page">
@@ -26,7 +26,7 @@ export default function Library({ wallet }: { wallet: Address | null; setWallet:
           {BOOKS.map((b) => (
             <div key={b.id} className="tile book-card span-2">
               <a className="book-card-link" href={`/book/${b.id}/0`} onClick={remember} aria-label={b.title[lang]}>
-                <span className="book-card-cover"><Cover number={b.number} title={b.title[lang]} /></span>
+                <span className="book-card-cover"><Cover number={b.number} title={b.title[lang]} icon={b.icon} /></span>
                 <span className="t-label kicker">{b.number}</span>
                 <span className="t-header">{b.title[lang]}</span>
                 <span className="t-secondary">{b.blurb[lang]}</span>

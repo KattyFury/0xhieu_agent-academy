@@ -33,15 +33,16 @@ export function Nav({ active, banner }: { active?: Tab; banner?: ReactNode }) {
   );
 }
 
-/** Book cover drawn with DS tokens: black leather, yellow title and frame. Ratio 7:10. */
-export function Cover({ number, title, muted = false }: { number: string; title: string; muted?: boolean }) {
+/** Book cover drawn with DS tokens: black leather, banded spine, yellow frame; number on top, the book's icon, title, cat mark at the foot. Ratio 7:10. */
+export function Cover({ number, title, icon: Icon }: { number: string; title: string; icon?: LucideIcon }) {
   return (
-    <div className={`cover ${muted ? "cover-muted" : ""}`} role="img" aria-label={`${number}: ${title}`}>
+    <div className="cover" role="img" aria-label={`${number}: ${title}`}>
       <span className="cover-spine" aria-hidden />
       <span className="cover-frame" aria-hidden>
-        <span className="t-label">{number}</span>
-        <span className={muted ? "t-label" : "t-header cover-title"}>{title}</span>
-        {!muted && <span className="t-label">Agent Academy</span>}
+        <span className="t-label cover-num">{number}</span>
+        {Icon && <span className="cover-mark"><Icon size={24} /></span>}
+        <span className="t-header cover-title">{title}</span>
+        <img className="cover-logo" src="/icon.png" alt="" />
       </span>
     </div>
   );

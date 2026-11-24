@@ -310,7 +310,6 @@ h1, h2, h3 { text-wrap: balance; }
 .cert-board.span-2 { width: auto; }
 .bk-record-block { display: flex; flex-direction: column; gap: var(--ds-space-8); margin-top: var(--ds-space-8); padding-top: var(--ds-space-16); border-top: 1px solid var(--ds-color-line); }
 .bk-days .bk-contents { height: 40px; padding: 0 var(--ds-space-16); }
-.door-cover .cover-frame > .t-label:last-child { visibility: hidden; }
 .shelf-book { align-items: flex-start; }
 .bk-goal { padding: var(--ds-space-8) var(--ds-space-12); border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-tile); color: var(--ds-color-grey); }
 .bk-goal strong { color: var(--ds-color-ink); font-weight: 600; }
@@ -343,7 +342,6 @@ h1, h2, h3 { text-wrap: balance; }
 .toc[open] { height: auto; max-height: calc(100dvh - var(--ds-space-32)); }
 .toc .contents-row { width: 100%; text-align: left; }
 .toc .contents-row[aria-current="page"] .contents-title { font-weight: 600; }
-.book-card-cover .cover-frame > .t-label:last-child { visibility: hidden; }
 /* Book / certificate cards: half the page on desktop; art on the left, text on the right */
 .book-card, .cert-card { display: grid; grid-template-columns: 176px minmax(0, 1fr); column-gap: var(--ds-space-32); row-gap: var(--ds-space-8); align-content: start; align-items: start; }
 .book-card > *, .book-card-link > *, .cert-card > * { grid-column: 2; justify-self: start; }
@@ -507,3 +505,66 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-page[data-fit5] .bk-steps-tight > li { padding-left: var(--ds-space-24); }
 .bk-page[data-fit6] .bk-body, .bk-page[data-fit6] .bk-body .t-lead, .bk-page[data-fit6] .bk-body .t-content, .bk-page[data-fit6] .bk-body .t-data, .bk-page[data-fit6] .bk-body .t-label, .bk-page[data-fit6] .bk-table { font-size: 11px; line-height: 15px; }
 .bk-page[data-fit6] .bk-body { gap: 2px; }
+
+/* ===== Art pass 2026-11-24: covers + certificate ===== */
+/* Cover: banded spine, number on top, the book's icon in a ring, title, cat mark at the foot. */
+.cover-spine { position: relative; }
+.cover-spine::before, .cover-spine::after { content: ""; position: absolute; left: 0; right: 0; height: 2px; background: var(--ds-accent); }
+.cover-spine::before { top: var(--ds-space-16); }
+.cover-spine::after { bottom: var(--ds-space-16); }
+.cover-frame { justify-content: flex-start; padding: var(--ds-space-16) var(--ds-space-12); }
+.cover-num { letter-spacing: 0.08em; }
+.cover-mark { display: grid; place-items: center; width: 48px; height: 48px; margin-top: auto; border: 1px solid var(--ds-accent); border-radius: 50%; }
+.cover-title { margin-bottom: auto; }
+.cover-logo { width: 16px; height: 16px; flex: none; }
+.cover-mark { flex: none; }
+.book-card-cover .cover-frame, .door-cover .cover-frame { margin: var(--ds-space-8); padding: var(--ds-space-12) var(--ds-space-8); }
+/* Covers at 144px or less: no room for the icon; the title sits in the middle. */
+.door-cover .cover-mark { display: none; }
+.door-cover .cover-title { margin-top: auto; }
+
+/* Home: book #1 in front, book #2 peeking behind it. */
+.door-stack { position: relative; height: 206px; }
+.door-stack .cover { position: absolute; top: 0; width: 144px; }
+.door-stack .cover:first-child { z-index: 1; transform: translateX(-24px); }
+.door-stack .cover:nth-child(2) { transform: translateX(32px) rotate(6deg); }
+.door:hover .door-stack .cover:first-child { transform: translateX(-24px) translateY(-4px); }
+.door:hover .door-stack .cover:nth-child(2) { transform: translateX(40px) rotate(8deg); }
+.door-stack .cover:nth-child(2) .cover-frame > * { visibility: hidden; } /* the back book shows its leather and frame only */
+@media (max-width: 640px) {
+  .door-stack { height: 160px; }
+  .door-stack .cover { width: 112px; }
+  .door-stack .cover:first-child, .door:hover .door-stack .cover:first-child { transform: translateX(-12px); }
+  .door-stack .cover:nth-child(2), .door:hover .door-stack .cover:nth-child(2) { transform: translateX(16px) rotate(6deg); }
+  .door-stack .cover-frame { margin: var(--ds-space-8); padding: var(--ds-space-8) var(--ds-space-4); }
+  .door-stack .cover-logo { display: none; }
+}
+
+/* Certificate: ink outer rule, accent inner rule, recipient as the hero. */
+.cert-art { background: var(--ds-color-yellow-soft); color: var(--ds-color-ink); border: 2px solid var(--ds-color-ink); border-radius: var(--ds-bento-radius-inner); padding: var(--ds-space-8); }
+.cert-inner { display: flex; flex-direction: column; align-items: center; gap: var(--ds-space-8); padding: var(--ds-space-32) var(--ds-space-24) var(--ds-space-24); border: 1px solid var(--ds-accent); border-radius: 4px; text-align: center; }
+.cert-brand { display: inline-flex; align-items: center; gap: var(--ds-space-8); margin-bottom: var(--ds-space-8); }
+.cert-brand img { width: 24px; height: 24px; }
+.cert-art .cert-kicker { text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: var(--ds-space-16); }
+.cert-art .cert-name { overflow-wrap: anywhere; }
+.cert-course { max-width: 480px; text-wrap: balance; }
+.cert-foot { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--ds-space-16); width: 100%; margin-top: var(--ds-space-24); }
+.cert-foot-col { display: flex; flex-direction: column; align-items: center; gap: var(--ds-space-4); }
+.cert-foot-col .t-content { padding-bottom: var(--ds-space-4); border-bottom: 1px solid var(--ds-color-ink); min-width: 128px; }
+.cert-foot-col .t-label { color: var(--ds-color-grey); }
+.cert-art .cert-seal { width: 64px; height: 64px; box-shadow: 0 0 0 4px var(--ds-color-yellow-soft), 0 0 0 5px var(--ds-accent); }
+.cert-proof { margin-top: var(--ds-space-16); overflow-wrap: anywhere; }
+.cert-full .cert-art .cert-name { font-size: var(--ds-type-display-size); line-height: var(--ds-type-display-line); }
+.cert-full .cert-inner { padding: var(--ds-space-48) var(--ds-space-32) var(--ds-space-32); }
+.cert-tools { display: flex; flex-direction: column; align-items: center; gap: var(--ds-space-8); padding: var(--ds-space-24) var(--ds-space-16) var(--ds-space-12); text-align: center; }
+.cert-tools .cert-actions { margin-top: 0; }
+.dialog.cert-dialog[open] { max-width: min(640px, calc(100vw - var(--ds-space-32))); padding-top: var(--ds-space-64); }
+@media (max-width: 640px) {
+  .cert-inner, .cert-full .cert-inner { padding: var(--ds-space-24) var(--ds-space-12) var(--ds-space-16); }
+  .cert-foot { gap: var(--ds-space-8); }
+  .cert-foot-col .t-content { min-width: 0; }
+  .cert-art .cert-seal { width: 48px; height: 48px; }
+  .book-card-cover .cover-frame { padding: var(--ds-space-8) var(--ds-space-4); }
+  .book-card-cover .cover-mark { display: none; }
+  .book-card-cover .cover-title { margin-top: auto; }
+}

@@ -6,6 +6,7 @@ import { BOOKS, bookById, type BookMeta } from "../books";
 import { ACADEMY, BOOK_PAGES, BSCSCAN, certificate, progressOf, savedPages, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
 import { CopyButton } from "./Pages";
+import { CertArt } from "./CertArt";
 
 function useBook(wallet: Address | null, chainId: number) {
   const [p, setP] = useState<Progress | null>(null);
@@ -81,31 +82,30 @@ export default function Certificate({ wallet, bookId }: { wallet: Address; bookI
         <div className="page-head"><h1 className="t-page">{t("Certificate", "Chứng chỉ")}</h1></div>
         <section className="bento">
           <article className="cert-board cert-full">
-            <div className="cert-paper">
-              <span className="cert-seal" aria-hidden><Award size={28} /></span>
-              <p className="t-label cert-kicker">{t("Certificate of completion", "Chứng chỉ hoàn thành")}</p>
-              <h2 className="t-page">{title}</h2>
-              <p className="t-secondary">Agent Academy, {book.number}</p>
-              {valid && <p className="t-header" translate="no">{name}</p>}
-              <p className="t-data cert-wallet" translate="no">{wallet}</p>
-              {err && <p className="t-secondary" role="status">{t("Can't check right now. Try again in a minute.", "Chưa kiểm tra được. Thử lại sau một phút.")}</p>}
-              {!err && !c && <p className="t-secondary" role="status">{t("Checking…", "Đang kiểm tra…")}</p>}
-              {c && (c.ok ? <>
-                <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
-                <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
-              </> : <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${BOOK_PAGES} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${BOOK_PAGES} trang.`)}</p>)}
-              {c && !c.ok && <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
+            {c?.ok ? <CertArt book={book} name={valid ? name : short(wallet)} wallet={wallet} issuedAt={c.issuedAt} /> : (
+              <div className="cert-paper">
+                <span className="cert-seal" aria-hidden><Award size={28} /></span>
+                <h2 className="t-page">{title}</h2>
+                <p className="t-data cert-wallet" translate="no">{wallet}</p>
+                {err && <p className="t-secondary" role="status">{t("Can't check right now. Try again in a minute.", "Chưa kiểm tra được. Thử lại sau một phút.")}</p>}
+                {!err && !c && <p className="t-secondary" role="status">{t("Checking…", "Đang kiểm tra…")}</p>}
+                {c && <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${BOOK_PAGES} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${BOOK_PAGES} trang.`)}</p>}
+                {c && <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
+              </div>
+            )}
+            {c?.ok && <div className="cert-tools">
+              <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
               {!valid && <form className="cert-actions" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
                 <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, e.g. you.ai", "Agent ID, ví dụ ban.ai")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
                 <button className="btn btn-ghost t-button" type="submit">{t("Add my name", "Thêm tên")}</button>
               </form>}
               {valid && <button className="link t-label link-btn" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
-              <p className="t-note cert-note">{valid || edit ? t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.") : ""}</p>
+              {(valid || edit) && <p className="t-note cert-note">{t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.")}</p>}
               <div className="cert-actions">
                 <CopyButton text={`${location.origin}/certificate/${book.id}/${wallet}`} label={t("Copy share link", "Chép link chia sẻ")} />
                 <a className="btn btn-ghost t-button" href={`${BSCSCAN}/address/${ACADEMY}#readContract`} target="_blank" rel="noreferrer">{t("Verify on BscScan", "Xác minh trên BscScan")}</a>
               </div>
-            </div>
+            </div>}
           </article>
         </section>
       </main>

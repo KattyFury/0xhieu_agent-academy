@@ -265,7 +265,7 @@ function useMedia(query: string) {
 /** Library → Book: the cover flies from its shelf spot to the closed-book spot, then opens around its spine. */
 function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled: boolean, number: string, title: string) {
   const [opening, setOpening] = useState(false);
-  const from = useMemo(() => { const v = sessionStorage.getItem("openFrom"); sessionStorage.removeItem("openFrom"); return v ? JSON.parse(v) as DOMRectInit : null; }, []);
+  const from = useMemo(() => { const v = sessionStorage.getItem("openFrom"); sessionStorage.removeItem("openFrom"); return v ? JSON.parse(v) as DOMRectInit & { html?: string } : null; }, []);
   useLayoutEffect(() => {
     const el = bookRef.current;
     if (!from || !enabled || !el) return;
@@ -273,9 +273,13 @@ function useOpenFromShelf(bookRef: React.RefObject<HTMLElement | null>, enabled:
     const h = b.height, w = h * 0.7, x = b.left + (b.width - w) / 2, y = b.top;
     const cover = document.createElement("div");
     cover.className = "cover bk-flycover";
-    cover.innerHTML = '<span class="cover-spine"></span><span class="cover-frame"><span class="t-label"></span><span class="t-header cover-title"></span><span class="t-label">Agent Academy</span></span>';
-    cover.querySelectorAll<HTMLElement>(".t-label")[0].textContent = number;
-    cover.querySelector<HTMLElement>(".cover-title")!.textContent = title;
+    // Same art as the clicked library cover (its markup is saved on click).
+    if (from.html) cover.innerHTML = from.html;
+    else {
+      cover.innerHTML = '<span class="cover-spine"></span><span class="cover-frame"><span class="t-label cover-num"></span><span class="t-header cover-title"></span></span>';
+      cover.querySelector<HTMLElement>(".cover-num")!.textContent = number;
+      cover.querySelector<HTMLElement>(".cover-title")!.textContent = title;
+    }
     Object.assign(cover.style, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${h}px` });
     document.body.appendChild(cover);
     const sx = (from.width ?? 0) / w, sy = (from.height ?? 0) / h;
