@@ -267,3 +267,16 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .t-header { font-weight: var(--ds-type-header-weight); }
 .mz-col strong, .mz-col .t-lead strong, .mz-toc-row.on, .bk-recorded, .bk-table td:first-child { font-weight: 600; }
 .bk-table th { text-transform: uppercase; color: var(--ds-color-grey); font-weight: 600; }
+
+/* Phone certificate popup ~20% shorter (owner 2026-11-24): tighter spacing only, same text sizes. */
+@media (max-width: 640px) {
+  .cert-dialog .sw-dialog-head { padding: var(--ds-space-8) var(--ds-space-12); }
+  .cert-dialog-body { gap: var(--ds-space-8); }
+  .cert-compact .cert-l { padding: var(--ds-space-16); gap: var(--ds-space-8); }
+  .cert-compact .cert-big { margin-bottom: 0; }
+  .cert-compact .cert-seal { min-height: 56px; }
+  .cert-compact .cert-seal svg { width: 32px; height: 32px; }
+  .cert-compact .cert-dl > div { padding: var(--ds-space-8) var(--ds-space-16); }
+  .cert-dialog .bk-field { gap: var(--ds-space-4); }
+  .cert-dialog .input, .cert-dialog .sw-btns .btn { height: 40px; }
+}
