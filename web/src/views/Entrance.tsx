@@ -13,7 +13,7 @@ export default function Entrance(_: { wallet: Address | null }) {
   const steps = [
     { icon: <BookOpen size={20} />, title: t("Learn", "Học"), text: t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.") },
     { icon: <PenLine size={20} />, title: t("Practice", "Thực hành"), text: t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.") },
-    { icon: <ListChecks size={20} />, title: t("Save progress", "Lưu tiến độ"), text: t("Save your progress every few lessons, so you can see how far you are.", "Lưu tiến độ sau vài bài, để biết mình đi tới đâu.") },
+    { icon: <ListChecks size={20} />, title: t("Save progress", "Lưu tiến độ"), text: t("Save your progress when you finish the course.", "Lưu tiến độ khi học xong khóa.") },
     { icon: <Award size={20} />, title: t("Get certificate", "Nhận chứng chỉ"), text: t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.") },
   ];
 

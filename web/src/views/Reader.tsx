@@ -1,213 +1,45 @@
-// Book reader: one open-book spread = 2 pages (theory left, practice right). 9 lessons + an ending = 20 pages.
-// Saves at pages 6, 12 and 18 send a cumulative mask (SAVE_STEPS in chain.ts); the last one issues the certificate.
-// QA: every state has a URL, e.g. /book/1/2?qa=copied (qa: nowallet|copied|submitted|confirmed|failed|timeout|unpublished|error|flip).
+// Book reader: one open-book spread = 2 pages (learn left, practice right). Book 1 = 12 pages = 6 spreads.
+// One save at page 12 (FULL_MASK in chain.ts). When the chain shows it, the book folds shut and the certificate popup opens.
+// Next / Space / → turn the page; Shift+Space / ← go back.
+// QA: every state has a URL, e.g. /book/1/5?qa=copied (qa: nowallet|copied|timeout|confirmed|unpublished|error|flip|own|pro|cert).
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import type { Address, Hash } from "viem";
-import { Activity, ArrowLeft, ArrowRight, AtSign, Award, Bot, Check, CircleHelp, Clock, Coins, Copy, CreditCard, Eye, EyeOff, FileCheck, Flag, Fuel, Gauge, Hand, History, Hourglass, Infinity, KeyRound, Landmark, Layers, Link, List, ListChecks, Loader2, Lock, LockOpen, LogOut, MessageSquareWarning, Network, Percent, PiggyBank, Receipt, Scale, Search, Share2, ShieldCheck, SlidersHorizontal, Smartphone, TriangleAlert, User, Wallet, X, Zap } from "lucide-react";
+import type { Address } from "viem";
+import { ArrowLeft, ArrowRight, Award, Check, List, Loader2, Lock, X } from "lucide-react";
 import { go } from "../App";
 import { Nav } from "./Shell";
-import { usePageTitles } from "./Library";
-import { ResultLines, SetupAccount, SetupAgent, SetupDevMode, SetupGas } from "./Onboard";
 import { useLang, useT } from "../i18n";
-import { book001Vi, localDay } from "../book001.vi";
-import { book001, completionPrompt, dayAt, pageCount, pagesOf, type Day, type IconKey } from "../book001";
-import { ACADEMY, BSCSCAN, SAVE_STEPS, chapterCount, client, completeCalldata, progressOf, savedPages } from "../chain";
+import { book001Vi } from "../book001.vi";
+import { book001, pageCount, pagesOf, savePrompt } from "../book001";
+import { ACADEMY, BOOK_ID, BOOK_PAGES, FULL_MASK, certificate, chapterCount, completeCalldata, isAddr, progressOf, savedPages } from "../chain";
+import { Code, Page1, Page10, Page11, Page12, Page2, Page3, Page4, Page5, Page6, Page7, Page8, Page9, WalletInput, usePageNames, usePrompts, type Track } from "./Pages";
+import { CertPopup } from "./CertPopup";
 
 const book = book001;
-const P = pageCount(book); // lesson spreads (2 pages each); the ending is one more
-const SAVES: Record<number, (typeof SAVE_STEPS)[number]> = Object.fromEntries(SAVE_STEPS.map((s) => [s.pages / 2 - 1, s])); // spread index -> save (pages 6, 12, 18)
-const SAVE_AT = Object.keys(SAVES).map(Number);
-const END = P; // ending spread: nothing is recorded
-const LAST = END;
-const PAGES = 2 * (P + 1);
-const WATCH_MS = 10 * 60 * 1000;
+const P = pageCount(); // spreads
+const LAST = P - 1;
+const PAGES = 2 * P;
+const WATCH_MS = 5 * 60 * 1000;
+const POLL_MS = 5000;
 const FLIP_MS = 600;
+const SHUT_MS = 700;
+const TRACK_KEY = "academy.track";
 const qa = () => new URLSearchParams(location.search).get("qa") ?? "";
 
-type Rec =
-  | { phase: "idle" } | { phase: "copied"; since: number }
-  | { phase: "submitted"; hash: Hash; since: number } | { phase: "failed"; hash: Hash } | { phase: "timeout" };
+type Rec = { phase: "idle" } | { phase: "copied"; since: number } | { phase: "timeout" };
 
 // ---------- chain state ----------
 function useChain(wallet: Address | null) {
   const [published, setPublished] = useState<boolean | null>(null);
   const [mask, setMask] = useState(0n);
   const [error, setError] = useState(false);
-  const loadBook = useCallback(() => chapterCount(book.id).then((n) => { setPublished(n > 0); setError(false); }).catch(() => setError(true)), []);
+  const loadBook = useCallback(() => chapterCount(BOOK_ID).then((n) => { setPublished(n > 0); setError(false); }).catch(() => setError(true)), []);
   const loadMask = useCallback(() => {
     if (!wallet) return Promise.resolve();
-    return progressOf(wallet, book.id).then((p) => { setMask(p.mask); setError(false); }).catch(() => setError(true));
+    return progressOf(wallet, BOOK_ID).then((p) => { setMask(p.mask); setError(false); }).catch(() => setError(true));
   }, [wallet]);
   useEffect(() => { loadBook(); loadMask(); }, [loadBook, loadMask]);
   useEffect(() => { if (!error) return; const t = setInterval(() => { loadBook(); loadMask(); }, 30000); return () => clearInterval(t); }, [error, loadBook, loadMask]);
   return { published, mask, error, loadMask };
-}
-
-// ---------- page contents ----------
-/** Lesson copy marks key terms with **…**; they render ink 600 inside grey body text. */
-const Rich = ({ text }: { text: string }) => <>{text.split(/\*\*(.+?)\*\*/g).map((t, i) => i % 2 ? <strong key={i}>{t}</strong> : t)}</>;
-const ICONS = { bot: Bot, card: CreditCard, shield: ShieldCheck, key: KeyRound, zap: Zap, sliders: SlidersHorizontal, logout: LogOut, flag: Flag, list: ListChecks, award: Award, landmark: Landmark, share: Share2, network: Network, alert: TriangleAlert, coins: Coins, layers: Layers, eyeOff: EyeOff, wallet: Wallet, history: History, hourglass: Hourglass, fuel: Fuel, gauge: Gauge, scale: Scale, user: User, fileCheck: FileCheck, clock: Clock, infinity: Infinity, help: CircleHelp, lock: Lock, unlock: LockOpen, smartphone: Smartphone, receipt: Receipt, activity: Activity, search: Search, piggy: PiggyBank, percent: Percent, eye: Eye, atSign: AtSign, link: Link, hand: Hand, message: MessageSquareWarning } as const;
-const Icon = ({ k }: { k: IconKey }) => { const C = ICONS[k]; return <span className="bk-icon" aria-hidden><C size={20} /></span>; };
-
-/** Ending spread, left: the book is over and how the certificate comes. */
-function EndPage() {
-  const t = useT();
-  const pts: [IconKey, string][] = [
-    ["flag", t("That was the **last page**. Well done!", "Đó là **trang cuối**. Bạn giỏi lắm!")],
-    ["list", t(`Your last save, at page ${2 * P}, covers **every page**.`, `Lần lưu cuối, ở trang ${2 * P}, lưu **mọi trang**.`)],
-    ["award", t(`All ${SAVE_STEPS.length} saves done = your **certificate** is issued on-chain, by itself.`, `Lưu đủ ${SAVE_STEPS.length} lần = **chứng chỉ** tự được cấp on-chain.`)],
-  ];
-  return (
-    <>
-      <h1 className="t-page">{t("You finished the book", "Bạn đã đọc xong sách")}</h1>
-      <ul className="bk-points">{pts.map(([k, s]) => <li key={k}><Icon k={k} /><p className="t-lead"><Rich text={s} /></p></li>)}</ul>
-    </>
-  );
-}
-
-/** Ending spread, right: progress toward the certificate. */
-function EndCertificate({ done }: { done: number }) {
-  const t = useT();
-  const all = done === 2 * P;
-  return (
-    <>
-      <h2 className="t-page">{t("Your certificate", "Chứng chỉ của bạn")}</h2>
-      <p className="t-lead">{t(`${done} of ${2 * P} pages saved.`, `Đã lưu ${done}/${2 * P} trang.`)}</p>
-      <p className="t-lead">{all
-        ? t("All done! Your certificate is ready. Anyone can check it with your wallet address.", "Xong hết! Chứng chỉ đã sẵn sàng. Ai cũng kiểm tra được bằng địa chỉ ví của bạn.")
-        : t(`Not ${2 * P} yet? Go back to page ${2 * P} and save your progress. It saves every page at once.`, `Chưa đủ ${2 * P}? Quay lại trang ${2 * P} và lưu tiến độ. Lần lưu đó lưu mọi trang cùng lúc.`)}</p>
-      <div className="actions">
-        {!all && <a className="btn btn-primary t-button" href={`/book/1/${P - 1}/practice`}>{t(`Go to page ${2 * P}`, `Tới trang ${2 * P}`)}</a>}
-        <a className={`btn ${all ? "btn-primary" : "btn-ghost"} t-button`} href="/certificate">{t("See your certificate", "Xem chứng chỉ")}</a>
-      </div>
-    </>
-  );
-}
-
-function LearnPage({ d, page, titleRef }: { d: Day; page: number; titleRef?: React.Ref<HTMLHeadingElement> }) {
-  const t = useT();
-  return (
-    <>
-      <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{d.title}</h1>
-      <p className="bk-goal t-content"><strong>{t("Goal:", "Mục tiêu:")}</strong> {d.goal}</p>
-      {d.learn.paragraphs.map((p) => <p key={p} className="t-lead"><Rich text={p} /></p>)}
-      {d.learn.points && <ul className="bk-points">{d.learn.points.map((p) => <li key={p.text}><Icon k={p.icon} /><p className="t-lead"><Rich text={p.text} /></p></li>)}</ul>}
-      {d.learn.flow && <ol className="bk-flow" aria-label="How it works">
-        {d.learn.flow.map((s, i, a) => <li key={s} className="t-label"><span className="bk-step-pill">{s}</span>{i < a.length - 1 && <ArrowRight size={14} aria-hidden />}</li>)}
-      </ol>}
-      {d.learn.remember.length > 0 && <div className="bk-remember">
-        <h2 className="t-label">{t("Remember", "Ghi nhớ")}</h2>
-        <ul>{d.learn.remember.map((t) => <li key={t} className="t-content"><Check size={18} aria-hidden /><span><Rich text={t} /></span></li>)}</ul>
-      </div>}
-    </>
-  );
-}
-
-function CopyButton({ text, label, primary, onCopied }: { text: string; label: string; primary?: boolean; onCopied?: () => void }) {
-  const t = useT();
-  const [state, setState] = useState<"idle" | "ok" | "blocked">("idle");
-  const copy = async () => {
-    try { await navigator.clipboard.writeText(text); setState("ok"); onCopied?.(); setTimeout(() => setState("idle"), 2000); }
-    catch { setState("blocked"); }
-  };
-  return (
-    <>
-      <button className={`btn t-button ${primary ? "btn-primary" : "btn-ghost"}`} onClick={copy}>
-        {state === "ok" ? <Check size={16} /> : <Copy size={16} />} {state === "ok" ? t("Copied", "Đã chép") : label}
-      </button>
-      {state === "blocked" && <textarea className="input t-data" readOnly value={text} rows={3} onFocus={(e) => e.currentTarget.select()} aria-label="Copy this text with Ctrl+C" />}
-    </>
-  );
-}
-
-function PromptBox({ text }: { text: string }) {
-  const t = useT();
-  const [full, setFull] = useState(false);
-  return (
-    <div className={`bk-prompt ${full ? "full" : ""}`}>
-      <p className="t-data">{text}</p>
-      <div className="bk-prompt-actions">
-        <CopyButton text={text} label={t("Copy prompt", "Chép prompt")} />
-        <button className="link t-label bk-prompt-toggle" style={{ background: "none", border: 0, padding: 0, cursor: "pointer" }} onClick={() => setFull((v) => !v)}>{full ? t("Show less", "Thu gọn") : t("Show full prompt", "Xem cả prompt")}</button>
-      </div>
-    </div>
-  );
-}
-
-function RecordStatus({ done, rec, setHash }: { done: boolean; rec: Rec; setHash: (h: Hash) => void }) {
-  const t = useT();
-  const [hash, setH] = useState("");
-  const [showHash, setShowHash] = useState(false);
-  if (done) return <p className="bk-status bk-recorded t-content" role="status"><Check size={18} aria-hidden /> {t("Recorded on-chain", "Đã ghi nhận on-chain")}</p>;
-  const hashForm = !showHash ? <button className="link t-label" style={{ background: "none", border: 0, padding: 0, cursor: "pointer" }} onClick={() => setShowHash(true)}>{t("Have a transaction hash?", "Có mã giao dịch?")}</button> : (
-    <form className="bk-hash" onSubmit={(e) => { e.preventDefault(); if (/^0x[0-9a-fA-F]{64}$/.test(hash.trim())) setHash(hash.trim() as Hash); }}>
-      <input className="input t-input" placeholder={t("Paste the tx hash your agent gave you (optional)", "Dán mã giao dịch agent đưa (không bắt buộc)")} value={hash} onChange={(e) => setH(e.target.value)} spellCheck={false} aria-label="Transaction hash" />
-    </form>
-  );
-  switch (rec.phase) {
-    case "copied": return <><p className="bk-status t-secondary" role="status"><Loader2 size={14} className="animate-spin" /> {t("Prompt copied. Paste it into your agent and type ", "Đã chép prompt. Dán vào agent và gõ ")}<b>confirm</b>{t(". Watching the chain…", ". Đang theo dõi chain…")}</p>{hashForm}</>;
-    case "submitted": return <p className="bk-status t-secondary" role="status"><Loader2 size={14} className="animate-spin" /> {t("Transaction sent, waiting for it to land.", "Đã gửi giao dịch, đang chờ xác nhận.")} <a className="link" href={`${BSCSCAN}/tx/${rec.hash}`} target="_blank" rel="noreferrer">{t("View", "Xem")}</a></p>;
-    case "failed": return <p className="bk-status t-secondary" role="alert" style={{ color: "var(--ds-color-red-text)" }}>{t("That transaction failed on-chain. Copy the record prompt and try again.", "Giao dịch thất bại on-chain. Chép lại prompt ghi nhận và thử lại.")} <a className="link" href={`${BSCSCAN}/tx/${rec.hash}`} target="_blank" rel="noreferrer">{t("See why", "Xem lý do")}</a></p>;
-    case "timeout": return <><p className="bk-status t-secondary" role="status">{t("Not seen on-chain yet. Did your agent ask you to type ", "Chưa thấy on-chain. Agent có bảo bạn gõ ")}<b>confirm</b>{t("? Is Developer Mode on?", " không? Developer Mode đã bật chưa?")}</p>{hashForm}</>;
-    default: return <p className="bk-status t-secondary"><span className="bk-dot" aria-hidden /> {t("Not recorded yet", "Chưa ghi nhận")}</p>;
-  }
-}
-
-/** "Record this page": the learner's own agent sends completeChapters(book, mask | this page). */
-/** Save point: records your progress on-chain. All saves done = certificate. */
-function Finish({ upTo, children }: { upTo: number; children: ReactNode }) {
-  const t = useT();
-  return (
-    <><span className="bk-push" aria-hidden />
-    <section className="bk-finish">
-      <h3 className="t-header"><Flag size={18} aria-hidden /> {t(`Save your progress: pages 1–${upTo}`, `Lưu tiến độ: trang 1–${upTo}`)}</h3>
-      {children}
-    </section></>
-  );
-}
-
-function RecordBlock({ page, bits, text, wallet, mask, done, published, allDone, rec, onCopy, setHash }: {
-  page: number; bits?: bigint; text?: string; wallet: Address | null; mask: bigint; done: boolean; published: boolean | null; allDone: boolean; rec: Rec; onCopy: () => void; setHash: (h: Hash) => void;
-}) {
-  const t = useT();
-  const { lang } = useLang();
-  const next = mask | (bits ?? 1n << BigInt(page));
-  const prompt = wallet ? completionPrompt({ wallet, academy: ACADEMY, bookId: book.id, mask: next, calldata: completeCalldata(book.id, next) }, lang) : "";
-  return (
-    <>
-      {published === false ? <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p> : <>
-        <p className="t-content">{text ? <Rich text={text} /> : <>{t("Paste the prompt into your AI, then type ", "Dán prompt vào AI, rồi gõ ")}<b>{t("confirm", "xác nhận")}</b>.</>}</p>
-        <div className="bk-record">
-          {!wallet ? <a className="btn btn-primary t-button" href="/book/1/2">{t("Get your wallet ready first", "Chuẩn bị ví trước")}</a>
-            : !done && <CopyButton text={prompt} label={t("Copy record prompt", "Chép prompt ghi nhận")} primary onCopied={onCopy} />}
-          {wallet && allDone && <a className="btn btn-primary t-button" href="/certificate">{t("View certificate", "Xem chứng chỉ")}</a>}
-          {wallet && <div className="bk-statusbox"><RecordStatus done={done} rec={rec} setHash={setHash} /></div>}
-        </div>
-      </>}
-    </>
-  );
-}
-
-function PracticePage({ d, record }: { d: Day; record: ReactNode }) {
-  const t = useT();
-  return (
-    <>
-      <h2 className="t-page">{d.practice.title ?? "Try it yourself"}</h2>
-      {d.practice.riskText && <p className="bk-risk t-note" role="note"><strong>{t("Risk:", "Cảnh báo rủi ro:")}</strong> {d.practice.riskText}</p>}
-      <ol className="bk-steps">
-        {d.practice.steps.map((s, i, all) => (
-          <li key={s.title} className={s.icon ? "bk-step-icon" : undefined}>
-            {s.icon && <Icon k={s.icon} />}
-            <h3 className="t-header">{s.title}</h3>
-            <p className="t-content"><Rich text={s.text} /></p>
-            {s.prompt && <PromptBox text={s.prompt} />}
-            {i === all.length - 1 && <ResultLines check={d.practice.check} ifNot={d.practice.ifNot} />}
-          </li>
-        ))}
-      </ol>
-      {record}
-    </>
-  );
 }
 
 // ---------- reader ----------
@@ -215,35 +47,43 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const q = qa();
   const { lang } = useLang();
   const t = useT();
-  const wallet = q === "nowallet" ? null : realWallet ?? (q && q !== "unpublished" && q !== "error" && q !== "flip" ? ("0x0000000000000000000000000000000000000001" as Address) : null);
+  const pr = usePrompts();
+  const demo = q && !["nowallet", "unpublished", "error", "flip", "own", "pro"].includes(q);
+  const wallet = q === "nowallet" ? null : realWallet ?? (demo || q === "own" || q === "pro" ? ("0x0000000000000000000000000000000000000001" as Address) : null);
   const chain = useChain(realWallet);
   const published = q === "unpublished" ? false : q ? true : chain.published;
-  const mask = chain.mask;
   const target = Math.max(0, Math.min(LAST, Number.isNaN(day) ? 0 : day));
   const spreadMode = useMedia("(min-width: 1024px) and (min-height: 700px)");
   const reduce = useMedia("(prefers-reduced-motion: reduce)");
 
-  // Recording state per page (the chain is the only proof of completion).
-  const [recs, setRecs] = useState<Record<number, Rec>>({});
-  const rec: Rec = (q === "copied" && { phase: "copied", since: Date.now() }) || (q === "submitted" && { phase: "submitted", hash: ("0x" + "a".repeat(64)) as Hash, since: Date.now() })
-    || (q === "failed" && { phase: "failed", hash: ("0x" + "b".repeat(64)) as Hash }) || (q === "timeout" && { phase: "timeout" }) || recs[target] || { phase: "idle" };
-  const setRec = (p: number, r: Rec) => setRecs((m) => ({ ...m, [p]: r }));
-  const saved = q === "confirmed" ? 2 * P : savedPages(mask);
-  const isDone = (p: number) => saved >= Math.min(2 * (p + 1), 2 * P);
-  const count = saved;
-  const watching = !q && (rec.phase === "copied" || rec.phase === "submitted");
+  // Track (page 3). ?qa=own|pro forces one for screenshots.
+  const [trackState, setTrackState] = useState<Track | null>(() => { const v = localStorage.getItem(TRACK_KEY); return v === "own" || v === "pro" ? v : null; });
+  const track: Track = q === "own" || q === "pro" ? q : trackState ?? "own"; // nothing picked yet = the recommended path
+  const setTrack = (k: Track) => { localStorage.setItem(TRACK_KEY, k); setTrackState(k); };
+
+  // Save state (the chain is the only proof).
+  const [recState, setRec] = useState<Rec>({ phase: "idle" });
+  const rec: Rec = q === "copied" ? { phase: "copied", since: Date.now() } : q === "timeout" ? { phase: "timeout" } : recState;
+  const saved = q === "confirmed" || q === "cert" ? BOOK_PAGES : savedPages(chain.mask);
+  const done = saved === BOOK_PAGES;
   const { loadMask } = chain;
   useEffect(() => {
-    if (!watching) return;
-    const t = setInterval(async () => {
-      await loadMask();
-      if (rec.phase === "submitted") {
-        try { const r = await client.getTransactionReceipt({ hash: rec.hash }); if (r.status === "reverted") setRec(target, { phase: "failed", hash: rec.hash }); } catch { /* not mined yet */ }
-      }
-      if (Date.now() - rec.since > WATCH_MS) setRec(target, { phase: "timeout" });
-    }, 8000);
-    return () => clearInterval(t);
-  }, [watching, rec, target, loadMask]);
+    if (q || rec.phase !== "copied") return;
+    const id = setInterval(() => { loadMask(); if (Date.now() - rec.since > WATCH_MS) setRec({ phase: "timeout" }); }, POLL_MS);
+    return () => clearInterval(id);
+  }, [q, rec, loadMask]);
+
+  // Saved while we watched: fold the book shut, then the certificate popup.
+  const [shut, setShut] = useState(false);
+  const [issuedAt, setIssuedAt] = useState(0);
+  const certRef = useRef<HTMLDialogElement>(null);
+  const openCert = useCallback(() => {
+    if (wallet && !q) certificate(wallet, BOOK_ID).then((c) => setIssuedAt(c.issuedAt)).catch(() => {});
+    certRef.current?.showModal();
+  }, [wallet, q]);
+  const finish = useCallback(() => { setShut(true); setTimeout(openCert, reduce ? 0 : SHUT_MS); }, [openCert, reduce]);
+  useEffect(() => { if (done && rec.phase === "copied" && !q) { setRec({ phase: "idle" }); finish(); } }, [done, rec.phase, q, finish]);
+  useEffect(() => { if (q === "cert") finish(); }, [q, finish]);
 
   // Page turns: `shown` is what is on the desk; `flip` animates shown -> target.
   const [shown, setShown] = useState(target);
@@ -266,53 +106,78 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
     const pp = Math.max(0, Math.min(LAST, p));
     go(`/book/${book.id}/${pp}${s === "practice" ? "/practice" : ""}`);
   }, []);
-  // Single-page order: page0 left, page0 right, page1 left …
+  // Single-page order: page 1, page 2, page 3 …
   const stepPage = (delta: 1 | -1) => {
     if (spreadMode) return nav(target + delta);
-    if (delta === 1) return side === "learn" ? nav(target, "practice") : nav(target + 1);
-    return side === "practice" ? nav(target, "learn") : nav(target - 1, "practice");
+    if (delta === 1) return side === "learn" ? nav(target, "practice") : target < LAST && nav(target + 1);
+    return side === "practice" ? nav(target, "learn") : target > 0 && nav(target - 1, "practice");
   };
   useEffect(() => {
     const on = (e: KeyboardEvent) => {
-      const el = e.target as Element | null; if (el instanceof Element && el.closest("input, textarea")) return;
-      if (e.key === "ArrowRight") stepPage(1); else if (e.key === "ArrowLeft") stepPage(-1);
+      const el = e.target as Element | null;
+      if (el instanceof Element && el.closest("input, textarea, select, dialog[open]")) return;
+      if (e.key === " ") {
+        if (el instanceof Element && el.closest("button, a")) return; // Space on a focused button presses that button
+        e.preventDefault(); stepPage(e.shiftKey ? -1 : 1);
+      } else if (e.key === "ArrowRight") stepPage(1); else if (e.key === "ArrowLeft") stepPage(-1);
       else if (e.key === "Home") nav(0); else if (e.key === "End") nav(LAST);
     };
     addEventListener("keydown", on); return () => removeEventListener("keydown", on);
   });
   const touch = useRef<{ x: number; y: number } | null>(null);
   const tocRef = useRef<HTMLDialogElement>(null);
-  const titles = usePageTitles();
-  useEffect(() => { document.title = `${target < P ? titles[target] : t("You finished the book", "Bạn đã hoàn thành sách")} · Agent Academy`; }, [target, titles, t]);
+  const names = usePageNames(track);
+  useEffect(() => { document.title = `${names[2 * target]} · Agent Academy`; }, [target, names]);
 
-  // Saves at pages 6, 12 and 18. Each marks every page up to that point, so a missed save is caught by the next one.
-  const record = (p: number, text?: string) => {
-    const bits = SAVES[p].bits;
-    return <Finish upTo={SAVES[p].pages}><RecordBlock page={p} bits={bits} text={text} wallet={wallet} mask={mask} done={(mask & bits) === bits} published={published} allDone={count === 2 * P}
-      rec={p === target ? rec : { phase: "idle" }} onCopy={() => setRec(p, { phase: "copied", since: Date.now() })} setHash={(h) => setRec(p, { phase: "submitted", hash: h, since: Date.now() })} /></Finish>;
-  };
+  // Page 12, part 2 step 1: the save command (shown sentence; copy adds the technical block), or the address box first.
+  const [addr, setAddr] = useState("");
+  const [addrErr, setAddrErr] = useState("");
+  const saveAddr = () => { const a = addr.trim(); if (isAddr(a)) setWallet(a as Address); else setAddrErr(t("That doesn't look like a wallet address (0x + 40 characters).", "Đây không giống địa chỉ ví (0x + 40 ký tự).")); };
+  const walletBox: ReactNode = !wallet && <div className="bk-gas"><WalletInput value={addr} onChange={(v) => { setAddr(v); setAddrErr(""); }} onEnter={saveAddr} err={addrErr} />
+    <div className="actions"><button className="btn btn-primary t-button" onClick={saveAddr}>OK</button></div></div>;
+  const saveBlock: ReactNode = !wallet || published === false ? <><div className="bk-code"><pre className="t-data">{pr.save}</pre></div>{wallet && <p className="bk-status t-content"><Lock size={18} aria-hidden /> {t("Opens soon.", "Sắp mở.")}</p>}</>
+    : <Code text={pr.save} copy={savePrompt(pr.save, { wallet, academy: ACADEMY, bookId: BOOK_ID, mask: FULL_MASK, calldata: completeCalldata(BOOK_ID, FULL_MASK) }, lang)} onCopied={() => setRec({ phase: "copied", since: Date.now() })} />;
+  // Temporary status words (owner approves).
+  const status: ReactNode = !wallet ? null
+    : done ? <div className="bk-record"><p className="bk-status bk-recorded t-content" role="status"><Check size={18} aria-hidden /> {t("Saved.", "Đã lưu.")}</p>
+        <button className="btn btn-primary t-button" onClick={openCert}><Award size={16} aria-hidden /> {t("Open certificate", "Mở chứng chỉ")}</button></div>
+    : rec.phase === "copied" ? <p className="bk-status t-secondary" role="status"><Loader2 size={14} className="animate-spin" /> {t("Waiting for your save…", "Đang chờ bạn lưu…")}</p>
+    : rec.phase === "timeout" ? <div className="bk-record"><p className="bk-status t-secondary" role="status">{t("Not saved yet.", "Chưa thấy lưu.")}</p>
+        <button className="btn btn-ghost t-button" onClick={() => { setRec({ phase: "copied", since: Date.now() }); loadMask(); }}>{t("Try again", "Thử lại")}</button></div>
+    : null;
+
   const page = (p: number, which: "learn" | "practice", interactive: boolean) => {
-    if (p === END) return which === "learn" ? <EndPage /> : <EndCertificate done={count} />;
-    if (p === 1) return which === "learn" ? <SetupAccount total={P} /> : <SetupAgent record={null} />;
-    if (p === 2) return which === "learn" ? <SetupGas wallet={realWallet} setWallet={setWallet} total={P} /> : <SetupDevMode record={record(2)} />;
-    const dd = localDay(dayAt(book, p)!, lang);
-    if (p === 0) return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={null} />;
-    return which === "learn" ? <LearnPage d={dd} page={p} titleRef={interactive && p === shown ? titleRef : undefined} /> : <PracticePage d={dd} record={SAVE_AT.includes(p) ? record(p, dd.practice.recordText) : null} />;
+    const r = interactive && p === shown ? titleRef : undefined;
+    switch (`${p}${which[0]}`) {
+      case "0l": return <Page1 titleRef={r} />;
+      case "0p": return <Page2 />;
+      case "1l": return <Page3 track={track} setTrack={setTrack} titleRef={r} />;
+      case "1p": return <Page4 track={track} />;
+      case "2l": return <Page5 titleRef={r} />;
+      case "2p": return <Page6 track={track} />;
+      case "3l": return <Page7 wallet={wallet} setWallet={setWallet} titleRef={r} />;
+      case "3p": return <Page8 />;
+      case "4l": return <Page9 titleRef={r} />;
+      case "4p": return <Page10 />;
+      case "5l": return <Page11 titleRef={r} />;
+      default: return <Page12 save={saveBlock} status={status} wallet={walletBox} />;
+    }
   };
 
   const bookRef = useRef<HTMLElement>(null);
   const opening = useOpenFromShelf(bookRef, spreadMode && !reduce, lang === "vi" ? book001Vi.title : book.title);
+  const close = <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>;
 
   return (
     <div className={`bk-screen ${spreadMode ? "" : "bk-single"} ${opening ? "bk-opening" : ""}`}
       onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; }}
-      onTouchEnd={(e) => { const t = touch.current; touch.current = null; if (!t || spreadMode || getSelection()?.toString()) return;
-        const dx = e.changedTouches[0].clientX - t.x, dy = e.changedTouches[0].clientY - t.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) stepPage(dx < 0 ? 1 : -1); }}>
+      onTouchEnd={(e) => { const s = touch.current; touch.current = null; if (!s || spreadMode || getSelection()?.toString()) return;
+        const dx = e.changedTouches[0].clientX - s.x, dy = e.changedTouches[0].clientY - s.y; if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) stepPage(dx < 0 ? 1 : -1); }}>
       <Nav active="library" banner={(chain.error || q === "error") && <p className="bk-banner t-label" role="status">{t("Can't reach the chain. Progress may be out of date.", "Không kết nối được chuỗi. Tiến độ có thể chưa mới.")}</p>} />
 
       <main className="bk-stage">
         {spreadMode ? (
-          <article ref={bookRef} className="bk-book" aria-label={t(`Pages ${pagesOf(shown)} of ${PAGES}`, `Trang ${pagesOf(shown)}/${PAGES}`)} inert={!!turning}>
+          <article ref={bookRef} className={`bk-book ${shut ? "bk-shut" : ""}`} aria-label={t(`Pages ${pagesOf(shown)} of ${PAGES}`, `Trang ${pagesOf(shown)}/${PAGES}`)} inert={!!turning || shut}>
             {turning ? (
               <>
                 <Page side="left" folio={2 * (turning.dir === "fwd" ? turning.from : turning.to) + 1}>{page(turning.dir === "fwd" ? turning.from : turning.to, "learn", false)}</Page>
@@ -329,14 +194,12 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
                 <Page side="right" folio={2 * shown + 2}>{page(shown, "practice", true)}</Page>
               </>
             )}
-
-            <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>
+            {close}
           </article>
         ) : (
-          <article key={`${target}-${side}`} className="bk-book bk-one turn" aria-label={t(`Page ${2 * target + (side === "learn" ? 1 : 2)}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}`)}>
+          <article key={`${target}-${side}`} className={`bk-book bk-one turn ${shut ? "bk-shut" : ""}`} aria-label={t(`Page ${2 * target + (side === "learn" ? 1 : 2)}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}`)}>
             <Page side={side === "learn" ? "left" : "right"} folio={side === "learn" ? 2 * target + 1 : 2 * target + 2}>{page(target, side, true)}</Page>
-
-            <a className="bk-close" href="/library" aria-label={t("Close book", "Đóng sách")}><X size={20} aria-hidden /></a>
+            {close}
           </article>
         )}
       </main>
@@ -347,10 +210,10 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
         </button>
         <div className="bk-days">
           <button className="btn btn-ghost t-button bk-contents" onClick={() => tocRef.current?.showModal()} aria-label={t("Contents", "Mục lục")}><List size={16} /> <span className="bk-hide-sm">{t("Contents", "Mục lục")}</span></button>
-          <ol aria-label={t(`${P + 1} pages`, `${P + 1} trang`)}>
-            {[...Array(P + 1)].map((_, p) => (
-              <li key={p}><button aria-label={`${t("Pages", "Trang")} ${pagesOf(p)}${isDone(p) ? t(", recorded", ", đã ghi nhận") : ""}`} aria-current={p === target ? "step" : undefined}
-                className={`bk-dotbtn ${isDone(p) ? "done" : ""} ${p === target ? "on" : ""}`} onClick={() => nav(p)} /></li>
+          <ol aria-label={t(`${P} spreads`, `${P} cặp trang`)}>
+            {[...Array(P)].map((_, p) => (
+              <li key={p}><button aria-label={`${t("Pages", "Trang")} ${pagesOf(p)}`} aria-current={p === target ? "step" : undefined}
+                className={`bk-dotbtn ${done ? "done" : ""} ${p === target ? "on" : ""}`} onClick={() => nav(p)} /></li>
             ))}
           </ol>
           <span className="t-label">{spreadMode ? t(`Pages ${pagesOf(target)} of ${PAGES}`, `Trang ${pagesOf(target)}/${PAGES}`) : t(`Page ${2 * target + (side === "learn" ? 1 : 2)} of ${PAGES}`, `Trang ${2 * target + (side === "learn" ? 1 : 2)}/${PAGES}`)}</span>
@@ -365,24 +228,21 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
           <button className="btn btn-ghost" aria-label={t("Close", "Đóng")} onClick={() => tocRef.current?.close()} style={{ padding: 0, width: "var(--ds-control-height)" }}><X size={20} /></button>
         </div>
         <ol className="dialog-body contents">
-          {[...titles, t("The end", "Kết thúc")].map((name, i) => (
+          {[...Array(P)].map((_, i) => (
             <li key={i}><button className="contents-row link-btn" onClick={() => { tocRef.current?.close(); nav(i); }} aria-current={i === target ? "page" : undefined}>
               <span className="t-data contents-no">{pagesOf(i)}</span>
-              <span className="t-content contents-title">{name}</span>
-              {isDone(i) && <span className="chip chip-done t-label"><Check size={14} aria-hidden /> {t("Done", "Đã học")}</span>}
+              <span className="t-content contents-title">{names[2 * i]} · {names[2 * i + 1]}</span>
             </button></li>
           ))}
         </ol>
       </dialog>
+      {wallet && <CertPopup ref={certRef} wallet={wallet} issuedAt={issuedAt} onClose={() => { if (shut) go("/library"); }} />}
     </div>
   );
 }
 
 function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"; folio: number; children: ReactNode; extra?: string }) {
-  const t = useT();
   const body = useRef<HTMLDivElement>(null);
-  const [more, setMore] = useState(false);
-  const check = () => { const b = body.current; if (b) setMore(b.scrollHeight - b.clientHeight - b.scrollTop > 8); };
   // No scrollbar: step down spacing, then text size (data-fit1..4 in styles.css) until the page fits.
   const fit = () => {
     const b = body.current, sec = b?.parentElement; if (!b || !sec) return;
@@ -390,15 +250,12 @@ function Page({ side: s, folio, children, extra = "" }: { side: "left" | "right"
       for (let i = 1; i <= 4; i++) sec.toggleAttribute(`data-fit${i}`, i <= l);
       if (b.scrollHeight <= b.clientHeight) break;
     }
-    check();
   };
   useLayoutEffect(fit);
   useEffect(() => { addEventListener("resize", fit); return () => removeEventListener("resize", fit); });
   return (
     <section className={`bk-page bk-${s} ${extra}`}>
-      <div className="bk-body" ref={body} onScroll={check}>{children}
-        {more && <p className="bk-more t-label" aria-hidden>{t("More below", "Còn tiếp bên dưới")}</p>}
-      </div>
+      <div className="bk-body" ref={body}>{children}</div>
       <span className="bk-folio t-label">{folio}</span>
     </section>
   );

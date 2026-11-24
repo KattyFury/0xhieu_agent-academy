@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import type { Address } from "viem";
 import { Award, ShieldCheck } from "lucide-react";
 import { AddressForm, Nav } from "./Shell";
-import { book001, pageCount } from "../book001";
+import { book001 } from "../book001";
 import { book001Vi } from "../book001.vi";
-import { ACADEMY, BSCSCAN, certificate, progressOf, savedPages, short, type Progress } from "../chain";
+import { ACADEMY, BOOK_ID, BOOK_PAGES, BSCSCAN, certificate, progressOf, savedPages, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
-import { CopyBtn } from "./Onboard";
+import { CopyButton } from "./Pages";
 
 function useBook1(wallet: Address | null) {
   const [p, setP] = useState<Progress | null>(null);
@@ -15,7 +15,7 @@ function useBook1(wallet: Address | null) {
   useEffect(() => {
     setP(null); setC(null); setErr(false);
     if (!wallet) return;
-    Promise.all([progressOf(wallet, book001.id), certificate(wallet, book001.id)]).then(([pp, cc]) => { setP(pp); setC(cc); }).catch(() => setErr(true));
+    Promise.all([progressOf(wallet, BOOK_ID), certificate(wallet, BOOK_ID)]).then(([pp, cc]) => { setP(pp); setC(cc); }).catch(() => setErr(true));
   }, [wallet]);
   return { p, c, err };
 }
@@ -23,8 +23,8 @@ function useBook1(wallet: Address | null) {
 /** /certificate: one small card per book. How a book checks progress is that book's own business (book #1: its wallet address). */
 export function CertificateList({ wallet, setWallet }: { wallet: Address | null; setWallet: (a: Address | null) => void }) {
   const t = useT();
+  const { lang } = useLang();
   const { p, c, err } = useBook1(wallet);
-  const P = pageCount(book001);
   return (
     <div className="page">
       <Nav active="cert" />
@@ -34,7 +34,7 @@ export function CertificateList({ wallet, setWallet }: { wallet: Address | null;
           <div className="tile cert-card span-2">
             <span className="cert-seal" aria-hidden><Award size={28} /></span>
             <span className="t-label kicker">{book001.number}</span>
-            <span className="t-header">Binance Agentic Wallet</span>
+            <span className="t-header">{lang === "vi" ? book001Vi.title : book001.title}</span>
             {!wallet ? <>
               <span className="t-secondary">{t("This course is checked with the wallet you studied with.", "Khóa học này kiểm tra bằng ví bạn dùng để học.")}</span>
               <AddressForm wallet={wallet} setWallet={setWallet} />
@@ -44,7 +44,7 @@ export function CertificateList({ wallet, setWallet }: { wallet: Address | null;
               {!err && !c && <span className="t-secondary">{t("Checking…", "Đang kiểm tra…")}</span>}
               {c && (c.ok
                 ? <span className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Certificate issued", "Đã cấp chứng chỉ")}</span>
-                : <span className="t-secondary">{t(`${p ? savedPages(p.mask) : 0} of ${2 * P} pages done.`, `Đã học ${p ? savedPages(p.mask) : 0}/${2 * P} trang.`)}</span>)}
+                : <span className="t-secondary">{t(`${p ? savedPages(p.mask) : 0} of ${BOOK_PAGES} pages done.`, `Đã học ${p ? savedPages(p.mask) : 0}/${BOOK_PAGES} trang.`)}</span>)}
               <a className="btn btn-primary t-button" href={`/certificate/1/${wallet}`}>{t("View certificate", "Xem chứng chỉ")}</a>
               <button className="link t-label link-btn" onClick={() => setWallet(null)}>{t("Use another wallet", "Dùng ví khác")}</button>
             </>}
@@ -59,7 +59,6 @@ export function CertificateList({ wallet, setWallet }: { wallet: Address | null;
 export default function Certificate({ wallet }: { wallet: Address }) {
   const t = useT();
   const { lang } = useLang();
-  const P = pageCount(book001);
   const title = lang === "vi" ? book001Vi.title : book001.title;
   const { p, c, err } = useBook1(wallet);
   // Optional: the learner types their own Agent ID. Shown on this device only (never in the share link), so it can't label anyone else's certificate; the address is the proof.
@@ -87,7 +86,7 @@ export default function Certificate({ wallet }: { wallet: Address }) {
               {c && (c.ok ? <>
                 <p className="bk-recorded t-content cert-status"><ShieldCheck size={18} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
                 <p className="t-secondary">{t("Issued", "Cấp ngày")} {new Date(c.issuedAt * 1000).toLocaleDateString(lang === "vi" ? "vi-VN" : "en-US", { year: "numeric", month: "short", day: "numeric" })}</p>
-              </> : <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${2 * P} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${2 * P} trang.`)}</p>)}
+              </> : <p className="t-content cert-status">{t(`Not issued yet: ${p ? savedPages(p.mask) : 0} of ${BOOK_PAGES} pages done.`, `Chưa cấp: đã học ${p ? savedPages(p.mask) : 0}/${BOOK_PAGES} trang.`)}</p>)}
               {c && !c.ok && <p className="t-note cert-note">{t("Complete the course to get the certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</p>}
               {!valid && <form className="cert-actions" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
                 <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, e.g. you.ai", "Agent ID, ví dụ ban.ai")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
@@ -96,7 +95,7 @@ export default function Certificate({ wallet }: { wallet: Address }) {
               {valid && <button className="link t-label link-btn" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
               <p className="t-note cert-note">{valid || edit ? t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.") : ""}</p>
               <div className="cert-actions">
-                <CopyBtn text={`${location.origin}/certificate/1/${wallet}`} label={t("Copy share link", "Chép link chia sẻ")} />
+                <CopyButton text={`${location.origin}/certificate/1/${wallet}`} label={t("Copy share link", "Chép link chia sẻ")} />
                 <a className="btn btn-ghost t-button" href={`${BSCSCAN}/address/${ACADEMY}#readContract`} target="_blank" rel="noreferrer">{t("Verify on BscScan", "Xác minh trên BscScan")}</a>
               </div>
             </div>

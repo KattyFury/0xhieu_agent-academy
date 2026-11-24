@@ -40,10 +40,15 @@ export async function certificate(addr: Address, bookId: number): Promise<{ ok: 
   return { ok, issuedAt: Number(issuedAt) };
 }
 
-/** The contract counts 13 units; learners only see pages. A save at page N sets the units below, so the last save (page 18) sets all 13 and issues the certificate. */
-export const SAVE_STEPS = [{ pages: 6, bits: 15n }, { pages: 12, bits: 255n }, { pages: 18, bits: 8191n }] as const;
-/** Pages saved so far (0, 6, 12 or 18), from the on-chain mask. */
-export const savedPages = (mask: bigint) => SAVE_STEPS.reduce((n, s) => ((mask & s.bits) === s.bits ? s.pages : n), 0);
+// ---- Config (owner fills) ----
+/** On-chain bookId of the 12-page Book 1. Owner runs createBook(BOOK_ID, 12) once the content is frozen; until then the site shows "Opens soon". */
+export const BOOK_ID = 2;
+/** 12 pages = 12 chapters on-chain; one save sets them all (0xFFF) and issues the certificate. */
+export const FULL_MASK = 0xfffn;
+export const BOOK_PAGES = 12;
+
+/** Pages saved so far: 12 when the save is on-chain, else 0. */
+export const savedPages = (mask: bigint) => ((mask & FULL_MASK) === FULL_MASK ? BOOK_PAGES : 0);
 
 /** Cumulative mask: everything already recorded plus this save. */
 export const completeCalldata = (bookId: number, mask: bigint) =>

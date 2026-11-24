@@ -442,3 +442,42 @@ h1, h2, h3 { text-wrap: balance; }
 .bk-finish .bk-record > .btn { flex: none; }
 .bk-finish .bk-statusbox { width: 100%; min-height: 64px; }
 .bk-finish .bk-status { font-size: 13px; line-height: 20px; margin: 0; }
+
+/* ===== Book 1 v3 (12 pages, owner's spec 2026-11-24) ===== */
+.bk-list { display: flex; flex-direction: column; gap: var(--ds-space-8); padding-left: var(--ds-space-24); list-style: disc; }
+.bk-list li::marker { color: var(--ds-color-ink); }
+.bk-page[data-fit2] .bk-list { gap: var(--ds-space-4); }
+.bk-code { display: flex; flex-direction: column; align-items: flex-start; gap: var(--ds-space-8); }
+.bk-code pre { width: 100%; margin: 0; padding: var(--ds-space-8) var(--ds-space-16); border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-tile); color: var(--ds-color-ink); white-space: pre-wrap; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.bk-code .btn { height: 32px; padding: 0 var(--ds-space-12); }
+.bk-page[data-fit3] .bk-code { gap: var(--ds-space-4); }
+.bk-page[data-fit3] .bk-code pre { padding-top: var(--ds-space-4); padding-bottom: var(--ds-space-4); }
+.bk-result { display: flex; align-items: flex-start; gap: var(--ds-space-8); padding: var(--ds-space-8) var(--ds-space-12); border-radius: var(--ds-bento-radius-inner); background: var(--ds-bento-tile); color: var(--ds-color-grey); }
+.bk-result > svg { flex: none; margin-top: 1px; color: var(--ds-color-green-text); }
+.bk-result strong { color: var(--ds-color-ink); font-weight: 600; }
+.bk-body h3.t-header { color: var(--ds-color-ink); font-size: 16px; line-height: 22px; }
+.bk-field { display: flex; flex-direction: column; gap: var(--ds-space-4); width: 100%; }
+.bk-field .t-label { color: var(--ds-color-grey); }
+.bk-gas { display: flex; flex-direction: column; gap: var(--ds-space-8); }
+.bk-gas .actions { margin-top: 0; }
+.pick-card { cursor: default; gap: var(--ds-space-8); }
+.pick-card > .btn { margin-top: auto; align-self: flex-start; }
+.pick-list { display: flex; flex-direction: column; gap: var(--ds-space-4); }
+.pick-list li { display: flex; align-items: flex-start; gap: var(--ds-space-8); }
+.pick-list svg { flex: none; margin-top: 2px; }
+.pick-pro { color: var(--ds-color-green-text); }
+.pick-con { color: var(--ds-color-red-text); }
+.book-card-link { display: contents; color: inherit; text-decoration: none; }
+/* Saved: the right page folds onto the left, then the book fades (popup comes next). */
+.bk-shut .bk-right { transform-origin: left center; animation: bk-fold 500ms ease-in forwards; backface-visibility: hidden; }
+.bk-shut { animation: bk-fade 200ms ease-out 500ms forwards; }
+.bk-one.bk-shut { animation-delay: 0ms; animation-duration: 500ms; }
+@keyframes bk-fold { to { transform: perspective(2000px) rotateY(-180deg); } }
+@keyframes bk-fade { to { opacity: 0; transform: scale(.96); } }
+/* Certificate popup */
+.dialog.cert-dialog[open] { height: fit-content; max-width: min(560px, calc(100vw - var(--ds-space-32))); padding: var(--ds-space-24); gap: var(--ds-space-16); overflow-y: auto; }
+.cert-dialog .cert-paper { padding: var(--ds-space-32) var(--ds-space-24); gap: var(--ds-space-8); }
+.cert-dialog .cert-name { overflow-wrap: anywhere; }
+.cert-x { position: absolute; top: var(--ds-space-8); right: var(--ds-space-8); padding: 0; width: 40px; z-index: 1; }
+.cert-buttons { margin-top: 0; }
+.cert-buttons .btn { flex: 1 1 0; justify-content: center; }
