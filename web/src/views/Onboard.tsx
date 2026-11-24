@@ -111,6 +111,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
     enough: <>{t("Your wallet already has ", "Ví của bạn đã có ")}<strong>{res?.balance} BNB</strong>{t(", enough.", ", đủ dùng.")}</>,
     cap: <>{t("Today's free gas is gone. Come back after 00:00 UTC.", "Gas miễn phí hôm nay đã hết. Quay lại sau 00:00 UTC.")}</>,
     out: <>{t("Free gas is out for now.", "Gas miễn phí tạm hết.")}</>,
+    limit: <>{t("Too many requests from your network today. Try again tomorrow, or use your own BNB.", "Mạng của bạn đã yêu cầu quá nhiều hôm nay. Thử lại ngày mai, hoặc dùng BNB của bạn.")}</>,
   };
   return (
     <>
@@ -118,7 +119,7 @@ export function SetupGas({ wallet, setWallet, total }: { wallet: Address | null;
       <Goal><strong>{t("Goal:", "Mục tiêu:")}</strong> {t("Get a little BNB for fees, and turn on Developer Mode.", "Có một ít BNB trả phí, và bật Developer Mode.")}</Goal>
       <p className="t-lead"><strong>Gas</strong>{t(" is a tiny fee, paid in ", " là phí rất nhỏ, trả bằng ")}<strong>BNB</strong>{t(", each time you save something on the network. Saving your progress costs very little.", ", mỗi lần bạn lưu gì đó lên mạng. Lưu tiến độ tốn rất ít.")}</p>
       <p className="t-lead">{t("Agent Academy gives ", "Agent Academy tặng ")}<strong>{t("free gas once", "gas miễn phí một lần")}</strong>{t(" (0.00025 BNB, about $0.15) to each Agent ID. Ask your AI for your wallet address and paste it below. It starts with 0x and is safe to share.", " (0,00025 BNB, khoảng 0,15 USD) cho mỗi Agent ID. Hỏi AI địa chỉ ví rồi dán vào ô bên dưới. Địa chỉ bắt đầu bằng 0x và chia sẻ được an toàn.")}</p>
-      {res ? <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p> : <>
+      {res ? <p className="t-content" role="status" style={{ color: res.status === "cap" || res.status === "out" || res.status === "limit" ? undefined : "var(--ds-color-green-text)" }}>{msg[res.status] ?? t("Done.", "Xong.")}</p> : <>
         <input className="input t-input" aria-label={t("Wallet address", "Địa chỉ ví")} value={v} onChange={(e) => { setV(e.target.value); setErr(""); }} onKeyDown={(e) => { if (e.key === "Enter") send(); }} placeholder="0x…" spellCheck={false} autoComplete="off" />
         {err && <p className="t-note" role="alert" style={{ color: "var(--ds-color-red-text)" }}>{err}</p>}
         <div className="actions">

@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import type { Address } from "viem";
 import Entrance from "./views/Entrance";
 import Library from "./views/Library";
-import Reader from "./views/Reader";
-import Certificate, { CertificateList } from "./views/Certificate";
-import { isAddr } from "./chain";
+import NotFound from "./views/NotFound";
+import { isAddr } from "./addr";
+import { useT } from "./i18n";
+
+// Reader and certificate pull in the chain code (viem), so they load only when opened.
+const Reader = lazy(() => import("./views/Reader"));
+const Certificate = lazy(() => import("./views/Certificate"));
+const CertificateList = lazy(() => import("./views/Certificate").then((m) => ({ default: m.CertificateList })));
 
 const KEY = "academy.wallet";
 
@@ -51,12 +56,41 @@ export default function App() {
     setWalletState(a);
   };
 
-  const [page, a, b, c] = route;
-  if (page === "library") return <Library wallet={wallet} setWallet={setWallet} />;
-  if (page === "book") return <Reader day={Number(b ?? 0)} side={c === "practice" ? "practice" : "learn"} wallet={wallet} setWallet={setWallet} />;
-  if (page === "certificate") {
-    const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/1/0x… (or old /certificate/0x…)
-    return addr ? <Certificate wallet={addr as Address} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
+  const t = useT();
+  const [, a, b, c] = route;
+  const view = pickView(route);
+  useEffect(() => {
+    if (view === "library") document.title = `${t("Library", "Thư viện")} · Agent Academy`;
+    else if (view === "certificate") document.title = `${t("Certificate", "Chứng chỉ")} · Agent Academy`;
+    else if (view === "home") document.title = "Agent Academy";
+  }, [view, t]); // the reader sets its own title per page; NotFound sets its own
+
+  return (
+    <Suspense fallback={<div className="page" aria-busy="true" />}>
+      {view === "library" ? <Library wallet={wallet} setWallet={setWallet} />
+        : view === "book" ? <Reader day={Number(b ?? 0)} side={c === "practice" ? "practice" : "learn"} wallet={wallet} setWallet={setWallet} />
+        : view === "certificate" ? (() => {
+          const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/1/0x… (or old /certificate/0x…)
+          return addr ? <Certificate wallet={addr as Address} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
+        })()
+        : view === "home" ? <Entrance wallet={wallet} />
+        : <NotFound />}
+    </Suspense>
+  );
+}
+
+/** Which view a URL shows. Keep in sync with VALID_PATH in worker/index.ts (the Worker answers 404 for the rest). */
+function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "certificate" | "404" {
+  if (!page) return "home";
+  if (page === "library") return a === undefined ? "library" : "404";
+  if (page === "book") {
+    // /book/1, /book/1/<0-13>, /book/1/<0-13>/practice (10-13 are old links: the reader clamps them to the ending)
+    return a === "1" && (b === undefined || /^(\d|1[0-3])$/.test(b)) && (c === undefined || c === "practice") && d === undefined ? "book" : "404";
   }
-  return <Entrance wallet={wallet} />;
+  if (page === "certificate") {
+    if (a === undefined) return "certificate";
+    if (a === "1") return b !== undefined && isAddr(b) && c === undefined ? "certificate" : "404";
+    return isAddr(a) && b === undefined ? "certificate" : "404";
+  }
+  return "404";
 }

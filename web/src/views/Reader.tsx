@@ -283,6 +283,7 @@ export default function Reader({ day, side, wallet: realWallet, setWallet }: { d
   const touch = useRef<{ x: number; y: number } | null>(null);
   const tocRef = useRef<HTMLDialogElement>(null);
   const titles = usePageTitles();
+  useEffect(() => { document.title = `${target < P ? titles[target] : t("You finished the book", "Bạn đã hoàn thành sách")} · Agent Academy`; }, [target, titles, t]);
 
   // Saves at pages 6, 12 and 18. Each marks every page up to that point, so a missed save is caught by the next one.
   const record = (p: number, text?: string) => {

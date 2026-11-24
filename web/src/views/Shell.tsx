@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import type { Address } from "viem";
-import { isAddr } from "../chain";
+import { isAddr } from "../addr";
 import { LangSwitch, useT } from "../i18n";
 import { Award, BookOpen, type LucideIcon } from "lucide-react";
 
