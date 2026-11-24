@@ -264,7 +264,7 @@ export function Page7({ wallet, setWallet, titleRef }: { wallet: Address | null;
       t("Agent Academy gives you gas: 0.00025 BNB (under 0.20 USD), once per Agent ID.", "Agent Academy tặng bạn gas: 0,00025 BNB (dưới 0,20 USD), một lần cho mỗi Agent ID."),
     ]} />
     <div className="bk-gas">
-      <WalletInput value={v} onChange={(s) => { setV(s); setErr(""); setRes(null); }} onEnter={send} err={err} />
+      <WalletInput value={v} onChange={(s) => { setV(s); setErr(""); setRes(null); if (isAddr(s.trim())) setWallet(s.trim() as Address); }} onEnter={send} err={err} />
       <div className="actions">
         <button className="btn btn-primary t-button" onClick={send} disabled={busy || gasOut}>{busy && <Loader2 size={16} className="animate-spin" />} {busy ? t("Sending…", "Đang gửi…") : gasOut ? msg[res!.status] : t("Send me gas", "Gửi gas cho tôi")}</button>
         <button className="btn btn-ghost t-button" onClick={justSave}>{t("I have BNB, just save", "Tôi có BNB, chỉ lưu")}</button>
