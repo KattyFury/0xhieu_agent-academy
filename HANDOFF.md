@@ -12,12 +12,13 @@ Agent Academy = a library; each book = a course; each lesson = short theory + a 
 - Routes: `/`, `/library`, `/book/<1|2>/<spread 0-5>[/practice]` (higher numbers clamp to 5), `/certificate`, `/certificate/<1|2>/0x…`. Valid-route list in 2 places: `pickView` in `App.tsx` and `VALID_PATH` in `worker/index.ts` (keep in sync).
 - Lucky draw list: `cd web && npx tsx scripts/certified-wallets.ts <bookId 2|3> ../docs/certified-wallets.csv`.
 
-## Books (deployed 2026-11-24, Worker version 46985e43)
+## Books (deployed 2026-11-24, Worker version 50a1aa11)
 - Every book: 12 pages = 6 spreads, odd page = learn, even = practice. VI = owner's approved copy; EN = translation. A book = `BookContent` (`saves` masks, page names, pages); `Reader.tsx` is shared.
 - Book 1: page 3 picks `track` (`own` default / `pro`, localStorage `academy.track`) for pages 4 and 6. Page 7: one "Enter wallet" button (saves the wallet, asks for gas). One save at page 12 (0xFFF).
 - Book 2: no track, no gas page; uses the saved wallet (address box at the save if missing). Saves at pages 4, 8, 12 (0x00F, 0x0FF, 0xFFF; the contract keeps bits already saved). Saves 1-2 show no status (owner's spec).
 - Copy prompt = shown sentence + hidden technical block (`savePrompt` in `books.ts`). After the last save is copied the site polls every 5 s for 5 min; full mask = book folds shut + `CertPopup.tsx` (.ai name typed by the learner, display only; Save image = PNG; Share on X = intent + `/certificate/<id>/0x…`).
-- Next / Space / → turn the page; Shift+Space / ← go back. A page never scrolls: `data-fit1..6` in `Reader.tsx` step spacing then text down to 11px (owner OK'd smaller text). Measured 0 overflow at 1440x900 and 393x852, EN + VI, both books.
+- Next / Space / → turn the page; Shift+Space / ← go back. A page never scrolls: `data-fit1..6` in `Reader.tsx` step spacing then text down to 11px (owner OK'd smaller text). Book text one step smaller since 2026-11-24 (last block in `styles.css`). Measured 0 overflow at 1440x900 and 393x852, EN + VI, both books; densest page = book 2 page 4 (fit3 desktop, fit5 phone).
+- Look: one certificate design (`CertArt.tsx`) for popup, share page and PNG; covers drawn in `Cover` (`Shell.tsx`) with a per-book Lucide `icon` in `books.ts`.
 - QA URLs: `?qa=own|pro|nowallet|copied|timeout|confirmed|cert|unpublished|error|flip`, `?lang=vi`.
 
 ## Hackathon (deadline 2026-12-09 08:00 UTC)
