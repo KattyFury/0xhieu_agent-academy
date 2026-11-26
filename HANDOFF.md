@@ -1,4 +1,4 @@
-# HANDOFF: Agent Academy (2026-11-24)
+# HANDOFF: Agent Academy (2026-11-26)
 
 Spec: `docs/spec-v1.2.md` (platform; §14 = decisions). Course text: `web/src/views/Pages.tsx` (course 1), `Pages2.tsx` (course 2), owner-approved. Rules: `CLAUDE.md`. History: `docs/archive/`.
 
@@ -8,9 +8,12 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 ## Live
 - Contract **AgentAcademy `0x66Ae47EAE1aacFd70148808AE63a5B4A5e882753`** (BSC, verified). Owner 0xhieu.ai `0xe0a34AC1da06423e1e67345828bd629dFAbd4Ca2`; only power = `createBook`.
 - Courses (`web/src/books.ts`: URL id → on-chain `chainId`, titles, blurbs): **#1 = bookId 2** (createBook tx `0x771f75e7…6a54`), **#2 = bookId 3** (tx `0x713575ed…3a58`); both 12 chapters, 2026-11-24. All 12 bits (`FULL_MASK` 0xFFF in `chain.ts`) = certificate. bookIds 1, 900, 901 are unused (ids >= 900 = tests).
-- Site https://academy.0xhieu.xyz, Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` (wrangler logged in on this PC; new files can 404 for ~1 min after deploy). Worker secrets RELAYER_KEY, TG_*; KV `GAS` (free-gas relayer `/api/claim`: 0.00025 BNB once per Agent ID, only if the wallet has no BNB, max 20/day, 5 per IP per day; relayer `0x49CBB7477b163F4613f08995E1dE61a502b2A43c`, top-ups by the owner).
+- Site https://academy.0xhieu.xyz, Worker `academy-web` (`web/`, React + Vite + viem). Deploy: `cd web && npm run build && npx wrangler deploy` (PC: wrangler is not logged in; load `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` from `~/.claude/secrets.env`; the `CF_API_TOKEN` in `keys.env` was rejected as invalid on 2026-11-26; new files can 404 for ~1 min after deploy). Worker secrets RELAYER_KEY, TG_*; KV `GAS` (free-gas relayer `/api/claim`: 0.00025 BNB once per Agent ID, only if the wallet has no BNB, max 20/day, 5 per IP per day; relayer `0x49CBB7477b163F4613f08995E1dE61a502b2A43c`, top-ups by the owner).
+- Landing `/` (2026-11-26, owner): headline, one button "Start learning", 4 steps. No course list or certificate section.
 - Routes: `/`, `/courses` (page named "Courses"; old `/library` works), `/course/<1|2>/<pair 0-5>[/practice]` (higher numbers clamp to 5; old `/book/…` links still work), `/certificate`, `/certificate/<1|2>/0x…`. Valid-route list in 2 places: `pickView` in `App.tsx` and `VALID_PATH` in `worker/index.ts` (keep in sync).
 - `/status` (not in the navbar) + `/api/status`: totals of different wallets that saved on courses 1-2 (the contract requires an Agent ID; owner wallet included) and a list of those wallets (no Agent ID / .ai name). `worker/status.ts`: a Durable Object alarm (`worker/clock.ts`; the free plan's 5 cron triggers are all used; any `/api/status` request restarts it) every 5 min reads new `ChapterCompleted` logs from publicnode into KV `GAS` key `status`; history before block 135,560,000 is a seed in that file (2026-11-26: 6 wallets). If it falls > 295,000 blocks (~1.4 days) behind it stops with an error: rescan and update the seed + KV.
+- `/status` layout: fits one screen; 3 number columns (wallets, certificates per course) + wallet table (yellow check = certificate, links to BscScan); only the table scrolls. ds-check 0 issues.
+- Counter catch-up: publicnode answers 429 to the Worker during backfill, so it advanced about 10k blocks per run (chunks already read are kept). On 2026-11-26 it was ~132k blocks behind and moving; not yet seen caught up.
 - Giveaway list: `cd web && npx tsx scripts/certified-wallets.ts <bookId 2|3>`: wallets from `/api/status`, each checked with `hasCertificate`, owner left out; it stops if the counter is behind. Never trust old `getLogs` from publicnode (returns `[]` with no error).
 
 ## Courses (deployed 2026-11-24, Worker version cadd613f)
@@ -30,6 +33,7 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 - Open: owner power is in README only, not on the site.
 
 ## Next
+0. Check the `/status` counter caught up: `/api/status` `block` within ~2,000 of the chain head. Then run the giveaway script once (only its "counter behind" stop has been tested, not a full export).
 1. Tested 2026-11-24 with 0xhieu.ai: course 2 EN saves end to end; all practice prompts (EN + VI) match "Right result"; all 8 save prompts (EN + VI) carry the right mask/calldata. Untested: a real save from a fresh wallet in VI, and whether Binance AI Pro follows the save prompt (it contains `baw` commands).
 2. Open owner question: labels say LEARN/PRACTICE by page position, so course 1 page 2 says PRACTICE but is theory. Neutral "PAGE 02"?
 3. Top up the relayer when low (`baw wallet send` only sends to addresses in the Binance app address book).
@@ -37,6 +41,6 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 
 ## Gotchas
 - Another Claude session once edited this repo at the same time: commit files by name, check `git status` first.
-- Owner wants: short ELI12 copy, no unexplained lines, screenshots before claiming done, and says "deploy" before each deploy.
+- Owner wants: short ELI12 copy, no unexplained lines, screenshots before claiming done. Deploy after verified changes without asking.
 - Design = DS Swiss style (`D:\Codes\0xhieu\design`, README "Swiss Editorial"). Run `node D:/Codes/0xhieu/design/ds-check.mjs <url> --product 0xhieu-xyz` after UI changes (0 issues). Copy `design/web.css` into `web/src/ds/web.css` when the DS changes.
 - Foundry: `~/bin/forge.exe`; `contracts/lib` not committed (README has the install command). `ETHERSCAN` key in `D:\Codes\.secrets\keys.env`.
