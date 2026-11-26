@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Nav, two } from "./Shell";
+import { Nav } from "./Shell";
 import { bookById } from "../books";
 import { useLang, useT } from "../i18n";
 
@@ -23,26 +23,21 @@ export default function Status() {
   return (
     <div className="page">
       <Nav />
-      <main className="sw-wrap">
-        <h1 className="sw-title">{t("Status", "Thống kê")}</h1>
+      <main className="sw-wrap st">
+        <h1 className="sw-label">{t("Status", "Thống kê")}</h1>
         {!d && <p className="t-content sw-grey" role="status">{err ? t("Can't check right now. Try again in a minute.", "Chưa kiểm tra được. Thử lại sau một phút.") : t("Checking…", "Đang kiểm tra…")}</p>}
         {d && <>
-          <section className="sw-sec">
-            <span className="sw-label">{t("Joined", "Đã tham gia")}</span>
-            <div className="sw-stack">
-              <p className="sw-hero-title">{d.wallets}</p>
-              <p className="t-content sw-measure">{t("Different Agent ID wallets that saved progress on-chain.", "Số ví Agent ID khác nhau đã lưu tiến độ on-chain.")}</p>
-              {d.updatedAt > 0 && <p className="t-note">{t("Updated", "Cập nhật")} {new Date(d.updatedAt).toLocaleString(lang === "vi" ? "vi-VN" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>}
-            </div>
-          </section>
-          <ul className="sw-lib">{d.courses.map((c, i) => (
-            <li key={c.id}>
-              <span className="sw-big">{two(i + 1)}</span>
-              <h2 className="sw-lib-title">{bookById(c.id).title[lang]}</h2>
-              <div className="sw-lib-text"><p className="t-content">{t(`Wallets joined: ${c.joined}`, `Ví tham gia: ${c.joined}`)}</p></div>
-              <div className="sw-lib-meta"><p className="t-content">{t(`Certificates: ${c.finished}`, `Chứng chỉ: ${c.finished}`)}</p></div>
-            </li>
-          ))}</ul>
+          <div className="st-total">
+            <p className="sw-hero-title">{d.wallets}</p>
+            <p className="t-content sw-measure">{t("Different Agent ID wallets that saved progress on-chain.", "Số ví Agent ID khác nhau đã lưu tiến độ on-chain.")}</p>
+          </div>
+          <table className="bk-table">
+            <thead><tr><th>{t("Course", "Khóa học")}</th><th className="bk-num">{t("Wallets", "Số ví")}</th><th className="bk-num">{t("Certificates", "Chứng chỉ")}</th></tr></thead>
+            <tbody>{d.courses.map((c) => (
+              <tr key={c.id}><td>{bookById(c.id).title[lang]}</td><td className="bk-num">{c.joined}</td><td className="bk-num">{c.finished}</td></tr>
+            ))}</tbody>
+          </table>
+          {d.updatedAt > 0 && <p className="t-note">{t("Updated", "Cập nhật")} {new Date(d.updatedAt).toLocaleString(lang === "vi" ? "vi-VN" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}</p>}
         </>}
       </main>
     </div>

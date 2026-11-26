@@ -94,6 +94,10 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .sw-chips { display: flex; flex-wrap: wrap; gap: var(--ds-space-8); }
 .sw-lib-meta .sw-btns { margin-top: var(--ds-space-4); flex-wrap: nowrap; }
 .sw-stack { display: flex; flex-direction: column; gap: var(--ds-space-16); }
+/* /status: fits one screen */
+.page > main.st { display: flex; flex-direction: column; gap: var(--ds-space-24); padding-top: var(--ds-space-48); padding-bottom: var(--ds-space-32); }
+.st-total { display: flex; flex-direction: column; gap: var(--ds-space-8); padding-bottom: var(--ds-space-24); border-bottom: 1px solid #000; }
+.st .bk-num { padding-left: var(--ds-space-16); }
 
 /* ===== Lessons (magazine) ===== */
 .mz-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ds-space-16); padding: var(--ds-space-16) 0; }
