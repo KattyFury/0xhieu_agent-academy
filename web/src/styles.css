@@ -94,10 +94,32 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .sw-chips { display: flex; flex-wrap: wrap; gap: var(--ds-space-8); }
 .sw-lib-meta .sw-btns { margin-top: var(--ds-space-4); flex-wrap: nowrap; }
 .sw-stack { display: flex; flex-direction: column; gap: var(--ds-space-16); }
-/* /status: fits one screen */
-.page > main.st { display: flex; flex-direction: column; gap: var(--ds-space-24); padding-top: var(--ds-space-48); padding-bottom: var(--ds-space-32); }
-.st-total { display: flex; flex-direction: column; gap: var(--ds-space-8); padding-bottom: var(--ds-space-24); border-bottom: 1px solid #000; }
-.st .bk-num { padding-left: var(--ds-space-16); }
+/* /status: fits one screen; only the wallet list scrolls */
+.page:has(> main.st) { height: 100dvh; }
+.page > main.st { display: flex; flex-direction: column; min-height: 0; }
+.st-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ds-space-16); padding: var(--ds-space-24) 0; border-bottom: 1px solid #000; }
+.st-stats { display: grid; grid-template-columns: repeat(3, 1fr); list-style: none; margin: 0; padding: 0; border-bottom: 1px solid #000; }
+.st-stats li { display: flex; flex-direction: column; gap: var(--ds-space-4); padding: var(--ds-space-16) var(--ds-space-24) var(--ds-space-16) 0; }
+.st-stats li + li { border-left: 1px solid #000; padding-left: var(--ds-space-24); }
+.st-stats h2, .st-stats p { margin: 0; }
+.st-list { flex: 1; min-height: 120px; overflow-y: auto; margin: var(--ds-space-8) 0 var(--ds-space-16); }
+.st-list th { position: sticky; top: 0; background: #fff; }
+.st-list .bk-table td { vertical-align: middle; padding-top: var(--ds-space-4); padding-bottom: var(--ds-space-4); }
+.bk-table td.st-n { width: 48px; font-weight: 400; color: var(--ds-color-grey); }
+.bk-table .st-col { width: 120px; text-align: center; padding-right: 0; }
+.st-addr { color: #000; }
+.st-short { display: none; }
+.st-mark { display: inline-grid; place-items: center; width: 24px; height: 24px; background: var(--ds-accent); vertical-align: middle; }
+@media (max-width: 640px) {
+  .st-head { padding: var(--ds-space-16) 0; }
+  .st-stats li { padding: var(--ds-space-16) var(--ds-space-8) var(--ds-space-16) 0; }
+  .st-stats li + li { padding-left: var(--ds-space-8); }
+  .st-stats p { display: none; }
+  .st-full { display: none; }
+  .st-short { display: inline; }
+  .bk-table td.st-n { width: 32px; }
+  .bk-table .st-col { width: 72px; }
+}
 
 /* ===== Lessons (magazine) ===== */
 .mz-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--ds-space-16); padding: var(--ds-space-16) 0; }

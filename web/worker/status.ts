@@ -58,13 +58,15 @@ export async function refreshStatus(kv: KVNamespace) {
   }
 }
 
-/** Public totals only: no addresses. */
+/** Totals plus each wallet (public on-chain data, oldest first). Per course: true = certificate, false = joined, null = not joined. */
 export async function statusJson(kv: KVNamespace) {
   const state = await load(kv);
   const all = Object.values(state.wallets);
   return {
     updatedAt: state.updatedAt,
+    block: state.next - 1, // last block counted
     wallets: all.length,
+    list: Object.entries(state.wallets).map(([address, w]) => ({ address, courses: BOOKS.map((b) => w[String(b.chainId)] ?? null) })),
     courses: BOOKS.map((b) => {
       const rows = all.filter((w) => String(b.chainId) in w);
       return { id: b.id, joined: rows.length, finished: rows.filter((w) => w[String(b.chainId)]).length };
