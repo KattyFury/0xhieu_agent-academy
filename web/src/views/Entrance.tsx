@@ -1,13 +1,11 @@
 import type { Address } from "viem";
 import { ArrowRight } from "lucide-react";
-import { BOOKS } from "../books";
-import { useLang, useT } from "../i18n";
+import { useT } from "../i18n";
 import { Label, Nav, two } from "./Shell";
 
-/** Landing (Swiss): giant headline + side text, 4 numbered steps between rules, library rows, certificate line. */
+/** Landing (Swiss): giant headline + side text, 4 numbered steps between rules. One button. */
 export default function Entrance(_: { wallet: Address | null }) {
   const t = useT();
-  const { lang } = useLang();
   const steps = [
     [t("Learn", "Học"), t("Read a short, simple lesson.", "Đọc một bài lý thuyết ngắn, dễ hiểu.")],
     [t("Practice", "Thực hành"), t("Try it yourself with a small exercise.", "Tự làm một bài thực hành nhỏ.")],
@@ -34,25 +32,6 @@ export default function Entrance(_: { wallet: Address | null }) {
             <li key={h}><span className="sw-num">{two(i + 1)}</span><h3 className="t-header">{h}</h3><p className="t-secondary">{p}</p></li>
           ))}
         </ol>
-
-        <section className="sw-sec">
-          <Label>{t(`Courses — ${BOOKS.length}`, `Khóa học — ${BOOKS.length}`)}</Label>
-          <ul className="sw-rows">
-            {BOOKS.map((b, i) => (
-              <li key={b.id}><a className="sw-row" href={`/course/${b.id}/0`}>
-                <span className="sw-num">{two(i + 1)}</span>
-                <span className="sw-row-title">{b.title[lang]}</span>
-                <span className="t-secondary sw-row-text">{b.blurb[lang]}</span>
-                <span className="sw-sq" aria-hidden><ArrowRight size={20} /></span>
-              </a></li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="sw-sec">
-          <Label>{t("Certificate", "Chứng chỉ")}</Label>
-          <a className="sw-statement" href="/certificate">{t("Complete the course to get a certificate.", "Hoàn thành khóa học để nhận chứng chỉ.")}</a>
-        </section>
       </main>
     </div>
   );

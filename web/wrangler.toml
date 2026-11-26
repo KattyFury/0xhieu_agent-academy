@@ -2,6 +2,15 @@ name = "academy-web"
 main = "worker/index.ts"
 compatibility_date = "2026-11-01"
 
+# 5-minute timer for the /status join counter (a Durable Object alarm: the free plan's 5 cron triggers are all used).
+[[durable_objects.bindings]]
+name = "CLOCK"
+class_name = "StatusClock"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["StatusClock"]
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"

@@ -85,12 +85,6 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .sw-steps li:first-child { padding-left: 0; }
 .sw-steps li:last-child { border-right: 0; }
 .sw-sec { display: grid; grid-template-columns: 3fr 9fr; gap: var(--ds-swiss-gutter); padding: var(--ds-space-48) 0; border-bottom: 1px solid #000; }
-.sw-rows li + li .sw-row { border-top: 0; }
-.sw-row { display: grid; grid-template-columns: 96px 1fr 1fr 48px; gap: var(--ds-swiss-gutter); align-items: center; padding: var(--ds-space-24) 0; border-top: 1px solid #000; border-bottom: 1px solid #000; color: #000; text-decoration: none; }
-.sw-sq { width: 48px; height: 48px; display: grid; place-items: center; background: var(--ds-accent); }
-.sw-row:hover .sw-sq { background: #000; color: var(--ds-accent); }
-.sw-statement { color: #000; text-decoration: none; max-width: 720px; }
-.sw-statement:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 /* ===== Library + certificate list ===== */
 .sw-title { padding: var(--ds-space-64) 0 var(--ds-space-32); border-bottom: 1px solid #000; }
@@ -222,9 +216,6 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
   .sw-steps li:nth-child(2n) { border-right: 0; padding-left: var(--ds-space-12); }
   .sw-steps li:nth-last-child(-n+2) { border-bottom: 0; }
   .sw-sec { grid-template-columns: 1fr; padding: var(--ds-space-32) 0; }
-  .sw-row { grid-template-columns: 56px 1fr 40px; }
-  .sw-row-text { display: none; }
-  .sw-sq { width: 40px; height: 40px; }
   .sw-title { padding: var(--ds-space-40, 40px) 0 var(--ds-space-24); }
   .sw-lib li { grid-template-columns: 1fr; gap: var(--ds-space-12); padding: var(--ds-space-32) 0; }
   .mz-bar .sw-label:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -254,8 +245,7 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid 
 .mz-col .t-page, .sw-heading { font-size: var(--ds-type-swiss-heading-size); line-height: var(--ds-type-swiss-heading-line); font-weight: var(--ds-type-swiss-heading-weight); letter-spacing: var(--ds-type-swiss-heading-tracking); }
 .sw-lib-title { font-size: var(--ds-type-swiss-subhead-size); line-height: var(--ds-type-swiss-subhead-line); font-weight: var(--ds-type-swiss-subhead-weight); letter-spacing: var(--ds-type-swiss-subhead-tracking); }
 .cert-course { font-size: var(--ds-type-swiss-course-size); line-height: var(--ds-type-swiss-course-line); font-weight: var(--ds-type-swiss-course-weight); letter-spacing: var(--ds-type-swiss-course-tracking); }
-.sw-row-title, .cert-dl dd, .cert-compact .cert-course { font-size: var(--ds-type-swiss-row-size); line-height: var(--ds-type-swiss-row-line); font-weight: var(--ds-type-swiss-row-weight); letter-spacing: var(--ds-type-swiss-row-tracking); }
-.sw-statement { font-size: var(--ds-type-swiss-statement-size); line-height: var(--ds-type-swiss-statement-line); font-weight: var(--ds-type-swiss-statement-weight); letter-spacing: var(--ds-type-swiss-statement-tracking); }
+.cert-dl dd, .cert-compact .cert-course { font-size: var(--ds-type-swiss-row-size); line-height: var(--ds-type-swiss-row-line); font-weight: var(--ds-type-swiss-row-weight); letter-spacing: var(--ds-type-swiss-row-tracking); }
 .sw-logo { font-size: var(--ds-type-swiss-logo-size); line-height: var(--ds-type-swiss-logo-line); font-weight: var(--ds-type-swiss-logo-weight); letter-spacing: var(--ds-type-swiss-logo-tracking); }
 .mz-col .t-lead, .bk-list li.t-lead { font-size: var(--ds-type-swiss-body-size); line-height: var(--ds-type-swiss-body-line); font-weight: var(--ds-type-swiss-body-weight); letter-spacing: var(--ds-type-swiss-body-tracking); }
 .mz-col .t-content, .bk-read { font-size: var(--ds-type-swiss-small-size); line-height: var(--ds-type-swiss-small-line); font-weight: var(--ds-type-swiss-small-weight); letter-spacing: var(--ds-type-swiss-small-tracking); }

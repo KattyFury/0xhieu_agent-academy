@@ -11,6 +11,8 @@ const Reader = lazy(() => import("./views/Reader"));
 const Certificate = lazy(() => import("./views/Certificate"));
 const CertificateList = lazy(() => import("./views/Certificate").then((m) => ({ default: m.CertificateList })));
 
+const Status = lazy(() => import("./views/Status"));
+
 const KEY = "academy.wallet";
 
 /** Clean URLs: /, /courses (old /library), /course/1/3, /course/1/3/practice, /certificate, /certificate/0x… (/book/… = old links, same view) */
@@ -62,6 +64,7 @@ export default function App() {
   useEffect(() => {
     if (view === "library") document.title = `${t("Courses", "Khóa học")} · Agent Academy`;
     else if (view === "certificate") document.title = `${t("Certificate", "Chứng chỉ")} · Agent Academy`;
+    else if (view === "status") document.title = `${t("Status", "Thống kê")} · Agent Academy`;
     else if (view === "home") document.title = "Agent Academy";
   }, [view, t]); // the reader sets its own title per page; NotFound sets its own
 
@@ -73,6 +76,7 @@ export default function App() {
           const addr = b && isAddr(b) ? b : a && isAddr(a) ? a : null; // /certificate/<book>/0x… (or old /certificate/0x… = book 1)
           return addr ? <Certificate key={`${a}-${addr}`} wallet={addr as Address} bookId={b ? Number(a) : 1} /> : <CertificateList wallet={wallet} setWallet={setWallet} />;
         })()
+        : view === "status" ? <Status />
         : view === "home" ? <Entrance wallet={wallet} />
         : <NotFound />}
     </Suspense>
@@ -80,8 +84,9 @@ export default function App() {
 }
 
 /** Which view a URL shows. Keep in sync with VALID_PATH in worker/index.ts (the Worker answers 404 for the rest). */
-function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "certificate" | "404" {
+function pickView([page, a, b, c, d]: string[]): "home" | "library" | "book" | "certificate" | "status" | "404" {
   if (!page) return "home";
+  if (page === "status") return a === undefined ? "status" : "404";
   if (page === "courses" || page === "library") return a === undefined ? "library" : "404"; // /library = old link
   if (page === "course" || page === "book") {
     // /course/<1|2>, /course/<id>/<0-13>, /course/<id>/<0-13>/practice (/book/… and 6-13 are old links: the reader clamps them to the last pair)
