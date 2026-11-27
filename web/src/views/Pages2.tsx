@@ -1,8 +1,10 @@
-// Book #2 "Explore what Binance Agentic Wallet can do", 12 pages (owner's spec 2026-11-24). Vietnamese = the owner's approved copy, word for word; English = translation.
+// Book #2 "Explore what Binance Agentic Wallet can do", 12 pages (owner's spec 2026-11-24; reworked for beginners 2026-11-28 with drawn pictures).
 // No track, no gas page. Saves at pages 4, 8, 12 (cumulative masks 0x00F, 0x0FF, 0xFFF); the last one issues the certificate.
 import type { ReactNode } from "react";
+import { ArrowLeftRight, Bot, Clock, Coins, FileCheck, Landmark, Store, Target, Wallet } from "lucide-react";
 import { useT } from "../i18n";
-import { Code, H1, H2, List, Ok, P, Rich, S, Steps, type BookContent, type Ctx, type TitleRef } from "./Pages";
+import { Ask, H1, H2, List, Ok, P, Rich, SaveHelp, SaveStep, Say, Steps, type BookContent, type Ctx, type TitleRef } from "./Pages";
+import { Fig, Flow, Note, Rows } from "./Art";
 
 const H3 = ({ text }: { text: string }) => <h3 className="t-header">{text}</h3>;
 const Read = ({ text }: { text: string }) => <p className="t-content bk-read"><Rich text={text} /></p>;
@@ -25,6 +27,11 @@ function useNames() {
   ];
 }
 
+const useSaveIntro = () => {
+  const t = useT();
+  return t("Tap Copy below, paste it to your AI, send. Developer Mode must be on; expired? Turn it on again as in Course 1, page 12.", "Bấm Chép bên dưới, dán cho AI, rồi gửi. Developer Mode phải đang bật; hết hạn thì bật lại như Khóa học 1, trang 12.");
+};
+
 function Page1({ titleRef }: TitleRef) {
   const t = useT();
   const n = useNames();
@@ -40,6 +47,12 @@ function Page1({ titleRef }: TitleRef) {
       t("Tell your AI 4 things: which address, which token, how much, on which network.", "Bạn nói với AI 4 điều: gửi cho địa chỉ nào, gửi token gì, gửi bao nhiêu, qua mạng nào."),
       t("Sending costs a little gas, paid in the network's own token: BNB on BNB Smart Chain, ETH on Ethereum, SOL on Solana.", "Gửi tốn một chút gas, trả bằng token gốc của mạng đó: mạng BNB Smart Chain trả bằng BNB, Ethereum trả bằng ETH, Solana trả bằng SOL."),
     ]} />
+    <Fig>
+      <div className="art-win art-body">
+        <p className="sw-label">{t("Example: the 4 things to tell your AI", "Ví dụ: 4 điều cần nói với AI")}</p>
+        <Rows rows={[[t("1 · To address", "1 · Địa chỉ nhận"), "0x12ab…9f3c"], [t("2 · Token", "2 · Token"), "USDT"], [t("3 · Amount", "3 · Số lượng"), "5"], [t("4 · Network", "4 · Mạng"), "BNB Smart Chain"]]} />
+      </div>
+    </Fig>
     <P text={t("**Once sent, it can't be taken back.** One wrong character in the address and the money is gone.", "**Gửi xong là không lấy lại được.** Sai một ký tự trong địa chỉ là tiền đi mất.")} />
     <H3 text={t("Does the AI just do it, or ask again?", "AI làm luôn hay hỏi lại?")} />
     <P text={t("Small tasks within your limit, the AI sends right away without asking. Over the limit, it is refused or you are asked again.", "Việc nhỏ trong hạn mức thì AI gửi luôn, không hỏi lại. Vượt hạn mức thì bị từ chối hoặc hỏi lại.")} />
@@ -51,12 +64,18 @@ function Page2() {
   const n = useNames();
   return <>
     <H2 text={n[1]} />
-    <P text={t("Ask your AI:", "Hỏi AI:")} />
-    <Code text={t("Which tokens are in my wallet?", "Ví của tôi đang có những token nào?")} />
-    <Ok text={t("Your AI lists each token in the wallet with amount, price and USD value, plus the total. Tokens under 0.01 USD are hidden by default.", "AI liệt kê từng token trong ví, gồm số lượng, giá và giá trị USD, kèm tổng giá trị. Token dưới 0,01 USD bị ẩn mặc định.")} />
-    <P text={t("Then ask:", "Hỏi tiếp:")} />
-    <Code text={t("What is my recent transaction history?", "Lịch sử giao dịch gần đây của tôi là gì?")} />
-    <Ok text={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Course 1 is in this list; it shows as a contract call.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Khóa học 1 nằm trong danh sách này, hiện là một contract call.")} />
+    <P text={t("Two questions to see what's in your wallet. Nothing is sent or traded.", "Hai câu hỏi để xem ví có gì. Không gửi, không mua bán gì cả.")} />
+    <Steps>
+      <Ask title={t("See your tokens", "Xem các token")} q={t("Which tokens are in my wallet?", "Ví của tôi đang có những token nào?")}
+        reply={<><Say text={t("Your wallet has (BNB Smart Chain):", "Ví của bạn có (BNB Smart Chain):")} /><Rows rows={[["BNB", t("0.00024 · ≈ 0.13 USD", "0,00024 · ≈ 0,13 USD")], [t("Total", "Tổng"), t("≈ 0.13 USD", "≈ 0,13 USD")]]} /></>}
+        ok={t("Your AI lists each token in the wallet with amount, price and USD value, plus the total. Tokens under 0.01 USD are hidden by default.", "AI liệt kê từng token trong ví, gồm số lượng, giá và giá trị USD, kèm tổng giá trị. Token dưới 0,01 USD bị ẩn mặc định.")} />
+      <Ask title={t("See your history", "Xem lịch sử")} q={t("What is my recent transaction history?", "Lịch sử giao dịch gần đây của tôi là gì?")}
+        reply={<><Say text={t("Recent transactions on BSC:", "Giao dịch gần đây trên BSC:")} /><Rows rows={[[t("27/11 07:57 · contract call", "27/11 07:57 · contract call"), t("confirmed · fee 0.0000125 BNB", "confirmed · phí 0,0000125 BNB"), true]]} /></>}
+        ok={t("Your AI lists recent transactions, each with its time, confirmed status and fee. Your progress save from Course 1 is in this list; it shows as a contract call.", "AI liệt kê các giao dịch gần đây, mỗi giao dịch có giờ, trạng thái confirmed và phí. Lần lưu tiến độ ở Khóa học 1 nằm trong danh sách này, hiện là một contract call.")}>
+        <Read text={t("“Confirmed” = done and written on the blockchain.", "“Confirmed” = đã xong, đã ghi lên blockchain.")} />
+      </Ask>
+    </Steps>
+    <Note />
   </>;
 }
 
@@ -72,37 +91,40 @@ function Page3({ titleRef }: TitleRef) {
       t("How much movement you accept is called slippage, set automatically to 0.5%.", "Mức lệch bạn chấp nhận gọi là slippage, tự động đặt ở 0,5%."),
       t("Trading a very small amount means fees take most of it.", "Đổi số tiền quá nhỏ thì phí chiếm phần lớn."),
     ]} />
+    <Fig><Flow items={[[Coins, "BNB"], [ArrowLeftRight, t("swap at today's price", "đổi theo giá lúc này")], [Coins, "USDT"]]} /></Fig>
     <H3 text={t("Limit order (price target)", "Lệnh limit (hẹn giá)")} />
     <List items={[
       t("You pick the price you want. When the price hits it, the wallet buys or sells by itself.", "Bạn chọn giá mong muốn. Giá chạm mức đó thì ví tự mua hoặc bán."),
       t("Until the price hits it, the order waits.", "Giá chưa chạm thì lệnh nằm chờ."),
     ]} />
+    <Fig><Flow items={[[Target, t("You pick a price", "Bạn chọn giá")], [Clock, t("The order waits", "Lệnh nằm chờ")], [Wallet, t("Price hits it: the wallet trades", "Giá chạm: ví tự mua/bán")]]} /></Fig>
     <P text={t("Swaps and limit orders both count toward the general trading limit.", "Swap và lệnh limit cùng tính vào hạn mức giao dịch chung.")} />
+    <P text={t("**Risk:** prices go up and down. Trading can lose money.", "**Rủi ro:** giá lên xuống liên tục. Mua bán có thể lỗ.")} />
   </>;
 }
 
 function Page4({ save }: Pick<Ctx, "save">) {
   const t = useT();
   const n = useNames();
+  const me = t("Save my learning progress on Agent Academy: finished reading pages 1 to 4 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 4 của khóa học 2.");
   return <>
     <H2 text={n[3]} />
+    <P text={t("Steps 1–2 only look, nothing is traded. Step 3 saves your progress.", "Bước 1–2 chỉ xem, không mua bán gì. Bước 3 lưu tiến độ học.")} />
     <Steps>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("Quote swapping 0.0001 BNB to USDT. Just show me, don't do it.", "Báo giá đổi 0,0001 BNB sang USDT. Chỉ xem, đừng thực hiện.")} />
-        <Ok text={t("Your AI gives the estimated USDT you'd get (about 0.055 USDT; it changes with the BNB price) and 0.5% slippage. No order has been placed.", "AI báo số USDT nhận được ước tính (khoảng 0,055 USDT; số này đổi theo giá BNB) và slippage 0,5%. Chưa có lệnh nào được thực hiện.")} />
-        <Read text={t("How to read it: “about” means an estimate; the real price can move. 0.5% slippage means the price may move at most 0.5%. “Just show me, don't do it” makes the AI only quote, not trade.", "Cách đọc: \"nhận khoảng\" là số ước tính, giá thật có thể lệch. Slippage 0,5% nghĩa là giá được phép lệch tối đa 0,5%. Câu \"Chỉ xem, đừng thực hiện\" để AI chỉ báo giá, không đổi thật.")} />
-        <Read text={t("If you have a balance, you can try a real swap yourself. This lesson has no real-swap practice.", "Nếu có số dư, bạn có thể tự thử đổi thật. Bài học này không có phần thực hành đổi thật.")} />
-      </S>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("Do I have any open limit orders?", "Tôi đang có lệnh limit nào chưa khớp?")} />
-        <Ok text={t("Your AI says there are no limit orders waiting.", "AI báo không có lệnh limit nào đang chờ.")} />
-        <Read text={t("How to read it: a limit order waits until the price hits your level. A new wallet has no orders, so the list is empty.", "Cách đọc: lệnh limit nằm chờ đến khi giá chạm mức bạn đặt. Ví mới chưa đặt lệnh nào nên danh sách trống.")} />
-      </S>
-      <S text={t("**Save your learning progress (save 1).** This step records on the blockchain that you finished reading pages 1 to 4 of Course 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 1).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 4 của Khóa học 2. Gửi AI:")}>
-        {save(0, t("Save my learning progress on Agent Academy: finished reading pages 1 to 4 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 4 của khóa học 2."))}
-        <Read text={t("This is the first save of Course 2. Developer Mode must be on; if it expired, turn it on again as in Course 1. Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”. Saving progress only costs a little gas.", "Đây là lần ký đầu tiên của Khóa học 2. Developer Mode phải đang bật, nếu đã hết hạn thì bật lại như ở Khóa học 1. AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\". Lưu tiến độ chỉ tốn một chút gas.")} />
-      </S>
+      <Ask title={t("Ask for a quote (just look)", "Hỏi báo giá (chỉ xem)")} q={t("Quote swapping 0.0001 BNB to USDT. Just show me, don't do it.", "Báo giá đổi 0,0001 BNB sang USDT. Chỉ xem, đừng thực hiện.")}
+        reply={<Say text={t("0.0001 BNB ≈ 0.0551 USDT, slippage 0.5%. This is only a quote; no order was placed.", "0,0001 BNB ≈ 0,0551 USDT, slippage 0,5%. Đây chỉ là báo giá, chưa đặt lệnh nào.")} />}
+        ok={t("Your AI gives the estimated USDT you'd get (about 0.055 USDT; it changes with the BNB price) and 0.5% slippage. No order has been placed.", "AI báo số USDT nhận được ước tính (khoảng 0,055 USDT; số này đổi theo giá BNB) và slippage 0,5%. Chưa có lệnh nào được thực hiện.")}>
+        <Read text={t("“Just show me, don't do it” makes the AI only quote, not trade. This lesson has no real swap.", "Câu \"Chỉ xem, đừng thực hiện\" để AI chỉ báo giá, không đổi thật. Bài học này không đổi thật.")} />
+      </Ask>
+      <Ask title={t("Check for waiting orders", "Xem lệnh đang chờ")} q={t("Do I have any open limit orders?", "Tôi đang có lệnh limit nào chưa khớp?")}
+        reply={<Say text={t("No limit orders waiting.", "Không có lệnh limit nào đang chờ.")} />}
+        ok={t("Your AI says there are no limit orders waiting.", "AI báo không có lệnh limit nào đang chờ.")}>
+        <Read text={t("A new wallet has no orders, so the list is empty.", "Ví mới chưa đặt lệnh nào nên danh sách trống.")} />
+      </Ask>
+      <SaveStep title={t("Save your progress (save 1 of 3)", "Lưu tiến độ (lần 1/3)")} me={me} block={save(0, me)} intro={useSaveIntro()} />
     </Steps>
+    <SaveHelp />
+    <Note />
   </>;
 }
 
@@ -116,6 +138,7 @@ function Page5({ titleRef }: TitleRef) {
       t("DeFi is financial services that run on the blockchain as programs (contracts), not through a bank.", "DeFi là các dịch vụ tài chính chạy trên blockchain bằng chương trình (hợp đồng), không qua ngân hàng."),
       t("With your AI's wallet, you can deposit tokens to earn interest, add liquidity, withdraw, and claim rewards.", "Với ví của AI, bạn có thể gửi token vào để nhận lãi, thêm thanh khoản, rút ra, và nhận thưởng."),
     ]} />
+    <Fig><Flow items={[[Landmark, t("A bank: people run it", "Ngân hàng: người vận hành")], [FileCheck, t("DeFi: a program runs it", "DeFi: chương trình tự chạy")]]} /></Fig>
     <H3 text={t("Adding liquidity (LP)", "Thêm thanh khoản (LP)")} />
     <List items={[t("You put 2 kinds of tokens into a shared pool so others can trade between them. You get a share of the pool's fees.", "Bạn góp 2 loại token vào một kho chung để người khác đổi qua lại. Bạn nhận một phần phí của kho.")]} />
     <H3 text="APY" />
@@ -131,17 +154,19 @@ function Page6() {
   const n = useNames();
   return <>
     <H2 text={n[5]} />
+    <P text={t("Two questions, just looking. Nothing is deposited.", "Hai câu hỏi, chỉ xem. Không gửi tiền vào đâu cả.")} />
     <Steps>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("What DeFi positions do I have?", "Vị thế DeFi của tôi hiện có gì?")} />
-        <Ok text={t("Your AI says you have no DeFi positions yet, total value 0 USD.", "AI báo bạn chưa có vị thế DeFi nào, tổng giá trị 0 USD.")} />
-      </S>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("What DeFi tasks can this wallet do?", "Ví này làm được những việc DeFi nào?")} />
-        <Ok text={t("Your AI splits them into 2 groups. Viewing: protocol list, protocol details, investment opportunities, your positions, transaction previews. Actions: deposit, withdraw, add liquidity, remove liquidity, claim rewards. Plus the DeFi daily limit of 5,000 USD.", "AI chia làm 2 nhóm. Nhóm xem thông tin: danh sách giao thức, chi tiết giao thức, các cơ hội đầu tư, vị thế của bạn, xem trước giao dịch. Nhóm thao tác: gửi vào, rút, thêm thanh khoản, rút thanh khoản, nhận thưởng. Kèm hạn mức DeFi mỗi ngày là 5.000 USD.")} />
-      </S>
+      <Ask title={t("See your DeFi", "Xem DeFi của bạn")} q={t("What DeFi positions do I have?", "Vị thế DeFi của tôi hiện có gì?")}
+        reply={<Say text={t("No DeFi positions yet. Total 0 USD.", "Chưa có vị thế DeFi nào. Tổng 0 USD.")} />}
+        ok={t("Your AI says you have no DeFi positions yet, total value 0 USD.", "AI báo bạn chưa có vị thế DeFi nào, tổng giá trị 0 USD.")}>
+        <Read text={t("“Position” = money you have put into DeFi.", "“Vị thế” = tiền bạn đang gửi trong DeFi.")} />
+      </Ask>
+      <Ask title={t("See what DeFi can do", "Xem DeFi làm được gì")} q={t("What DeFi tasks can this wallet do?", "Ví này làm được những việc DeFi nào?")}
+        reply={<><Say text={t("Two groups of DeFi tasks:", "Hai nhóm việc DeFi:")} /><Rows rows={[[t("View", "Xem"), t("protocols, opportunities, positions, previews", "giao thức, cơ hội, vị thế, xem trước")], [t("Act", "Thao tác"), t("deposit, withdraw, add/remove liquidity, claim", "gửi, rút, thêm/rút thanh khoản, nhận thưởng")], [t("DeFi limit", "Hạn mức DeFi"), t("5,000 USD a day", "5.000 USD mỗi ngày")]]} /></>}
+        ok={t("Your AI splits them into 2 groups. Viewing: protocol list, protocol details, investment opportunities, your positions, transaction previews. Actions: deposit, withdraw, add liquidity, remove liquidity, claim rewards. Plus the DeFi daily limit of 5,000 USD.", "AI chia làm 2 nhóm. Nhóm xem thông tin: danh sách giao thức, chi tiết giao thức, các cơ hội đầu tư, vị thế của bạn, xem trước giao dịch. Nhóm thao tác: gửi vào, rút, thêm thanh khoản, rút thanh khoản, nhận thưởng. Kèm hạn mức DeFi mỗi ngày là 5.000 USD.")} />
     </Steps>
-    <Read text={t("If you have a balance, you can try it yourself. This lesson has no real DeFi practice.", "Nếu có số dư, bạn có thể tự thử. Bài học này không có phần thực hành DeFi thật.")} />
+    <Read text={t("If you have a balance, you can try it yourself. This lesson has no real DeFi practice. DeFi can lose money.", "Nếu có số dư, bạn có thể tự thử. Bài học này không có phần thực hành DeFi thật. DeFi có thể mất tiền.")} />
+    <Note />
   </>;
 }
 
@@ -161,6 +186,7 @@ function Page7({ titleRef }: TitleRef) {
       t("x402 is a way for the AI to pay a small amount by itself to use a paid online service, e.g. a data source.", "x402 là cách AI tự trả một khoản nhỏ để dùng dịch vụ có thu phí trên mạng, ví dụ một nguồn dữ liệu."),
       t("x402 has its own limit, 20 USD a day by default. There is no on/off switch, only the limit.", "x402 có hạn mức riêng, mặc định 20 USD mỗi ngày. Không có công tắc bật tắt, chỉ có hạn mức."),
     ]} />
+    <Fig><Flow items={[[Bot, t("AI needs paid data", "AI cần dữ liệu có phí")], [Coins, t("pays a small amount", "tự trả khoản nhỏ")], [Store, t("gets the data", "nhận dữ liệu")]]} /></Fig>
     <P text={t("This lesson only introduces these two features, no practice.", "Bài học này chỉ giới thiệu hai tính năng này, không thực hành.")} />
   </>;
 }
@@ -168,19 +194,19 @@ function Page7({ titleRef }: TitleRef) {
 function Page8({ save }: Pick<Ctx, "save">) {
   const t = useT();
   const n = useNames();
+  const me = t("Save my learning progress on Agent Academy: finished reading pages 1 to 8 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 8 của khóa học 2.");
   return <>
     <H2 text={n[7]} />
     <Steps>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("What are my Prediction and x402 limits?", "Hạn mức Dự đoán và x402 của tôi là bao nhiêu?")} />
-        <Ok text={t("Your AI gives the daily limit of both: Prediction 5,000 USD, x402 20 USD, 0 used. Prediction is off, so it can't be used yet. These two limits are separate and don't count toward the general trading limit.", "AI báo hạn mức mỗi ngày của hai loại: Dự đoán 5.000 USD, x402 20 USD, đã dùng 0. Dự đoán đang tắt nên chưa dùng được. Hai hạn mức này tính riêng, không trừ vào hạn mức giao dịch chung.")} />
-        <Read text={t("How to read it: “separate” means using up the Prediction or x402 limit leaves the 50,000 USD general trading limit untouched. Each kind of task has its own limit, as in Course 1.", "Cách đọc: \"tính riêng\" nghĩa là dùng hết hạn mức Dự đoán hay x402 thì hạn mức giao dịch chung 50.000 USD vẫn còn nguyên. Mỗi loại việc có một hạn mức riêng, như ở Khóa học 1.")} />
-      </S>
-      <S text={t("**Save your learning progress (save 2).** This step records on the blockchain that you finished reading pages 1 to 8 of Course 2. Send your AI:", "**Lưu tiến độ học bài (ký lần 2).** Bước này ghi lên blockchain rằng bạn đã đọc xong trang 1 đến 8 của Khóa học 2. Gửi AI:")}>
-        {save(1, t("Save my learning progress on Agent Academy: finished reading pages 1 to 8 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 8 của khóa học 2."))}
-        <Read text={t("If Developer Mode hasn't expired, keep using it; no need to turn it on again. Your AI shows you a preview. Check whether any token leaves your wallet. If it's right, type “confirm”.", "Developer Mode còn hạn thì dùng tiếp, không cần bật lại. AI cho bạn xem trước. Xem có token nào bị chuyển đi không. Thấy đúng thì gõ \"xác nhận\".")} />
-      </S>
+      <Ask title={t("Ask for these two limits", "Hỏi hai hạn mức này")} q={t("What are my Prediction and x402 limits?", "Hạn mức Dự đoán và x402 của tôi là bao nhiêu?")}
+        reply={<Say text={t("Prediction: 5,000 USD a day, currently off. x402: 20 USD a day. 0 used. Both are separate from the general trading limit.", "Dự đoán: 5.000 USD mỗi ngày, đang tắt. x402: 20 USD mỗi ngày. Đã dùng 0. Cả hai tính riêng, không trừ vào hạn mức giao dịch chung.")} />}
+        ok={t("Your AI gives the daily limit of both: Prediction 5,000 USD, x402 20 USD, 0 used. Prediction is off, so it can't be used yet. These two limits are separate and don't count toward the general trading limit.", "AI báo hạn mức mỗi ngày của hai loại: Dự đoán 5.000 USD, x402 20 USD, đã dùng 0. Dự đoán đang tắt nên chưa dùng được. Hai hạn mức này tính riêng, không trừ vào hạn mức giao dịch chung.")}>
+        <Read text={t("“Separate” means using up the Prediction or x402 limit leaves the 50,000 USD general trading limit untouched.", "\"Tính riêng\" nghĩa là dùng hết hạn mức Dự đoán hay x402 thì hạn mức giao dịch chung 50.000 USD vẫn còn nguyên.")} />
+      </Ask>
+      <SaveStep title={t("Save your progress (save 2 of 3)", "Lưu tiến độ (lần 2/3)")} me={me} block={save(1, me)} intro={useSaveIntro()} />
     </Steps>
+    <SaveHelp />
+    <Note />
   </>;
 }
 
@@ -197,6 +223,7 @@ function Page9({ titleRef }: TitleRef) {
       t("If an approval stays open after you're done, the app can still take your tokens. So revoke approvals you no longer use.", "Dùng xong mà quyền còn mở, ứng dụng vẫn có thể lấy token của bạn. Vì vậy quyền không dùng nữa thì nên thu hồi."),
       t("The AI only revokes when you confirm.", "AI chỉ thu hồi khi bạn xác nhận."),
     ]} />
+    <Fig><Flow items={[[Wallet, t("Your wallet", "Ví của bạn")], [FileCheck, t("gives permission", "cấp quyền")], [Store, t("the app can take tokens", "ứng dụng lấy được token")]]} /></Fig>
     <H3 text={t("Pending transactions", "Giao dịch đang chờ")} />
     <List items={[
       t("A transaction sent to the blockchain takes a moment to finish. Until then, it is pending.", "Gửi giao dịch lên blockchain cần một lúc mới xong. Lúc chưa xong, giao dịch đang chờ."),
@@ -210,18 +237,20 @@ function Page10() {
   const n = useNames();
   return <>
     <H2 text={n[9]} />
+    <P text={t("Two safety questions. Nothing is changed.", "Hai câu hỏi an toàn. Không thay đổi gì.")} />
     <Steps>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("Which contracts has my wallet given approvals to?", "Ví của tôi đã cấp quyền cho những hợp đồng nào?")} />
-        <Ok text={t("Your AI says the wallet hasn't approved any token for any contract.", "AI báo ví không cấp quyền token nào cho hợp đồng nào.")} />
-        <Read text={t("How to read it: a new wallet has no approvals. If it has some later, the AI can show each one and revoke it after you confirm.", "Cách đọc: ví mới chưa cấp quyền nào. Nếu sau này có, AI xem được chi tiết từng quyền và thu hồi sau khi bạn xác nhận.")} />
-      </S>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("Which of my transactions are pending or stuck?", "Giao dịch nào của tôi đang chờ hoặc bị kẹt?")} />
-        <Ok text={t("Your AI says no transactions are pending or stuck. The wallet status is UNLOCKED.", "AI báo không có giao dịch nào đang chờ hoặc bị kẹt. Trạng thái ví là UNLOCKED.")} />
-        <Read text={t("How to read it: UNLOCKED means the wallet is ready to send a new transaction.", "Cách đọc: UNLOCKED nghĩa là ví sẵn sàng gửi giao dịch mới.")} />
-      </S>
+      <Ask title={t("See your approvals", "Xem quyền đã cấp")} q={t("Which contracts has my wallet given approvals to?", "Ví của tôi đã cấp quyền cho những hợp đồng nào?")}
+        reply={<Say text={t("No approvals.", "Chưa cấp quyền nào.")} />}
+        ok={t("Your AI says the wallet hasn't approved any token for any contract.", "AI báo ví không cấp quyền token nào cho hợp đồng nào.")}>
+        <Read text={t("A new wallet has no approvals. If it has some later, the AI can show each one and revoke it after you confirm.", "Ví mới chưa cấp quyền nào. Nếu sau này có, AI xem được chi tiết từng quyền và thu hồi sau khi bạn xác nhận.")} />
+      </Ask>
+      <Ask title={t("See stuck transactions", "Xem giao dịch bị kẹt")} q={t("Which of my transactions are pending or stuck?", "Giao dịch nào của tôi đang chờ hoặc bị kẹt?")}
+        reply={<><p className="art-status sw-label">UNLOCKED</p><Say text={t("Nothing pending.", "Không có gì đang chờ.")} /></>}
+        ok={t("Your AI says no transactions are pending or stuck. The wallet status is UNLOCKED.", "AI báo không có giao dịch nào đang chờ hoặc bị kẹt. Trạng thái ví là UNLOCKED.")}>
+        <Read text={t("UNLOCKED means the wallet is ready to send a new transaction.", "UNLOCKED nghĩa là ví sẵn sàng gửi giao dịch mới.")} />
+      </Ask>
     </Steps>
+    <Note />
   </>;
 }
 
@@ -256,21 +285,22 @@ function Page11({ titleRef }: TitleRef) {
 function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
   const t = useT();
   const n = useNames();
+  const me = t("Save my learning progress on Agent Academy: finished reading pages 1 to 12 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 12 của khóa học 2.");
   return <>
     <H2 text={n[11]} />
     <Steps>
-      <S text={t("Ask your AI:", "Hỏi AI:")}>
-        <Code text={t("Run a safety check on my wallet.", "Kiểm tra an toàn ví của tôi.")} />
-        <Ok text={t("Your AI checks connection, approvals, pending transactions, balances, limits and Developer Mode, then says it found nothing unusual.", "AI kiểm tra kết nối, quyền đã cấp, giao dịch đang chờ, số dư, hạn mức và Developer Mode, rồi báo không thấy gì bất thường.")} />
+      <Ask title={t("Run a safety check", "Kiểm tra an toàn")} q={t("Run a safety check on my wallet.", "Kiểm tra an toàn ví của tôi.")}
+        reply={<><Rows rows={[[t("Connection", "Kết nối"), "CONNECTED", true], [t("Approvals", "Cấp quyền"), t("None", "Không có"), true], [t("Pending", "Đang chờ"), "UNLOCKED", true], [t("Limits", "Hạn mức"), t("0 used", "Đã dùng 0"), true]]} /><Say text={t("Nothing unusual. Developer Mode is on: turn it off in the app when you're done.", "Không thấy gì bất thường. Developer Mode đang bật: học xong thì tắt trong app.")} /></>}
+        ok={t("Your AI checks connection, approvals, pending transactions, balances, limits and Developer Mode, then says it found nothing unusual.", "AI kiểm tra kết nối, quyền đã cấp, giao dịch đang chờ, số dư, hạn mức và Developer Mode, rồi báo không thấy gì bất thường.")}>
         <Read text={t("It only reports what it could check. It may suggest turning off Developer Mode or lowering high limits (change them in the Binance App).", "AI chỉ báo những gì kiểm tra được. Nó có thể khuyên tắt Developer Mode hoặc hạ hạn mức cao (đổi trong Binance App).")} />
-      </S>
-      <S text={t("**Save your progress (save 3).** Send your AI:", "**Lưu tiến độ (ký lần 3).** Gửi AI:")}>
-        {save(2, t("Save my learning progress on Agent Academy: finished reading pages 1 to 12 of course 2.", "Lưu tiến độ học bài của tôi trên Agent Academy: đã đọc xong trang 1 đến 12 của khóa học 2."))}
-        <Read text={t("Check that no token leaves your wallet, then type “confirm”. Your certificate opens.", "Xem không có token nào bị chuyển đi, rồi gõ \"xác nhận\". Chứng chỉ hiện ra.")} />
-      </S>
-      <S text={t("Done? Turn off Developer Mode in the Binance App if you won't use it.", "Xong rồi thì tắt Developer Mode trong Binance App nếu không dùng nữa.")} />
+      </Ask>
+      <SaveStep title={t("Save and get your certificate (save 3 of 3)", "Lưu và nhận chứng chỉ (lần 3/3)")} me={me} block={save(2, me)} intro={useSaveIntro()} />
     </Steps>
+    <Ok text={t("Your AI says it's saved. Your certificate opens.", "AI báo đã lưu xong. Chứng chỉ hiện ra.")} />
     {status as ReactNode}
+    <P text={t("Done? Turn off Developer Mode in the Binance App if you won't use it.", "Xong rồi thì tắt Developer Mode trong Binance App nếu không dùng nữa.")} />
+    <SaveHelp />
+    <Note />
   </>;
 }
 

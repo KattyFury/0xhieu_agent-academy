@@ -1,6 +1,6 @@
-# HANDOFF: Agent Academy (2026-11-26)
+# HANDOFF: Agent Academy (2026-11-28)
 
-Spec: `docs/spec-v1.2.md` (platform; §14 = decisions). Course text: `web/src/views/Pages.tsx` (course 1), `Pages2.tsx` (course 2), owner-approved. Rules: `CLAUDE.md`. History: `docs/archive/`.
+Spec: `docs/spec-v1.2.md` (platform; §14 = decisions). Course text: `web/src/views/Pages.tsx` (course 1), `Pages2.tsx` (course 2); reworked for beginners 2026-11-28 (owner asked; owner has not re-read every line). Rules: `CLAUDE.md`. History: `docs/archive/`.
 
 ## Core
 Agent Academy = a learning platform of short courses about AI agents: read a little, practice a little, finish to get a certificate (UI never says "book" or "library"; code still does: `book1`, `BOOKS`, `bookId`). Each page = short theory or a small practice; finishing = on-chain certificate. Site-wide copy (home, Courses, certificate) fits ANY course.
@@ -15,6 +15,14 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 - `/status` layout: fits one screen; 3 number columns (wallets, certificates per course) + wallet table (yellow check = certificate, links to BscScan); only the table scrolls. ds-check 0 issues.
 - Counter catch-up: publicnode answers 429 to the Worker during backfill, so it advanced about 10k blocks per run (chunks already read are kept). On 2026-11-26 it was ~132k blocks behind and moving; not yet seen caught up.
 - Giveaway list: `cd web && npx tsx scripts/certified-wallets.ts <bookId 2|3>`: wallets from `/api/status`, each checked with `hasCertificate`, owner left out; it stops if the counter is behind. Never trust old `getLogs` from publicnode (returns `[]` with no error).
+
+## Beginner rework (deployed 2026-11-28, Worker version 490842ab)
+- Goal (owner): a non-technical person can finish both courses. Owner rejected wall-of-text pages and the word "Terminal".
+- `views/Art.tsx` = drawn pictures (no screenshots): `Step` (where: computer / phone / AI chat + "Example picture"), `Need` (get ready), `Help` (Stuck? fold-outs), `Chat`, `Phone`, `Window`, `CodeMatch` (green same / red different), `Flow`, `Meter`, `Rows`, `Preview` (save: send → preview → "confirm" → saved), `Note`. CSS block `/* Drawn lesson pictures */` in `styles.css`.
+- `Pages.tsx` shared: `Ask` (prompt + drawn AI reply + Right result), `SaveStep`, `SaveHelp` (351802, execution reverted, no gas, PENDING_CONFIRMATION, 351803, lost certificate → /certificate). Used by both courses.
+- Course 1 p3: chips now "Easiest" (AI Pro) / "If you code" (own AI) + "New to this? pick AI Pro". p4 own: install = paste a sentence to Claude Code / Codex / Gemini CLI (web ChatGPT/Gemini can't). "AI tokens" explained as usage credits, not crypto.
+- AI replies in pictures come from a real run on 2026-11-28 (Claude Code + skill 1.15 / baw 1.12.0, owner's wallet, read-only): addresses = 11 EVM networks + Solana (old text listing 6 was wrong, fixed); limits 50k/DeFi 5k/Prediction 5k off/x402 20/Dev 1k; quote 0.0001 BNB ≈ 0.0551 USDT; history has fee; approvals none; tx-lock UNLOCKED. Sign-in link opens web3.binance.com "Đăng nhập Ví Agentic" QR page; pairing code is hex (e.g. 955b11). Don't put a real login QR on the site (red line).
+- baw is signed in on the PC (session to ~2026-11-30): `"$(npm prefix -g)/baw"`, skill in `~/.agents/skills/binance-agentic-wallet`.
 
 ## Courses (deployed 2026-11-24, Worker version cadd613f)
 - Every course (code still says `book`): 12 pages = 6 pairs, odd page = learn, even = practice. Reader = Swiss magazine: contents list left, ONE page at a time (desktop and phone), pages scroll; no flip/fit/flying cover since 2026-11-24. VI = owner's approved copy; EN = translation. A book = `BookContent` (`saves` masks, page names, pages); `Reader.tsx` is shared.
@@ -33,6 +41,7 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 - Open: owner power is in README only, not on the site.
 
 ## Next
+- Beginner rework open items: phone-app screens are still guesses ("Box 1/2/3" on Secure Auto Sign, Developer Mode toggle, Agent ID banner, code compare); owner to send phone screenshots (mask the address). The install sentence on course 1 p4 is untested. Owner should skim the new VI copy. Not looked at by eye: EN pages and phone layout of new pages (overflow checked: none). Best test: a non-technical person does course 1 unaided.
 0. Check the `/status` counter caught up: `/api/status` `block` within ~2,000 of the chain head. Then run the giveaway script once (only its "counter behind" stop has been tested, not a full export).
 1. Tested 2026-11-24 with 0xhieu.ai: course 2 EN saves end to end; all practice prompts (EN + VI) match "Right result"; all 8 save prompts (EN + VI) carry the right mask/calldata. Untested: a real save from a fresh wallet in VI, and whether Binance AI Pro follows the save prompt (it contains `baw` commands).
 2. Open owner question: labels say LEARN/PRACTICE by page position, so course 1 page 2 says PRACTICE but is theory. Neutral "PAGE 02"?

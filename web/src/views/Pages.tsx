@@ -3,9 +3,10 @@
 // Status words (gas button, save) and the X share text are temporary: the owner approves them (spec §9.5).
 import { useState, type ReactNode, type Ref } from "react";
 import type { Address } from "viem";
-import { Check, CircleCheck, CircleX, Copy, Loader2 } from "lucide-react";
+import { Bot, Check, CircleCheck, CircleX, Copy, Eye, Keyboard, Link2, Loader2, ShieldCheck, Smartphone, User, Wallet } from "lucide-react";
 import { BSCSCAN, isAddr } from "../chain";
 import { useT } from "../i18n";
+import { Btn, Chat, CodeMatch, Connected, Fig, Flow, Help, Meter, Need, Note, Phone, Preview, Rows, Step, Tick, Toggle, Window } from "./Art";
 
 export type Track = "own" | "pro";
 
@@ -62,6 +63,45 @@ export type TitleRef = { titleRef?: Ref<HTMLHeadingElement> };
 export const H1 = ({ text, titleRef }: { text: string } & TitleRef) => <h1 className="t-page" tabIndex={-1} ref={titleRef} style={{ outline: "none" }}>{text}</h1>;
 export const H2 = ({ text }: { text: string }) => <h2 className="t-page">{text}</h2>;
 
+/** One practice question: copy the prompt, send it to your AI, compare with the drawn reply and the right result. */
+export function Ask({ title, q, reply, ok, children }: { title: string; q: string; reply: ReactNode; ok: string; children?: ReactNode }) {
+  const t = useT();
+  return (
+    <Step on="ai" title={title} art={<Chat me={q}>{reply}</Chat>}>
+      <p className="t-content">{t("Tap Copy, paste it to your AI, send.", "Bấm Chép, dán cho AI, rồi gửi.")}</p>
+      <Code text={q} />
+      <Ok text={ok} />
+      {children}
+    </Step>
+  );
+}
+export const Say = ({ text }: { text: string }) => <p className="t-content">{text}</p>;
+
+/** A progress save: the copy block from the reader + how to read the preview. */
+export function SaveStep({ title, intro, me, block }: { title: string; intro: string; me: string; block: ReactNode }) {
+  const t = useT();
+  return (
+    <Step on="ai" title={title} art={<Preview me={me} />}>
+      <p className="t-content"><Rich text={intro} /></p>
+      {block}
+      <p className="t-content"><Rich text={t("Your AI shows a preview first. Check **no token leaves your wallet** and **no approval** is asked. All good? Type “confirm”. Anything else? Don't confirm.", "AI cho xem trước. Kiểm tra **không có token nào bị chuyển đi** và **không xin cấp quyền**. Đúng hết thì gõ “xác nhận”. Thấy khác thì đừng xác nhận.")} /></p>
+    </Step>
+  );
+}
+
+/** Fixes for a save that doesn't go through (error codes from the official skill docs). */
+export function SaveHelp() {
+  const t = useT();
+  return <Help items={[
+    [t("The AI says Developer Mode is off or expired (351802)", "AI báo Developer Mode đang tắt hoặc hết hạn (351802)"), t("Binance App → Agentic Wallet → settings icon at the top right → turn on Developer Mode. Then send the command again.", "App Binance → Agentic Wallet → biểu tượng cài đặt góc trên bên phải → bật Developer Mode. Rồi gửi lại câu lệnh.")],
+    [t("The AI says “execution reverted”", "AI báo “execution reverted”"), t("Usually these pages are already saved, or the wallet has no Agent ID. Reload this page: if it says “Already saved”, you're done.", "Thường là các trang này đã lưu rồi, hoặc ví chưa có Agent ID. Tải lại trang này: thấy “Đã lưu rồi” là xong.")],
+    [t("The AI says there isn't enough BNB for gas", "AI báo không đủ BNB để trả gas"), t("Course 1, page 7: enter your wallet to get free gas (once per Agent ID). Or add a little BNB on BNB Smart Chain.", "Khóa học 1, trang 7: nhập ví để nhận gas miễn phí (một lần cho mỗi Agent ID). Hoặc nạp một ít BNB trên mạng BNB Smart Chain.")],
+    [t("The AI says PENDING_CONFIRMATION", "AI báo PENDING_CONFIRMATION"), t("Open the Binance App and approve the transaction there. Then ask your AI again.", "Mở app Binance và duyệt giao dịch ở đó. Rồi hỏi lại AI.")],
+    [t("The AI says it was blocked as high risk (351803)", "AI báo bị chặn vì rủi ro cao (351803)"), t("Stop. Don't confirm and don't look for a way around it.", "Dừng lại. Đừng xác nhận và đừng tìm cách khác để làm.")],
+    [t("I closed the page and missed my certificate", "Lỡ đóng trang, chưa thấy chứng chỉ"), t("Tap Certificate at the top of the site and paste your wallet address.", "Bấm Chứng chỉ ở thanh trên cùng của trang và dán địa chỉ ví.")],
+  ]} />;
+}
+
 // ---------- prompts ----------
 const INSTALL = "npx skills add binance/binance-skills-hub/skills/binance-web3/binance-agentic-wallet";
 export const usePrompts = () => {
@@ -103,7 +143,8 @@ export function Page1({ titleRef }: TitleRef) {
     <H1 text={t("What is Binance Agentic Wallet?", "Binance Agentic Wallet là gì?")} titleRef={titleRef} />
     <P text={t("AI today is a great helper, but what it can do usually stops at:", "AI ngày nay là trợ thủ đắc lực, nhưng việc AI làm được thường dừng ở:")} />
     <List items={[t("Talking", "Nói chuyện"), t("Writing, finding and summing up information", "Viết, tìm và tóm tắt thông tin"), t("Making images or videos", "Tạo ảnh hoặc video")]} />
-    <P text={t("Give the AI a crypto wallet, and you can tell it to manage your crypto for you, like:", "Nếu đưa cho AI một cái ví crypto, bạn có thể ra lệnh để AI quản lý crypto giúp bạn, như:")} />
+    <P text={t("Give the AI a crypto wallet (crypto = digital money such as Bitcoin, BNB, USDT), and you can tell it to manage your crypto for you:", "Nếu đưa cho AI một cái ví crypto (crypto = tiền số, ví dụ Bitcoin, BNB, USDT), bạn có thể ra lệnh để AI quản lý crypto giúp bạn:")} />
+    <Fig><Flow items={[[User, t("You give an order", "Bạn ra lệnh")], [Bot, t("The AI does it", "AI làm")], [Wallet, t("in your wallet", "trên ví của bạn")]]} /></Fig>
     <List items={[
       t("See your balance and history", "Xem số dư và lịch sử"),
       t("Send – receive", "Gửi – nhận"),
@@ -128,6 +169,7 @@ export function Page2() {
       t("Sign out and the AI loses access", "Đăng xuất thì AI hết quyền"),
     ]} />
     <P text={t("You set these limits yourself in the Binance App. The AI can see them but can't change them.", "Các giới hạn này do bạn tự đặt trong app Binance. AI chỉ xem được, không sửa được.")} />
+    <Fig><Flow items={[[Smartphone, t("You set the limit in the app", "Bạn đặt hạn mức trong app")], [Bot, t("The AI can only read it", "AI chỉ đọc được")], [ShieldCheck, t("It spends only within the limit", "AI chỉ tiêu trong hạn mức")]]} /></Fig>
   </>;
 }
 
@@ -148,16 +190,17 @@ export function Page3({ track, setTrack, titleRef }: { track: Track; setTrack: (
   );
   return <>
     <H1 text={t("Choose your AI", "Chọn AI của bạn")} titleRef={titleRef} />
-    <P text={t("Binance Agentic Wallet does not share a wallet with MPC Wallet. It is a wallet of its own.", "Binance Agentic Wallet không dùng chung ví với MPC Wallet. Nó là một ví riêng.")} />
+    <P text={t("Binance Agentic Wallet is a new wallet just for the AI. It is separate from the Binance Wallet you may already have (MPC Wallet).", "Binance Agentic Wallet là một ví mới, riêng cho AI. Nó tách biệt với ví Binance Wallet bạn có thể đang dùng (MPC Wallet).")} />
     <P text={t("Pick one of two paths. The next pages show only the path you pick.", "Chọn một trong hai đường. Bạn chọn đường nào thì các trang sau chỉ hiện đường đó.")} />
+    <P text={t("**New to this?** Never used Claude Code, Codex or Gemini CLI? Pick **Binance AI Pro**: nothing to install.", "**Mới làm quen?** Chưa từng dùng Claude Code, Codex hay Gemini CLI thì chọn **Binance AI Pro**: không cần cài gì.")} />
     <div className="setup-cards">
-      {card("own", t("Your own AI", "AI của bạn"), t("Recommended", "Nên dùng"), "Claude Code, Codex, Gemini CLI…",
+      {card("own", t("Your own AI", "AI của bạn"), t("If you code", "Cho người rành máy tính"), "Claude Code, Codex, Gemini CLI…",
         [t("Use the AI you already know", "Dùng AI bạn đã quen"), t("Can do every step", "Làm được mọi bước")],
-        [t("Needs Node.js 18+ and the skill", "Phải cài Node.js 18+ và skill"), t("You type commands in a terminal", "Phải gõ lệnh trong terminal")],
+        [t("Needs Node.js 18+ and the skill", "Phải cài Node.js 18+ và skill"), t("Needs a computer", "Cần có máy tính")],
         t("Choose your own AI", "Chọn AI của bạn"))}
-      {card("pro", "Binance AI Pro", null, null,
-        [t("Ready to use, nothing to install", "Có sẵn, không cần cài"), t("Claim an Agent ID and get 2.5 million free AI tokens. Free tokens are FCFS.", "Nhận Agent ID được tặng 2,5 triệu token AI. Số token tặng theo FCFS.")],
-        [t("Only 250K tokens a week by default, then you pay", "Mặc định chỉ 250K token mỗi tuần, hết phải mua"), t("May not be available in your country yet", "Có thể chưa dùng được ở nước bạn")],
+      {card("pro", "Binance AI Pro", t("Easiest", "Dễ nhất"), t("Chat with AI right in the Binance App or website", "Chat với AI ngay trong app hoặc web Binance"),
+        [t("Ready to use, nothing to install", "Có sẵn, không cần cài"), t("Claim an Agent ID and get 2.5 million free AI tokens (AI usage credits, not crypto). Free tokens are FCFS.", "Nhận Agent ID được tặng 2,5 triệu token AI (lượt dùng AI, không phải tiền crypto). Số token tặng theo FCFS.")],
+        [t("Only 250K AI tokens a week by default, then you pay", "Mặc định chỉ 250K token AI mỗi tuần, hết phải mua"), t("May not be available in your country yet", "Có thể chưa dùng được ở nước bạn")],
         t("Choose Binance AI Pro", "Chọn Binance AI Pro"))}
     </div>
   </>;
@@ -166,29 +209,72 @@ export function Page3({ track, setTrack, titleRef }: { track: Track; setTrack: (
 export function Page4({ track }: { track: Track }) {
   const t = useT();
   const pr = usePrompts();
+  const notYet: [string, string] = [t("The app says signed in, but the AI says not connected", "App báo xong, nhưng AI báo chưa kết nối"), t("Believe the AI. Tell it: “Sign in again”.", "Tin theo AI. Nói với nó: “Đăng nhập lại”.")];
   if (track === "own") return <>
     <H2 text={t("Install and sign in", "Cài và đăng nhập")} />
+    <Need items={[
+      ["pc", t("A computer", "Một máy tính")],
+      ["ai", t("Claude Code, Codex or Gemini CLI, already working on it", "Claude Code, Codex hoặc Gemini CLI đã dùng được trên máy đó")],
+      ["phone", t("A phone with the Binance App, signed in", "Điện thoại có app Binance, đã đăng nhập")],
+    ]}>
+      <p className="t-content">{t("Don't have these AI tools? The normal ChatGPT or Gemini web chat won't work. Go back to page 3 and pick Binance AI Pro.", "Chưa có mấy AI này? Chat ChatGPT hay Gemini trên web không làm được. Quay lại trang 3, chọn Binance AI Pro.")}</p>
+    </Need>
     <Steps>
-      <S text={t("Install the skill (type it in a terminal, or ask your AI to run it):", "Cài skill (gõ trong terminal, hoặc nhờ AI chạy):")}><Code text={INSTALL} command /></S>
-      <S text={t("Tell your AI:", "Nói với AI:")}><Code text={pr.login} /></S>
-      <S text={t("Your AI gives you a link and a 6-character code. Open the link and sign in with the Binance App. The first time, the app guides you to create the wallet.", "AI đưa bạn một link và mã 6 ký tự. Mở link, đăng nhập bằng Binance App. Lần đầu, app sẽ hướng dẫn bạn tạo ví.")} />
-      <S text={t("In the app, compare the 6-character code with the one your AI gave. If they match, confirm. If they don't match, or you didn't just ask for it (unknown IP warning), don't confirm.", "Trong app, so mã 6 ký tự với mã AI vừa đưa. Khớp thì xác nhận. Không khớp, hoặc không phải bạn vừa yêu cầu (cảnh báo IP lạ), thì đừng xác nhận.")} />
-      <S text={t("Turn on Secure Auto Sign (lets the AI do small tasks within your limit), tick the 3 boxes, tap Continue.", "Bật Secure Auto Sign (cho AI tự làm việc nhỏ trong hạn mức), tick 3 ô, bấm Continue.")} />
-      <S text={t("Ask your AI:", "Hỏi AI:")}><Code text={pr.connected} /></S>
+      <Step on="pc" title={t("Teach your AI to use the wallet", "Dạy AI cách dùng ví")} art={<Chat me={t("Install the wallet skill for me", "Cài skill ví giúp tôi")}><p className="art-ok t-content"><Check size={16} aria-hidden /> {t("Installed", "Cài xong")}</p></Chat>}>
+        <p className="t-content">{t("A “skill” is a guide pack that shows your AI how to use the wallet. Tap Copy, paste into your AI, press Enter.", "“Skill” là gói hướng dẫn để AI biết dùng ví. Bấm Chép, dán vào khung chat của AI, rồi nhấn Enter.")}</p>
+        <Code text={t("Install the Binance wallet skill for me.", "Cài skill ví Binance giúp tôi.")} copy={t(`Install the Binance wallet skill for me by running the command below. If my computer is missing something (like Node.js 18+), guide me one step at a time:\n${INSTALL}`, `Cài skill ví Binance giúp tôi bằng lệnh dưới đây. Máy thiếu gì (ví dụ Node.js 18+) thì hướng dẫn tôi từng bước một:\n${INSTALL}`)} />
+        <p className="t-content">{t("The copy also includes the install command. If the AI asks permission to run it, allow it. Wait until it says it's installed (its words may differ from the picture).", "Khi chép sẽ có kèm lệnh cài. AI xin phép chạy lệnh thì đồng ý. Chờ đến khi nó báo cài xong (câu chữ có thể khác hình).")}</p>
+      </Step>
+      <Step on="pc" title={t("Ask your AI to sign in", "Bảo AI đăng nhập")} art={<Chat me={pr.login}><p className="t-content">{t("Open this link and scan the QR code with the Binance App. Pairing code:", "Mở link này và quét mã QR bằng app Binance. Mã ghép cặp:")}</p><p className="art-status sw-label">654321</p><p className="t-content">{t("Confirm only if the app shows the same code.", "Chỉ xác nhận nếu app hiện đúng mã này.")}</p></Chat>}>
+        <Code text={pr.login} />
+        <p className="t-content">{t("The AI gives you a link and a 6-character code. Keep the code on screen.", "AI đưa một đường link và mã 6 ký tự. Để mã đó trên màn hình.")}</p>
+      </Step>
+      <Step on="phone" title={t("Scan the QR code, compare the codes", "Quét mã QR, so hai mã")} art={<CodeMatch code="654321" other="908172" />}>
+        <p className="t-content">{t("On your computer, click the AI's link. A web page opens with a QR code (a square pattern). Scan it with the Binance App on your phone. First time? The app helps you create the wallet.", "Trên máy tính, bấm vào link AI đưa. Trang web mở ra có mã QR (ô vuông chấm đen). Dùng app Binance trên điện thoại quét mã đó. Lần đầu thì app sẽ hướng dẫn bạn tạo ví.")}</p>
+        <p className="t-content">{t("The app shows a code. It must be exactly the one your AI gave you.", "App hiện một mã. Mã này phải giống hệt mã AI đưa.")}</p>
+        <p className="art-stop t-content">{t("Didn't ask to sign in, or see an unknown IP warning? Don't confirm.", "Bạn không hề yêu cầu đăng nhập, hoặc thấy cảnh báo IP lạ? Đừng xác nhận.")}</p>
+      </Step>
+      <Step on="phone" title={t("Turn on Secure Auto Sign", "Bật Secure Auto Sign")} art={<Phone title="Binance App"><Toggle text="Secure Auto Sign" /><Tick text={t("Box 1", "Ô 1")} /><Tick text={t("Box 2", "Ô 2")} /><Tick text={t("Box 3", "Ô 3")} /><Btn text="Continue" /></Phone>}>
+        <p className="t-content">{t("This lets your AI do small tasks by itself, within your limit. Tick the 3 boxes, then tap Continue.", "Bật cái này để AI tự làm việc nhỏ, trong hạn mức của ví. Tick đủ 3 ô, rồi bấm Continue.")}</p>
+      </Step>
+      <Step on="pc" title={t("Check that it worked", "Kiểm tra đã được chưa")} art={<Chat me={pr.connected}><Connected /></Chat>}>
+        <Code text={pr.connected} />
+        <p className="t-content">{t("The AI says CONNECTED? You're done with this page.", "AI báo CONNECTED (đã kết nối) là bạn xong trang này.")}</p>
+      </Step>
     </Steps>
-    <Ok text={t("Your AI says the wallet is connected (CONNECTED).", "AI báo ví đã kết nối (CONNECTED).")} />
+    <Help items={[
+      [t("The install shows an error", "Cài bị báo lỗi"), t("Copy the whole error, send it to your AI and say: “Explain this simply and help me fix it”.", "Chép nguyên dòng lỗi, gửi cho AI và nói: “Giải thích đơn giản và giúp tôi sửa”.")],
+      [t("The link or code stopped working", "Link hoặc mã không dùng được nữa"), t("A code lasts about 5 minutes. Tell your AI: “Sign in again”. Use the new link and code.", "Mã chỉ dùng được khoảng 5 phút. Nói với AI: “Đăng nhập lại”. Rồi dùng link và mã mới.")],
+      notYet,
+    ]} />
+    <Note />
   </>;
   return <>
     <H2 text={t("Sign in and claim your Agent ID", "Đăng nhập và nhận Agent ID")} />
+    <Need items={[
+      ["phone", t("A phone with the Binance App, signed in", "Điện thoại có app Binance, đã đăng nhập")],
+      ["ai", t("Binance AI Pro (may not be available in your country yet)", "Binance AI Pro (có thể chưa dùng được ở nước bạn)")],
+    ]} />
     <Steps>
-      <S text={t("Open Binance AI in the app (or ai.binance.com), tap Activate.", "Mở Binance AI trong app (hoặc ai.binance.com), bấm Activate.")} />
-      <S text={t("Type:", "Gõ:")}><Code text={pr.login} /><p className="t-content">{t("(no wallet yet? create one now)", "(chưa có ví thì tạo luôn)")}</p></S>
-      <S text={t("Ask:", "Hỏi:")}><Code text={pr.connected} /></S>
-      <S text={t("Claim your Agent ID (app → Wallet → Agent ID banner; name 3–15 characters, lowercase letters and numbers).", "Nhận Agent ID (app → Ví → banner Agent ID; tên 3–15 ký tự, chữ thường và số).")} />
+      <Step on="any" title={t("Open Binance AI", "Mở Binance AI")} art={<Window label="ai.binance.com"><Btn text="Activate" /></Window>}>
+        <p className="t-content">{t("Open Binance AI in the app, or type ai.binance.com in your browser. Tap Activate.", "Mở Binance AI trong app, hoặc gõ ai.binance.com trên trình duyệt. Bấm Activate.")}</p>
+      </Step>
+      <Step on="any" title={t("Ask it to sign in", "Bảo AI đăng nhập")} art={<Chat me={pr.login}><p className="t-content">{t("Finish confirming in the sign-in card.", "Hoàn tất xác nhận trong thẻ đăng nhập.")}</p><p className="art-ok t-content"><Check size={16} aria-hidden /> {t("Signed in", "Đăng nhập thành công")}</p></Chat>}>
+        <Code text={pr.login} />
+        <p className="t-content">{t("A sign-in card opens in the chat. Follow it. No wallet yet? Create one now.", "Một thẻ đăng nhập hiện ra ngay trong chat. Làm theo thẻ. Chưa có ví thì tạo luôn.")}</p>
+      </Step>
+      <Step on="any" title={t("Check that it worked", "Kiểm tra đã được chưa")} art={<Chat me={pr.connected}><Connected /></Chat>}>
+        <Code text={pr.connected} />
+        <p className="t-content">{t("The AI should say CONNECTED.", "AI phải báo CONNECTED (đã kết nối).")}</p>
+      </Step>
+      <Step on="phone" title={t("Claim your Agent ID", "Nhận Agent ID")} art={<Phone title="Binance App"><p className="t-content">{t("Wallet → Agent ID banner", "Ví → banner Agent ID")}</p><p className="art-status sw-label">YOU.AI</p></Phone>}>
+        <p className="t-content">{t("An Agent ID is a short name for your wallet. In the app: Wallet → Agent ID banner. Use 3–15 lowercase letters or numbers.", "Agent ID là tên ngắn cho ví của bạn. Trong app: Ví → banner Agent ID. Đặt tên 3–15 ký tự, chữ thường hoặc số.")}</p>
+      </Step>
     </Steps>
-    <Ok text={t("Your AI says the wallet is connected (CONNECTED).", "AI báo ví đã kết nối (CONNECTED).")} />
-    <P text={t("By default you can use 250K tokens a week.", "Mặc định bạn dùng được 250K token mỗi tuần.")} />
+    <Help items={[notYet]} />
+    <P text={t("By default you can use 250K AI tokens (AI usage credits) a week.", "Mặc định bạn dùng được 250K token AI (lượt dùng AI) mỗi tuần.")} />
     <P text={t("**Do it now:** claim your Agent ID to get 2.5 million free AI Pro tokens. These free tokens are FCFS, first come first served, and nobody knows when it ends.", "**Làm ngay:** nhận Agent ID để được tặng 2,5 triệu token AI Pro. Số token tặng này theo FCFS, ai đến trước được trước, chưa biết khi nào kết thúc.")} />
+    <Note />
   </>;
 }
 
@@ -204,6 +290,12 @@ export function Page5({ titleRef }: TitleRef) {
       t("An Agent ID is a short name in place of your address, e.g. you.ai. One name per person, it can't be transferred.", "Agent ID là tên ngắn thay cho địa chỉ, ví dụ you.ai. Mỗi người một tên, không chuyển nhượng được."),
       t("When you finish this course, you record it on the blockchain to get the Agent Academy certificate. That needs an Agent ID.", "Học xong khóa học này, bạn ghi kết quả lên blockchain để nhận chứng chỉ của Agent Academy. Việc ghi này cần có Agent ID."),
     ]} />
+    <Fig>
+      <div className="art-win art-body">
+        <Rows rows={[[t("Short name (Agent ID)", "Tên ngắn (Agent ID)"), "you.ai"], [t("Wallet address", "Địa chỉ ví"), "0x12ab…9f3c"]]} />
+        <p className="t-content">{t("Two ways to point to the same wallet. A real address is 42 characters; the middle is cut here.", "Hai cách gọi cùng một ví. Địa chỉ thật dài 42 ký tự, ở đây cắt bớt phần giữa.")}</p>
+      </div>
+    </Fig>
   </>;
 }
 
@@ -213,12 +305,17 @@ export function Page6({ track }: { track: Track }) {
   return <>
     <H2 text={t("Get your wallet address", "Lấy địa chỉ ví")} />
     <Steps>
-      {track === "own" && <S text={t("Claim your Agent ID (app → Wallet → Agent ID banner; name 3–15 characters, lowercase letters and numbers).", "Nhận Agent ID (app → Ví → banner Agent ID; tên 3–15 ký tự, chữ thường và số).")} />}
-      <S text={t("Ask your AI:", "Hỏi AI:")}><Code text={pr.address} /></S>
-      <S text={t("Compare the address your AI gives with the one in the app.", "So địa chỉ AI đưa với địa chỉ trong app.")} />
-      <S text={t("Copy the 0x address.", "Chép địa chỉ 0x.")} />
+      {track === "own" && <Step on="phone" title={t("Claim your Agent ID", "Nhận Agent ID")} art={<Phone title="Binance App"><p className="t-content">{t("Wallet → Agent ID banner", "Ví → banner Agent ID")}</p><p className="art-status sw-label">YOU.AI</p></Phone>}>
+        <p className="t-content">{t("In the app: Wallet → Agent ID banner. Use 3–15 lowercase letters or numbers. Saving your progress later needs it.", "Trong app: Ví → banner Agent ID. Đặt tên 3–15 ký tự, chữ thường hoặc số. Lúc lưu tiến độ sẽ cần nó.")}</p>
+      </Step>}
+      <Ask title={t("Ask for your wallet address", "Hỏi địa chỉ ví")} q={pr.address}
+        reply={<><Say text={t("Your Agentic Wallet addresses:", "Địa chỉ ví Agentic Wallet của bạn:")} /><Rows rows={[[t("BSC, Ethereum, Base, Arbitrum, Polygon… (11 networks)", "BSC, Ethereum, Base, Arbitrum, Polygon… (11 mạng)"), "0x12aB…9f3C"], ["Solana", "7xKp…3mQe"]]} /><Say text={t("Send only on the matching network, or the money may be lost.", "Chỉ gửi đúng mạng, nếu không có thể mất tiền.")} /></>}
+        ok={t("Your AI lists your addresses by network. One 0x address shared by many networks (BSC, Ethereum, Base, Arbitrum, Polygon…). One separate address for Solana.", "AI liệt kê địa chỉ theo từng mạng. Một địa chỉ 0x dùng chung cho nhiều mạng (BSC, Ethereum, Base, Arbitrum, Polygon…). Một địa chỉ riêng cho Solana.")} />
+      <Step on="any" title={t("Copy the 0x address", "Chép địa chỉ 0x")}>
+        <p className="t-content">{t("Copy the address that starts with 0x (the BSC row). Next page asks for it. If you can, check it matches the address shown in the app.", "Chép địa chỉ bắt đầu bằng 0x (dòng BSC). Trang sau sẽ cần nó. Nếu được, so xem có giống địa chỉ trong app không.")}</p>
+      </Step>
     </Steps>
-    <Ok text={t("Your AI gives a table. One 0x address shared by BSC, Ethereum, Base, Arbitrum, Polygon, Robinhood. One separate address for Solana.", "AI đưa một bảng. Một địa chỉ 0x dùng chung cho các mạng BSC, Ethereum, Base, Arbitrum, Polygon, Robinhood. Một địa chỉ riêng cho Solana.")} />
+    <Note />
   </>;
 }
 
@@ -276,6 +373,7 @@ export function Page7({ wallet, setWallet, titleRef }: { wallet: Address | null;
       t("No BNB for gas yet? Agent Academy gives you 0.00025 BNB (under 0.20 USD), once per Agent ID. Wallets that already have BNB don't get it.", "Chưa có BNB làm gas? Agent Academy tặng bạn 0,00025 BNB (dưới 0,20 USD), một lần cho mỗi Agent ID. Ví đã có BNB thì không được tặng."),
     ]} />
     <div className="bk-gas">
+      <p className="t-content"><Rich text={t("**Do it now:** paste the 0x address you copied on page 6, then tap Enter wallet.", "**Làm ngay:** dán địa chỉ 0x đã chép ở trang 6 vào ô dưới, rồi bấm Nhập ví.")} /></p>
       <WalletInput value={v} onChange={(s) => { setV(s); setErr(""); setRes(null); if (isAddr(s.trim())) setWallet(s.trim() as Address); }} onEnter={submit} err={err} />
       <div className="actions">
         <button className="btn btn-primary t-button" onClick={submit} disabled={busy}>{busy && <Loader2 size={16} className="animate-spin" />} {t("Enter wallet", "Nhập ví")}</button>
@@ -290,9 +388,13 @@ export function Page8() {
   const pr = usePrompts();
   return <>
     <H2 text={t("Check your gas", "Kiểm tra gas")} />
-    <P text={t("Ask your AI:", "Hỏi AI:")} />
-    <Code text={pr.balance} />
-    <Ok text={t("Your AI gives your BNB balance, the BNB price and the value in USD. If you got gas from Agent Academy, the balance is about 0.00025 BNB.", "AI đưa số dư BNB, giá BNB và giá trị tính ra USD. Nếu đã nhận gas từ Agent Academy, số dư khoảng 0,00025 BNB.")} />
+    <Steps>
+      <Ask title={t("Ask for your BNB balance", "Hỏi số dư BNB")} q={pr.balance}
+        reply={<Say text={t("Your BNB on BNB Smart Chain: 0.00025 BNB, about 0.14 USD (BNB price about 550 USD).", "BNB của bạn trên BNB Smart Chain: 0,00025 BNB, khoảng 0,14 USD (giá BNB khoảng 550 USD).")} />}
+        ok={t("Your AI gives your BNB balance, the BNB price and the value in USD. If you got gas from Agent Academy, the balance is about 0.00025 BNB.", "AI đưa số dư BNB, giá BNB và giá trị tính ra USD. Nếu đã nhận gas từ Agent Academy, số dư khoảng 0,00025 BNB.")} />
+    </Steps>
+    <Help items={[[t("The balance is 0", "Số dư bằng 0"), t("Go back to page 7 and tap Enter wallet. Wait a minute, then ask again. Still 0? Add a little BNB on BNB Smart Chain.", "Quay lại trang 7, bấm Nhập ví. Chờ một phút rồi hỏi lại. Vẫn 0 thì nạp một ít BNB trên mạng BNB Smart Chain.")]]} />
+    <Note />
   </>;
 }
 
@@ -305,9 +407,10 @@ export function Page9({ titleRef }: TitleRef) {
       t("The daily limit is the most the AI can use from the wallet in one day.", "Hạn mức mỗi ngày là số tiền tối đa AI được dùng từ ví trong một ngày."),
       t("Each kind of task has its own limit.", "Mỗi loại việc có hạn mức riêng."),
       t("Normal transactions start at 50,000 USD a day.", "Giao dịch thông thường ban đầu là 50.000 USD mỗi ngày."),
-      t("Example: you lower it to 100 USD, the AI has used 40, so 60 USD is left even if the wallet holds 1,000 USD. A new day resets it.", "Ví dụ: bạn hạ xuống 100 USD, AI đã dùng 40, còn 60 USD dù ví có 1.000 USD. Sang ngày mới thì làm mới."),
       t("Within the limit, the AI just does it. Over the limit, it is refused or you are asked again.", "Trong hạn mức, AI làm luôn. Vượt hạn mức thì bị từ chối hoặc hỏi lại bạn."),
     ]} />
+    <P text={t("Example: you lower it to 100 USD, the AI has used 40, so 60 USD is left even if the wallet holds 1,000 USD. A new day resets it.", "Ví dụ: bạn hạ xuống 100 USD, AI đã dùng 40, còn 60 USD dù ví có 1.000 USD. Sang ngày mới thì làm mới.")} />
+    <Fig><Meter limit={100} used={40} /></Fig>
     <P text={t("So the limit is the most the AI can use from your wallet each day.", "Vì vậy hạn mức là số tiền tối đa AI có thể dùng từ ví của bạn mỗi ngày.")} />
   </>;
 }
@@ -317,10 +420,13 @@ export function Page10() {
   const pr = usePrompts();
   return <>
     <H2 text={t("Read your rules", "Đọc luật của bạn")} />
-    <P text={t("Ask your AI:", "Hỏi AI:")} />
-    <Code text={pr.limit} />
-    <Ok text={t("Your AI says the general daily trading limit is 50,000 USD, 0 used, 50,000 USD left. Plus the separate limits for DeFi, Prediction, x402 and Developer Mode.", "AI báo hạn mức giao dịch chung mỗi ngày là 50.000 USD, đã dùng 0, còn lại 50.000 USD. Kèm hạn mức riêng của DeFi, Dự đoán, x402 và Developer Mode.")} />
+    <Steps>
+      <Ask title={t("Ask for your daily limit", "Hỏi hạn mức mỗi ngày")} q={pr.limit}
+        reply={<><Say text={t("Your daily limits (used today: 0):", "Hạn mức mỗi ngày của bạn (hôm nay đã dùng 0):")} /><Rows rows={[[t("General trading", "Giao dịch chung"), t("50,000 USD", "50.000 USD")], ["DeFi", t("5,000 USD", "5.000 USD")], [t("Prediction (off)", "Dự đoán (đang tắt)"), t("5,000 USD", "5.000 USD")], ["x402", "20 USD"], ["Developer Mode", t("1,000 USD", "1.000 USD")]]} /></>}
+        ok={t("Your AI says the general daily trading limit is 50,000 USD, 0 used, 50,000 USD left. Plus the separate limits for DeFi, Prediction, x402 and Developer Mode.", "AI báo hạn mức giao dịch chung mỗi ngày là 50.000 USD, đã dùng 0, còn lại 50.000 USD. Kèm hạn mức riêng của DeFi, Dự đoán, x402 và Developer Mode.")} />
+    </Steps>
     <P text={t("Any type the AI marks “off” can't be used yet. To turn it on or change a limit: Binance App → Agentic Wallet → settings icon at the top right.", "Loại nào AI ghi \"tắt\" thì chưa dùng được. Muốn bật hoặc đổi hạn mức: Binance App → Agentic Wallet → biểu tượng cài đặt góc trên bên phải.")} />
+    <Note />
   </>;
 }
 
@@ -336,6 +442,7 @@ export function Page11({ titleRef }: TitleRef) {
       <S text={t("The AI fills in what to record on a draft receipt and shows it to you first.", "AI điền sẵn nội dung cần ghi vào một tờ hóa đơn nháp và đưa bạn xem trước.")} />
       <S text={t("You read it, and if it's right you type “confirm”. That is when you sign.", "Bạn đọc, thấy đúng thì gõ \"xác nhận\". Đó là lúc bạn ký.")} />
     </Steps>
+    <Fig><Flow items={[[Bot, t("AI writes a draft", "AI soạn nháp")], [Eye, t("You read it", "Bạn đọc")], [Keyboard, t("You type “confirm”", "Bạn gõ “xác nhận”")], [Link2, t("Written on the blockchain", "Ghi lên blockchain")]]} /></Fig>
     <h3 className="t-header">{t("Before you type “confirm”:", "Trước khi gõ \"xác nhận\":")}</h3>
     <P text={t("Check for any line saying tokens leave your wallet. If you didn't mean to send tokens but see some leaving, don't confirm.", "Xem có dòng nào báo token bị chuyển đi không. Bạn không định chuyển token mà thấy token bị chuyển đi thì đừng xác nhận.")} />
   </>;
@@ -347,20 +454,25 @@ export function Page12({ save, status }: Pick<Ctx, "save" | "status">) {
   const pr = usePrompts();
   return <>
     <H2 text={t("Turn on Developer Mode and save your progress", "Bật Developer Mode và lưu tiến độ")} />
+    <P text={t("Last page. Turn on the AI's “secondary card”, then sign once to save your progress and get the certificate.", "Trang cuối. Bật “thẻ phụ” cho AI, rồi ký một lần để lưu tiến độ và nhận chứng chỉ.")} />
     <h3 className="t-header">{t("Part 1: Turn on Developer Mode", "Phần 1: Bật Developer Mode")}</h3>
     <Steps>
-      <S text={t("Turn on Developer Mode in the app: Agentic Wallet → settings icon at the top right → Developer Mode.", "Bật Developer Mode trong app: Agentic Wallet → biểu tượng cài đặt góc trên bên phải → Developer Mode.")} />
-      <S text={t("Ask your AI:", "Hỏi AI:")}><Code text={pr.devLimit} /></S>
+      <Step on="phone" title={t("Turn on Developer Mode", "Bật Developer Mode")} art={<Phone title="Agentic Wallet"><p className="t-content">{t("Settings (top right)", "Cài đặt (góc trên bên phải)")}</p><Toggle text="Developer Mode" /></Phone>}>
+        <p className="t-content">{t("In the app: Agentic Wallet → settings icon at the top right → Developer Mode. It lets the AI sign things like saving your progress, lasts 7 days and has its own limit.", "Trong app: Agentic Wallet → biểu tượng cài đặt góc trên bên phải → Developer Mode. Nó cho AI ký những việc như lưu tiến độ, dùng được 7 ngày và có hạn mức riêng.")}</p>
+      </Step>
+      <Ask title={t("Check it's on", "Kiểm tra đã bật")} q={pr.devLimit}
+        reply={<Say text={t("Developer Mode is on until Dec 4. Daily limit 1,000 USD, 0 used today. Each successful use extends it.", "Developer Mode đang bật đến 04/12. Hạn mức 1.000 USD mỗi ngày, hôm nay đã dùng 0. Mỗi lần dùng thành công sẽ được gia hạn.")} />}
+        ok={t("Your AI says the limit is 1,000 USD, 0 used, 1,000 USD left. Developer Mode is on, with an end date. Each successful use extends it.", "AI báo hạn mức 1.000 USD, đã dùng 0, còn lại 1.000 USD. Developer Mode đang bật, kèm ngày hết hạn. Mỗi lần dùng thành công sẽ kéo dài thời hạn.")} />
     </Steps>
-    <Ok text={t("Your AI says the limit is 1,000 USD, 0 used, 1,000 USD left. Developer Mode is on, with an end date. Each successful use extends it.", "AI báo hạn mức 1.000 USD, đã dùng 0, còn lại 1.000 USD. Developer Mode đang bật, kèm ngày hết hạn. Mỗi lần dùng thành công sẽ kéo dài thời hạn.")} />
     <h3 className="t-header">{t("Part 2: Save your progress", "Phần 2: Lưu tiến độ")}</h3>
-    <Steps>
-      <S text={t("Send your AI this command:", "Gửi AI lệnh này:")}>{save(0, pr.save)}</S>
-      <S text={t("Your AI shows you a preview. Check whether any token leaves your wallet.", "AI cho bạn xem trước. Đọc xem có token nào bị chuyển đi không.")} />
-      <S text={t("If it's right, type “confirm”.", "Thấy đúng thì gõ \"xác nhận\".")} />
+    <Steps start={2}>
+      <SaveStep title={t("Save and get your certificate", "Lưu và nhận chứng chỉ")} me={pr.save} block={save(0, pr.save)}
+        intro={t("Tap Copy below, paste it to your AI, send. The copy includes the technical details the AI needs.", "Bấm Chép bên dưới, dán cho AI, rồi gửi. Khi chép sẽ có kèm thông tin kỹ thuật AI cần.")} />
     </Steps>
     <Ok text={t("Your AI says it's saved. Your certificate opens.", "AI báo đã lưu xong. Chứng chỉ hiện ra.")} />
     {status}
+    <SaveHelp />
+    <Note />
   </>;
 }
 
