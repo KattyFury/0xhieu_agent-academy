@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Address } from "viem";
-import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowRight, Download, ShieldCheck } from "lucide-react";
 import { AddressForm, Nav, two } from "./Shell";
 import { BOOKS, bookById, type BookMeta } from "../books";
 import { ACADEMY, BOOK_PAGES, BSCSCAN, certificate, progressOf, savedPages, short, type Progress } from "../chain";
 import { useLang, useT } from "../i18n";
 import { CopyButton } from "./Pages";
-import { CertArt } from "./CertArt";
+import { CertArt, useCertPng } from "./CertArt";
 
 function useBook(wallet: Address | null, chainId: number) {
   const [p, setP] = useState<Progress | null>(null);
@@ -70,17 +70,18 @@ export default function Certificate({ wallet, bookId }: { wallet: Address; bookI
   const book = bookById(bookId);
   const title = book.title[lang];
   const { p, c, err } = useBook(wallet, book.chainId);
-  // Optional: the learner types their own Agent ID. Shown on this device only (never in the share link), so it can't label anyone else's certificate; the address is the proof.
+  // Optional name, same rule as the popup: any text, never verified. Shown on this device only (never in the share link); the address is the proof.
   const [name, setName] = useState(() => localStorage.getItem("academy.agentid") ?? "");
   const [edit, setEdit] = useState("");
-  const valid = /^[a-z0-9-]{1,63}\.ai$/i.test(name);
-  const saveName = () => { const v = edit.trim().toLowerCase(); if (/^[a-z0-9-]{1,63}\.ai$/.test(v)) { localStorage.setItem("academy.agentid", v); setName(v); setEdit(""); } };
+  const shown = name.trim() || short(wallet);
+  const png = useCertPng();
+  const saveName = () => { const v = edit.trim(); if (v) { localStorage.setItem("academy.agentid", v); setName(v); setEdit(""); } };
 
   return (
     <div className="page">
       <Nav active="cert" />
       <main className="sw-wrap">
-        {c?.ok ? <div className="cert-page"><CertArt book={book} name={valid ? name : short(wallet)} wallet={wallet} issuedAt={c.issuedAt} /></div> : (
+        {c?.ok ? <div className="cert-page"><CertArt book={book} name={shown} wallet={wallet} issuedAt={c.issuedAt} /></div> : (
           <section className="sw-sec">
             <span className="sw-label">{t("Certificate", "Chứng chỉ")} · {book.number}</span>
             <div className="sw-stack">
@@ -96,14 +97,15 @@ export default function Certificate({ wallet, bookId }: { wallet: Address; bookI
         )}
         {c?.ok && <div className="cert-tools">
           <p className="bk-recorded t-content bk-status"><ShieldCheck size={16} aria-hidden /> {t("Verified on-chain", "Đã xác minh on-chain")}</p>
-          {!valid && <form className="address-form" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
-            <input className="input t-input" aria-label={t("Your Agent ID", "Agent ID của bạn")} placeholder={t("Agent ID, e.g. you.ai", "Agent ID, ví dụ ban.ai")} value={edit} onChange={(e) => setEdit(e.target.value)} spellCheck={false} autoCapitalize="none" />
+          {!name && <form className="address-form" onSubmit={(e) => { e.preventDefault(); saveName(); }}>
+            <input className="input t-input" aria-label={t("Your name or Agent ID", "Tên hoặc Agent ID của bạn")} placeholder={t("Your name, e.g. you.ai", "Tên của bạn, ví dụ ban.ai")} value={edit} onChange={(e) => setEdit(e.target.value)} maxLength={40} spellCheck={false} autoCapitalize="none" />
             <button className="btn btn-dark t-button" type="submit">{t("Add my name", "Thêm tên")}</button>
           </form>}
-          {valid && <button className="sw-textlink" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
-          {(valid || edit) && <p className="t-note">{t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.")}</p>}
+          {name && <button className="sw-textlink" onClick={() => { localStorage.removeItem("academy.agentid"); setName(""); }}>{t("Remove name", "Xoá tên")}</button>}
+          {(name || edit) && <p className="t-note">{t("The name shows on this device only. The wallet address is the proof.", "Tên chỉ hiện trên máy này. Địa chỉ ví mới là bằng chứng.")}</p>}
           <div className="sw-btns">
-            <CopyButton text={`${location.origin}/certificate/${book.id}/${wallet}`} label={t("Copy share link", "Chép link chia sẻ")} primary />
+            <button className="btn btn-primary t-button" onClick={() => png(book, shown, wallet, c.issuedAt)}><Download size={16} aria-hidden /> {t("Download", "Tải ảnh")}</button>
+            <CopyButton text={`${location.origin}/certificate/${book.id}/${wallet}`} label={t("Copy share link", "Chép link chia sẻ")} />
             <a className="btn btn-dark t-button" href={`${BSCSCAN}/address/${ACADEMY}#readContract`} target="_blank" rel="noreferrer"><ShieldCheck size={16} aria-hidden /> {t("Verify on BscScan", "Xác minh trên BscScan")}</a>
           </div>
         </div>}

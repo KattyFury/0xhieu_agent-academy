@@ -40,6 +40,9 @@ Agent Academy = a learning platform of short courses about AI agents: read a lit
 - Submission form: project name, website, contract address, how Agent ID is used (contract reverts `NoAgentId` without one), reward wallet. Also state: owner's only power = `createBook`; free gas = 0.00025 BNB once per Agent ID, only to wallets with no BNB (daily/IP caps above).
 - Open: owner power is in README only, not on the site.
 
+## Certificate page fix (2026-11-28, pushed, NOT deployed yet)
+Share page: name = any text up to 40 chars (same as popup; before, non-`.ai` input was silently ignored); added Download (PNG). Checked in local preview on desktop; phone not checked. The deploy command was blocked by Claude Code auto mode.
+
 ## Next
 - Beginner rework open items: phone-app screens are still guesses ("Box 1/2/3" on Secure Auto Sign, Developer Mode toggle, Agent ID banner, code compare); owner to send phone screenshots (mask the address). The install sentence on course 1 p4 is untested. Owner should skim the new VI copy. Not looked at by eye: EN pages and phone layout of new pages (overflow checked: none). Best test: a non-technical person does course 1 unaided.
 0. Check the `/status` counter caught up: `/api/status` `block` within ~2,000 of the chain head. Then run the giveaway script once (only its "counter behind" stop has been tested, not a full export).
